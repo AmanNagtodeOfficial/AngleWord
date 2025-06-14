@@ -13,11 +13,15 @@ import {
   ALargeSmall, // Used for Increase Font Size
   BarChart3,
   Baseline,
+  Blocks, // For Quick Parts
   Bold,
   Book,
   BookCopy,
   BookOpen,
+  Bookmark, // For Links group
   Brain,
+  CalendarDays, // For Date & Time
+  Camera, // For Screenshot
   CaseSensitive, // For Change Case (Aa)
   CaseLower, // Used for Decrease Font Size
   ClipboardCheck,
@@ -34,37 +38,46 @@ import {
   FileTextIcon,
   Footprints,
   GalleryHorizontal,
+  GalleryThumbnails, // For My Apps
   GalleryVerticalEnd,
   Globe,
   Grid, // For Borders in Paragraph group
   Grid3x3,
   Hash,
   Highlighter,
+  ImageUp, // For Online Pictures
   Image as LucideImage,
   IndentDecrease,
   IndentIncrease,
   Italic,
   LayoutGrid,
   LayoutList, // For Styles group
+  Library, // For Wikipedia
+  Link as LinkIcon, // For Hyperlink
+  Link2, // For Cross-reference
   List,
   ListChecks, // For Multilevel List
   ListOrdered,
   ListTree,
   Mail,
   MessageCircle,
+  MessageSquare, // For Comment
   Newspaper,
   Omega,
+  Package, // For Object
   PaintBucket, // For Shading
   Paintbrush, // For Format Painter & Design Colors
   Palette, // For Font Color & Design Themes
   PanelBottom,
   PanelLeftOpen,
   PanelTop,
+  PenTool, // For Signature Line
   Percent,
   Pilcrow, // For Show/Hide Paragraph marks
   Pointer, // For Select in Editing
   Printer,
   PrinterIcon,
+  Projector, // For SmartArt
   RectangleHorizontal,
   Replace,
   Ruler,
@@ -74,19 +87,24 @@ import {
   Search,
   Scissors,
   Shapes,
+  Sigma, // For Equation
   Sparkles, // For AI Improve
   SpellCheck,
   SplitSquareVertical,
   Square, // For Page Borders (Design)
+  SquarePen, // For Text Box
+  Store as StoreIcon, // For Store
   StretchHorizontal,
   Strikethrough,
   Subscript, // For Subscript x,
   Superscript, // For Superscript x²
   Table,
   Tags,
+  Type, // For WordArt
   Underline,
   UnfoldVertical,
   Users2,
+  Video, // For Online Video
   Wand2, // For Text Effects
   ZoomIn,
   ZoomOut,
@@ -221,24 +239,53 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
 
         <TabsContent value="insert" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Pages">
-            <RibbonButton icon={Newspaper}>Cover</RibbonButton>
-            <RibbonButton icon={FilePlus2}>Blank</RibbonButton>
-            <RibbonButton icon={UnfoldVertical}>Break</RibbonButton>
+            <RibbonButton icon={Newspaper}>Cover Page</RibbonButton>
+            <RibbonButton icon={FilePlus2}>Blank Page</RibbonButton>
+            <RibbonButton icon={UnfoldVertical}>Page Break</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Tables">
             <RibbonButton icon={Table}>Table</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Illustrations">
-            <RibbonButton icon={LucideImage}>Picture</RibbonButton>
+            <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
+            <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
             <RibbonButton icon={Shapes}>Shapes</RibbonButton>
+            <RibbonButton icon={Projector}>SmartArt</RibbonButton>
             <RibbonButton icon={BarChart3}>Chart</RibbonButton>
+            <RibbonButton icon={Camera}>Screenshot</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Apps">
+            <RibbonButton icon={StoreIcon}>Store</RibbonButton>
+            <RibbonButton icon={GalleryThumbnails}>My Apps</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Media">
+            <RibbonButton icon={Library}>Wikipedia</RibbonButton>
+            <RibbonButton icon={Video}>Online Video</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Links">
+            <RibbonButton icon={LinkIcon}>Hyperlink</RibbonButton>
+            <RibbonButton icon={Bookmark}>Bookmark</RibbonButton>
+            <RibbonButton icon={Link2}>Cross-ref</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Comments">
+            <RibbonButton icon={MessageSquare}>Comment</RibbonButton>
           </RibbonGroup>
            <RibbonGroup title="Header & Footer">
             <RibbonButton icon={PanelTop}>Header</RibbonButton>
             <RibbonButton icon={PanelBottom}>Footer</RibbonButton>
             <RibbonButton icon={Hash}>Page #</RibbonButton>
           </RibbonGroup>
+          <RibbonGroup title="Text">
+            <RibbonButton icon={SquarePen}>Text Box</RibbonButton>
+            <RibbonButton icon={Blocks}>Quick Parts</RibbonButton>
+            <RibbonButton icon={Type}>WordArt</RibbonButton>
+            <RibbonButton icon={Baseline}>Drop Cap</RibbonButton>
+            <RibbonButton icon={PenTool}>Signature</RibbonButton>
+            <RibbonButton icon={CalendarDays}>Date & Time</RibbonButton>
+            <RibbonButton icon={Package}>Object</RibbonButton>
+          </RibbonGroup>
           <RibbonGroup title="Symbols">
+            <RibbonButton icon={Sigma}>Equation</RibbonButton>
             <RibbonButton icon={Omega}>Symbol</RibbonButton>
           </RibbonGroup>
         </TabsContent>
