@@ -31,6 +31,7 @@ import {
   Copyright,
   Copy,
   ChevronDown,
+  Droplet, // For Design > Colors
   Eraser, // For Clear All Formatting
   File,
   FilePlus,
@@ -65,8 +66,8 @@ import {
   Newspaper,
   Omega,
   Package, // For Object
-  PaintBucket, // For Shading
-  Paintbrush, // For Format Painter & Design Colors
+  PaintBucket, // For Shading & Page Color
+  Paintbrush, // For Format Painter & Design Colors (Used for Design > Colors in image, but Droplet is better)
   Palette, // For Font Color & Design Themes
   PanelBottom,
   PanelLeftOpen,
@@ -81,14 +82,14 @@ import {
   RectangleHorizontal,
   Replace,
   Ruler,
-  Save,
+  Save, // For Save action & Design > Set as Default
   Scaling,
   ScanText,
   Search,
   Scissors,
   Shapes,
   Sigma, // For Equation
-  Sparkles, // For AI Improve
+  Sparkles, // For AI Improve & Design > Effects
   SpellCheck,
   SplitSquareVertical,
   Square, // For Page Borders (Design)
@@ -100,7 +101,7 @@ import {
   Superscript, // For Superscript x²
   Table,
   Tags,
-  Type, // For WordArt
+  Type, // For WordArt & Design > Fonts
   Underline,
   UnfoldVertical,
   Users2,
@@ -300,12 +301,39 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
 
         <TabsContent value="design" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Document Formatting">
-            <RibbonButton icon={Palette}>Themes</RibbonButton>
-            <RibbonButton icon={Paintbrush}>Colors</RibbonButton>
+            <RibbonButton icon={Palette}>
+              Themes
+              <ChevronDown className="inline w-3 h-3 ml-0.5" />
+            </RibbonButton>
+            {/* Style Gallery placeholder would go here if implemented */}
+            <div className="flex flex-col items-start pl-2 space-y-0.5">
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Droplet className="w-4 h-4 mr-2" /> Colors <ChevronDown className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Baseline className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Sparkles className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Save className="w-4 h-4 mr-2" /> Set as Default
+              </Button>
+            </div>
           </RibbonGroup>
           <RibbonGroup title="Page Background">
-             <RibbonButton icon={Square}>Borders</RibbonButton>
-             <RibbonButton icon={Copyright}>Watermark</RibbonButton>
+             <RibbonButton icon={Copyright}>
+               Watermark
+               <ChevronDown className="inline w-3 h-3 ml-0.5" />
+             </RibbonButton>
+             <RibbonButton icon={PaintBucket}>
+               Page Color
+               <ChevronDown className="inline w-3 h-3 ml-0.5" />
+             </RibbonButton>
+             <RibbonButton icon={Square}>Page Borders</RibbonButton>
           </RibbonGroup>
         </TabsContent>
         
