@@ -158,7 +158,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="file" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="file" className="bg-background p-2 flex items-start">
           <RibbonGroup title="File">
             <RibbonButton icon={FilePlus}>New</RibbonButton>
             <RibbonButton icon={File}>Open</RibbonButton>
@@ -167,7 +167,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="home" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="home" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Clipboard" className="items-stretch">
             <div className="flex flex-col items-center">
               <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
@@ -237,7 +237,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="insert" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="insert" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Pages">
             <RibbonButton icon={Newspaper}>Cover Page</RibbonButton>
             <RibbonButton icon={FilePlus2}>Blank Page</RibbonButton>
@@ -247,12 +247,16 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={Table}>Table</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Illustrations">
-            <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
-            <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
-            <RibbonButton icon={Shapes}>Shapes</RibbonButton>
-            <RibbonButton icon={Projector}>SmartArt</RibbonButton>
-            <RibbonButton icon={BarChart3}>Chart</RibbonButton>
-            <RibbonButton icon={Camera}>Screenshot</RibbonButton>
+            <div className="flex flex-col">
+              <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
+              <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
+              <RibbonButton icon={Shapes}>Shapes</RibbonButton>
+            </div>
+            <div className="flex flex-col">
+              <RibbonButton icon={Projector}>SmartArt</RibbonButton>
+              <RibbonButton icon={BarChart3}>Chart</RibbonButton>
+              <RibbonButton icon={Camera}>Screenshot</RibbonButton>
+            </div>
           </RibbonGroup>
           <RibbonGroup title="Apps">
             <RibbonButton icon={StoreIcon}>Store</RibbonButton>
@@ -276,13 +280,17 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={Hash}>Page #</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Text">
-            <RibbonButton icon={SquarePen}>Text Box</RibbonButton>
-            <RibbonButton icon={Blocks}>Quick Parts</RibbonButton>
-            <RibbonButton icon={Type}>WordArt</RibbonButton>
-            <RibbonButton icon={Baseline}>Drop Cap</RibbonButton>
-            <RibbonButton icon={PenTool}>Signature</RibbonButton>
-            <RibbonButton icon={CalendarDays}>Date & Time</RibbonButton>
-            <RibbonButton icon={Package}>Object</RibbonButton>
+            <div className="flex flex-col">
+              <RibbonButton icon={SquarePen}>Text Box</RibbonButton>
+              <RibbonButton icon={Blocks}>Quick Parts</RibbonButton>
+              <RibbonButton icon={Type}>WordArt</RibbonButton>
+            </div>
+            <div className="flex flex-col">
+              <RibbonButton icon={Baseline}>Drop Cap</RibbonButton>
+              <RibbonButton icon={PenTool}>Signature</RibbonButton>
+              <RibbonButton icon={CalendarDays}>Date & Time</RibbonButton>
+              <RibbonButton icon={Package}>Object</RibbonButton>
+            </div>
           </RibbonGroup>
           <RibbonGroup title="Symbols">
             <RibbonButton icon={Sigma}>Equation</RibbonButton>
@@ -290,7 +298,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="design" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="design" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Document Formatting">
             <RibbonButton icon={Palette}>Themes</RibbonButton>
             <RibbonButton icon={Paintbrush}>Colors</RibbonButton>
@@ -301,7 +309,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
         
-        <TabsContent value="layout" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="layout" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Page Setup">
             <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
             <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
@@ -310,7 +318,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="references" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="references" className="bg-background p-2 flex items-start">
            <RibbonGroup title="Table of Contents">
             <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
           </RibbonGroup>
@@ -322,7 +330,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="mailings" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="mailings" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Create">
             <RibbonButton icon={Mail}>Envelopes</RibbonButton>
             <RibbonButton icon={Tags}>Labels</RibbonButton>
@@ -332,7 +340,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="review" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="review" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Proofing">
             <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
             <RibbonButton icon={ScanText}>Word Count</RibbonButton>
@@ -345,7 +353,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="view" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="view" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Views">
             <RibbonButton icon={BookOpen}>Read Mode</RibbonButton>
             <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
@@ -376,7 +384,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Writing Assistant">
             <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
             <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
