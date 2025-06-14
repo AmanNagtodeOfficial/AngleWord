@@ -9,73 +9,85 @@ import {
   AlignLeft,
   AlignRight,
   AppWindow,
+  ArrowDownAZ,
+  ALargeSmall, // Used for Increase Font Size
   BarChart3,
   Baseline,
   Bold,
   Book,
-  BookCopy, // For Blank Page
+  BookCopy,
   BookOpen,
   Brain,
+  CaseSensitive, // For Change Case (Aa)
+  CaseLower, // Used for Decrease Font Size
   ClipboardCheck,
-  ClipboardPaste, // For Paste
+  ClipboardPaste,
   Code2,
   Columns,
-  Copyright, // For Watermark
+  Copyright,
   Copy,
-  Cut,
   ChevronDown,
+  Eraser, // For Clear All Formatting
   File,
   FilePlus,
-  FilePlus2, // For Blank Page (Alternative if BookCopy is not ideal)
+  FilePlus2,
   FileTextIcon,
   Footprints,
   GalleryHorizontal,
   GalleryVerticalEnd,
   Globe,
+  Grid, // For Borders in Paragraph group
   Grid3x3,
-  Hash, // For PageNumber
+  Hash,
   Highlighter,
   Image as LucideImage,
-  IndentDecrease, // For Outdent
-  IndentIncrease, // For Indent
+  IndentDecrease,
+  IndentIncrease,
   Italic,
   LayoutGrid,
+  LayoutList, // For Styles group
   List,
+  ListChecks, // For Multilevel List
   ListOrdered,
   ListTree,
   Mail,
-  Maximize2, // Icon for Size (alternative: Scaling)
   MessageCircle,
-  Newspaper, // For Cover Page
-  Omega, // For Symbol
-  Paintbrush,
-  Palette,
-  PanelBottom, // For Footer
+  Newspaper,
+  Omega,
+  PaintBucket, // For Shading
+  Paintbrush, // For Format Painter & Design Colors
+  Palette, // For Font Color & Design Themes
+  PanelBottom,
   PanelLeftOpen,
-  PanelTop, // For Header
+  PanelTop,
   Percent,
+  Pilcrow, // For Show/Hide Paragraph marks
+  Pointer, // For Select in Editing
   Printer,
   PrinterIcon,
   RectangleHorizontal,
-  Replace, // Changed from FindReplace
+  Replace,
   Ruler,
   Save,
-  Scaling, // For Page Size
-  ScanText, // For Word Count
+  Scaling,
+  ScanText,
   Search,
   Scissors,
   Shapes,
-  Sparkles,
+  Sparkles, // For AI Improve
   SpellCheck,
   SplitSquareVertical,
-  Square,
+  Square, // For Page Borders (Design)
   StretchHorizontal,
   Strikethrough,
+  Subscript, // For Subscript x,
+  Superscript, // For Superscript x²
   Table,
   Tags,
   Underline,
-  UnfoldVertical, // For Page Break
+  UnfoldVertical,
   Users2,
+  Wand2, // For Text Effects
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -88,16 +100,24 @@ interface RibbonProps {
 }
 
 export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
-  const RibbonButton = ({ children, icon: Icon, ...props }: { children: React.ReactNode, icon: React.ElementType, [key: string]: any }) => (
-    <Button variant="ghost" className="flex flex-col items-center h-auto p-2" {...props}>
+  const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
+    <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
       <Icon className="w-5 h-5 mb-1" />
-      <span className="text-xs">{children}</span>
+      <span className="text-xs text-center">{children}</span>
     </Button>
   );
 
-  const RibbonGroup = ({ title, children }: { title: string, children: React.ReactNode }) => (
-    <div className="flex flex-col items-center p-1 border-r last:border-r-0">
-      <div className="flex items-center gap-0.5">
+  const SmallRibbonButton = ({ icon: Icon, tooltip, ...props }: { icon: React.ElementType, tooltip: string, [key: string]: any }) => (
+    // Tooltip can be added here if ShadCN Tooltip is integrated
+    <Button variant="ghost" className="p-1 h-auto" title={tooltip} {...props}>
+      <Icon className="w-4 h-4" />
+    </Button>
+  );
+
+
+  const RibbonGroup = ({ title, children, className }: { title: string, children: React.ReactNode, className?: string }) => (
+    <div className={`flex flex-col items-center p-1 border-r last:border-r-0 ${className || ''}`}>
+      <div className="flex items-start gap-0.5">
         {children}
       </div>
       <span className="text-xs text-muted-foreground mt-1">{title}</span>
@@ -120,7 +140,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="file" className="bg-background p-2 flex items-start">
+        <TabsContent value="file" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="File">
             <RibbonButton icon={FilePlus}>New</RibbonButton>
             <RibbonButton icon={File}>Open</RibbonButton>
@@ -129,39 +149,77 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="home" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Clipboard">
-            <RibbonButton icon={Scissors}>Cut</RibbonButton>
-            <RibbonButton icon={Copy}>Copy</RibbonButton>
-            <RibbonButton icon={ClipboardPaste}>Paste</RibbonButton>
+        <TabsContent value="home" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
+          <RibbonGroup title="Clipboard" className="items-stretch">
+            <div className="flex flex-col items-center">
+              <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
+                <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
+                <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
+              </Button>
+            </div>
+            <div className="flex flex-col justify-center">
+              <SmallRibbonButton icon={Scissors} tooltip="Cut" />
+              <SmallRibbonButton icon={Copy} tooltip="Copy" />
+              <SmallRibbonButton icon={Paintbrush} tooltip="Format Painter" />
+            </div>
           </RibbonGroup>
           <RibbonGroup title="Font">
-            <Button variant="ghost" className="p-2 text-xs h-auto">PT Sans <ChevronDown className="w-3 h-3 ml-1" /></Button>
-            <Button variant="ghost" className="p-2 text-xs h-auto">11 <ChevronDown className="w-3 h-3 ml-1" /></Button>
-            <RibbonButton icon={Bold}>Bold</RibbonButton>
-            <RibbonButton icon={Italic}>Italic</RibbonButton>
-            <RibbonButton icon={Underline}>Underline</RibbonButton>
-            <RibbonButton icon={Strikethrough}>Strike</RibbonButton>
-            <RibbonButton icon={Highlighter}>Highlight</RibbonButton>
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <Button variant="ghost" className="p-1 text-xs h-auto">PT Sans <ChevronDown className="w-3 h-3 ml-1" /></Button>
+                <Button variant="ghost" className="p-1 text-xs h-auto">11 <ChevronDown className="w-3 h-3 ml-1" /></Button>
+                <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size"/>
+                <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size"/>
+                <SmallRibbonButton icon={CaseSensitive} tooltip="Change Case"/>
+                <SmallRibbonButton icon={Eraser} tooltip="Clear All Formatting"/>
+              </div>
+              <div className="flex items-center mt-1">
+                <SmallRibbonButton icon={Bold} tooltip="Bold"/>
+                <SmallRibbonButton icon={Italic} tooltip="Italic"/>
+                <SmallRibbonButton icon={Underline} tooltip="Underline"/>
+                <SmallRibbonButton icon={Strikethrough} tooltip="Strikethrough"/>
+                <SmallRibbonButton icon={Subscript} tooltip="Subscript"/>
+                <SmallRibbonButton icon={Superscript} tooltip="Superscript"/>
+                <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
+                <SmallRibbonButton icon={Highlighter} tooltip="Text Highlight Color"/>
+                <SmallRibbonButton icon={Palette} tooltip="Font Color"/>
+              </div>
+            </div>
           </RibbonGroup>
           <RibbonGroup title="Paragraph">
-            <RibbonButton icon={List}>Bullets</RibbonButton>
-            <RibbonButton icon={ListOrdered}>Numbering</RibbonButton>
-            <RibbonButton icon={IndentDecrease}>Outdent</RibbonButton>
-            <RibbonButton icon={IndentIncrease}>Indent</RibbonButton>
-            <RibbonButton icon={Baseline}>Spacing</RibbonButton>
-            <RibbonButton icon={AlignLeft}>Left</RibbonButton>
-            <RibbonButton icon={AlignCenter}>Center</RibbonButton>
-            <RibbonButton icon={AlignRight}>Right</RibbonButton>
-            <RibbonButton icon={AlignJustify}>Justify</RibbonButton>
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <SmallRibbonButton icon={List} tooltip="Bullets"/>
+                <SmallRibbonButton icon={ListOrdered} tooltip="Numbering"/>
+                <SmallRibbonButton icon={ListChecks} tooltip="Multilevel List"/>
+                <SmallRibbonButton icon={IndentDecrease} tooltip="Decrease Indent"/>
+                <SmallRibbonButton icon={IndentIncrease} tooltip="Increase Indent"/>
+                <SmallRibbonButton icon={ArrowDownAZ} tooltip="Sort"/>
+                <SmallRibbonButton icon={Pilcrow} tooltip="Show/Hide ¶"/>
+              </div>
+              <div className="flex items-center mt-1">
+                <SmallRibbonButton icon={AlignLeft} tooltip="Align Left"/>
+                <SmallRibbonButton icon={AlignCenter} tooltip="Align Center"/>
+                <SmallRibbonButton icon={AlignRight} tooltip="Align Right"/>
+                <SmallRibbonButton icon={AlignJustify} tooltip="Justify"/>
+                <SmallRibbonButton icon={Baseline} tooltip="Line Spacing"/>
+                <SmallRibbonButton icon={PaintBucket} tooltip="Shading"/>
+                <SmallRibbonButton icon={Grid} tooltip="Borders"/>
+              </div>
+            </div>
+          </RibbonGroup>
+          <RibbonGroup title="Styles">
+            <RibbonButton icon={LayoutList}>Styles</RibbonButton>
+             {/* Placeholder for style gallery items */}
           </RibbonGroup>
           <RibbonGroup title="Editing">
              <RibbonButton icon={Search}>Find</RibbonButton>
              <RibbonButton icon={Replace}>Replace</RibbonButton>
+             <RibbonButton icon={Pointer}>Select</RibbonButton>
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="insert" className="bg-background p-2 flex items-start">
+        <TabsContent value="insert" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Pages">
             <RibbonButton icon={Newspaper}>Cover</RibbonButton>
             <RibbonButton icon={FilePlus2}>Blank</RibbonButton>
@@ -185,7 +243,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="design" className="bg-background p-2 flex items-start">
+        <TabsContent value="design" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Document Formatting">
             <RibbonButton icon={Palette}>Themes</RibbonButton>
             <RibbonButton icon={Paintbrush}>Colors</RibbonButton>
@@ -196,7 +254,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
         
-        <TabsContent value="layout" className="bg-background p-2 flex items-start">
+        <TabsContent value="layout" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Page Setup">
             <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
             <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
@@ -205,7 +263,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="references" className="bg-background p-2 flex items-start">
+        <TabsContent value="references" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
            <RibbonGroup title="Table of Contents">
             <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
           </RibbonGroup>
@@ -217,7 +275,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="mailings" className="bg-background p-2 flex items-start">
+        <TabsContent value="mailings" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Create">
             <RibbonButton icon={Mail}>Envelopes</RibbonButton>
             <RibbonButton icon={Tags}>Labels</RibbonButton>
@@ -227,7 +285,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="review" className="bg-background p-2 flex items-start">
+        <TabsContent value="review" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Proofing">
             <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
             <RibbonButton icon={ScanText}>Word Count</RibbonButton>
@@ -240,7 +298,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="view" className="bg-background p-2 flex items-start">
+        <TabsContent value="view" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Views">
             <RibbonButton icon={BookOpen}>Read Mode</RibbonButton>
             <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
@@ -271,7 +329,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
+        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start data-[state=inactive]:hidden">
           <RibbonGroup title="Writing Assistant">
             <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
             <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
@@ -285,4 +343,3 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
   );
 }
 
-    
