@@ -17,7 +17,6 @@ import {
   Italic,
   List,
   ListOrdered,
-  Mic,
   Printer,
   Save,
   Scissors,
@@ -30,19 +29,38 @@ import {
   Image as LucideImage,
   BarChart3,
   Brain,
-  MessageSquareText,
   FileTextIcon,
   Columns,
   BookOpen,
   SpellCheck,
   Eye,
-  ZoomIn,
-  ZoomOut,
   PrinterIcon,
   Book,
   Footprints,
   MessageCircle,
   ClipboardCheck,
+  Palette,
+  Paintbrush,
+  Square, // Changed from BorderStyle
+  Mail,
+  Tags,
+  Users2,
+  Globe,
+  ListTree,
+  Ruler,
+  Grid3x3,
+  PanelLeftOpen,
+  ZoomIn,
+  Percent, // Changed from ZoomReset
+  RectangleHorizontal,
+  GalleryVerticalEnd,
+  StretchHorizontal,
+  AppWindow,
+  LayoutGrid,
+  SplitSquareVertical,
+  GalleryHorizontal,
+  Code2,
+  ZoomOut, 
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -76,11 +94,13 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <TabsTrigger value="file" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">File</TabsTrigger>
           <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
           <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
-          <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
+          <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
           <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
           <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
+          <TabsTrigger value="mailings" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Mailings</TabsTrigger>
           <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
           <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
+          <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
         </TabsList>
 
         <TabsContent value="file" className="bg-background p-2 flex items-start">
@@ -129,23 +149,24 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
 
-        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Writing Assistant">
-            <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
-            <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
+        <TabsContent value="design" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Document Formatting">
+            <RibbonButton icon={Palette}>Themes</RibbonButton>
+            <RibbonButton icon={Paintbrush}>Colors</RibbonButton>
           </RibbonGroup>
-          <RibbonGroup title="Document Analysis">
-            <RibbonButton icon={FileTextIcon} onClick={onSummarizeDocument}>Summarize</RibbonButton>
+          <RibbonGroup title="Page Background">
+             <RibbonButton icon={Square}>Borders</RibbonButton>
           </RibbonGroup>
         </TabsContent>
         
         <TabsContent value="layout" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Page Setup">
             <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
-            <RibbonButton icon={BookOpen}>Orientation</RibbonButton>
+            <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
             <RibbonButton icon={Columns}>Columns</RibbonButton>
           </RibbonGroup>
         </TabsContent>
+
         <TabsContent value="references" className="bg-background p-2 flex items-start">
            <RibbonGroup title="Table of Contents">
             <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
@@ -157,6 +178,17 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={Footprints}>Footnote</RibbonButton>
           </RibbonGroup>
         </TabsContent>
+
+        <TabsContent value="mailings" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Create">
+            <RibbonButton icon={Mail}>Envelopes</RibbonButton>
+            <RibbonButton icon={Tags}>Labels</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Start Mail Merge">
+            <RibbonButton icon={Users2}>Mail Merge</RibbonButton>
+          </RibbonGroup>
+        </TabsContent>
+
         <TabsContent value="review" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Proofing">
             <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
@@ -168,17 +200,48 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={ClipboardCheck}>Track Changes</RibbonButton>
           </RibbonGroup>
         </TabsContent>
+
         <TabsContent value="view" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Document Views">
-            <RibbonButton icon={Eye}>Read Mode</RibbonButton>
+          <RibbonGroup title="Views">
+            <RibbonButton icon={BookOpen}>Read Mode</RibbonButton>
             <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
+            <RibbonButton icon={Globe}>Web Layout</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Show">
+            <RibbonButton icon={ListTree}>Outline</RibbonButton>
+            <RibbonButton icon={Ruler}>Ruler</RibbonButton>
+            <RibbonButton icon={Grid3x3}>Gridlines</RibbonButton>
+            <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Zoom">
-            <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
-            <RibbonButton icon={ZoomOut}>Zoom Out</RibbonButton>
+            <RibbonButton icon={ZoomIn}>Zoom</RibbonButton>
+            <RibbonButton icon={Percent}>100%</RibbonButton>
+            <RibbonButton icon={RectangleHorizontal}>One Page</RibbonButton>
+            <RibbonButton icon={GalleryVerticalEnd}>Multi Page</RibbonButton>
+            <RibbonButton icon={StretchHorizontal}>Page Width</RibbonButton>
+          </RibbonGroup>
+           <RibbonGroup title="Window">
+            <RibbonButton icon={AppWindow}>New</RibbonButton>
+            <RibbonButton icon={LayoutGrid}>Arrange All</RibbonButton>
+            <RibbonButton icon={SplitSquareVertical}>Split</RibbonButton>
+            <RibbonButton icon={GalleryHorizontal}>Switch</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Macros">
+            <RibbonButton icon={Code2}>Macros</RibbonButton>
+          </RibbonGroup>
+        </TabsContent>
+
+        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Writing Assistant">
+            <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
+            <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Document Analysis">
+            <RibbonButton icon={FileTextIcon} onClick={onSummarizeDocument}>Summarize</RibbonButton>
           </RibbonGroup>
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
