@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,17 @@ import {
   Brain,
   MessageSquareText,
   FileTextIcon,
+  Columns,
+  BookOpen,
+  SpellCheck,
+  Eye,
+  ZoomIn,
+  ZoomOut,
+  PrinterIcon,
+  Book,
+  Footprints,
+  MessageCircle,
+  ClipboardCheck,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -65,10 +77,10 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
           <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
           <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
-          <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none" disabled>Layout</TabsTrigger>
-          <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none" disabled>References</TabsTrigger>
-          <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none" disabled>Review</TabsTrigger>
-          <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none" disabled>View</TabsTrigger>
+          <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
+          <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
+          <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
+          <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
         </TabsList>
 
         <TabsContent value="file" className="bg-background p-2 flex items-start">
@@ -127,17 +139,44 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
         </TabsContent>
         
-        <TabsContent value="layout" className="bg-background p-2">
-          <p className="text-muted-foreground">Layout tools (margins, orientation, size, columns) will be here.</p>
+        <TabsContent value="layout" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Page Setup">
+            <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
+            <RibbonButton icon={BookOpen}>Orientation</RibbonButton>
+            <RibbonButton icon={Columns}>Columns</RibbonButton>
+          </RibbonGroup>
         </TabsContent>
-        <TabsContent value="references" className="bg-background p-2">
-          <p className="text-muted-foreground">References tools (table of contents, citations, footnotes) will be here.</p>
+        <TabsContent value="references" className="bg-background p-2 flex items-start">
+           <RibbonGroup title="Table of Contents">
+            <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Citations">
+            <RibbonButton icon={Book}>Bibliography</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Footnotes">
+            <RibbonButton icon={Footprints}>Footnote</RibbonButton>
+          </RibbonGroup>
         </TabsContent>
-        <TabsContent value="review" className="bg-background p-2">
-          <p className="text-muted-foreground">Review tools (spell check, track changes, comments) will be here.</p>
+        <TabsContent value="review" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Proofing">
+            <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Comments">
+            <RibbonButton icon={MessageCircle}>Comment</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Tracking">
+            <RibbonButton icon={ClipboardCheck}>Track Changes</RibbonButton>
+          </RibbonGroup>
         </TabsContent>
-        <TabsContent value="view" className="bg-background p-2">
-          <p className="text-muted-foreground">View options (read mode, print layout, zoom) will be here.</p>
+        <TabsContent value="view" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Document Views">
+            <RibbonButton icon={Eye}>Read Mode</RibbonButton>
+            <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Zoom">
+            <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
+            <RibbonButton icon={ZoomOut}>Zoom Out</RibbonButton>
+          </RibbonGroup>
         </TabsContent>
       </Tabs>
     </div>
