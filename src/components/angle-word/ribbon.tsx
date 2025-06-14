@@ -8,59 +8,76 @@ import {
   AlignJustify,
   AlignLeft,
   AlignRight,
+  AppWindow,
+  BarChart3,
+  Baseline,
   Bold,
-  ChevronDown,
+  Book,
+  BookCopy, // For Blank Page
+  BookOpen,
+  Brain,
+  ClipboardCheck,
+  ClipboardPaste, // For Paste
+  Code2,
+  Columns,
+  Copyright, // For Watermark
   Copy,
   Cut,
+  ChevronDown,
   File,
   FilePlus,
+  FilePlus2, // For Blank Page (Alternative if BookCopy is not ideal)
+  FileTextIcon,
+  Footprints,
+  GalleryHorizontal,
+  GalleryVerticalEnd,
+  Globe,
+  Grid3x3,
+  Hash, // For PageNumber
+  Highlighter,
+  Image as LucideImage,
+  IndentDecrease, // For Outdent
+  IndentIncrease, // For Indent
   Italic,
+  LayoutGrid,
   List,
   ListOrdered,
+  ListTree,
+  Mail,
+  Maximize2, // Icon for Size (alternative: Scaling)
+  MessageCircle,
+  Newspaper, // For Cover Page
+  Omega, // For Symbol
+  Paintbrush,
+  Palette,
+  PanelBottom, // For Footer
+  PanelLeftOpen,
+  PanelTop, // For Header
+  Percent,
   Printer,
+  PrinterIcon,
+  RectangleHorizontal,
+  Replace, // Changed from FindReplace
+  Ruler,
   Save,
-  Scissors,
+  Scaling, // For Page Size
+  ScanText, // For Word Count
   Search,
+  Scissors,
   Shapes,
   Sparkles,
-  Table,
-  Type,
-  Underline,
-  Image as LucideImage,
-  BarChart3,
-  Brain,
-  FileTextIcon,
-  Columns,
-  BookOpen,
   SpellCheck,
-  Eye,
-  PrinterIcon,
-  Book,
-  Footprints,
-  MessageCircle,
-  ClipboardCheck,
-  Palette,
-  Paintbrush,
-  Square, // Changed from BorderStyle
-  Mail,
-  Tags,
-  Users2,
-  Globe,
-  ListTree,
-  Ruler,
-  Grid3x3,
-  PanelLeftOpen,
-  ZoomIn,
-  Percent, // Changed from ZoomReset
-  RectangleHorizontal,
-  GalleryVerticalEnd,
-  StretchHorizontal,
-  AppWindow,
-  LayoutGrid,
   SplitSquareVertical,
-  GalleryHorizontal,
-  Code2,
-  ZoomOut, 
+  Square,
+  StretchHorizontal,
+  Strikethrough,
+  Table,
+  Tags,
+  Underline,
+  UnfoldVertical, // For Page Break
+  Users2,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -116,7 +133,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <RibbonGroup title="Clipboard">
             <RibbonButton icon={Scissors}>Cut</RibbonButton>
             <RibbonButton icon={Copy}>Copy</RibbonButton>
-            <RibbonButton icon={Type}>Paste</RibbonButton>
+            <RibbonButton icon={ClipboardPaste}>Paste</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Font">
             <Button variant="ghost" className="p-2 text-xs h-auto">PT Sans <ChevronDown className="w-3 h-3 ml-1" /></Button>
@@ -124,10 +141,15 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={Bold}>Bold</RibbonButton>
             <RibbonButton icon={Italic}>Italic</RibbonButton>
             <RibbonButton icon={Underline}>Underline</RibbonButton>
+            <RibbonButton icon={Strikethrough}>Strike</RibbonButton>
+            <RibbonButton icon={Highlighter}>Highlight</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Paragraph">
             <RibbonButton icon={List}>Bullets</RibbonButton>
             <RibbonButton icon={ListOrdered}>Numbering</RibbonButton>
+            <RibbonButton icon={IndentDecrease}>Outdent</RibbonButton>
+            <RibbonButton icon={IndentIncrease}>Indent</RibbonButton>
+            <RibbonButton icon={Baseline}>Spacing</RibbonButton>
             <RibbonButton icon={AlignLeft}>Left</RibbonButton>
             <RibbonButton icon={AlignCenter}>Center</RibbonButton>
             <RibbonButton icon={AlignRight}>Right</RibbonButton>
@@ -135,10 +157,16 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
           <RibbonGroup title="Editing">
              <RibbonButton icon={Search}>Find</RibbonButton>
+             <RibbonButton icon={Replace}>Replace</RibbonButton>
           </RibbonGroup>
         </TabsContent>
 
         <TabsContent value="insert" className="bg-background p-2 flex items-start">
+          <RibbonGroup title="Pages">
+            <RibbonButton icon={Newspaper}>Cover</RibbonButton>
+            <RibbonButton icon={FilePlus2}>Blank</RibbonButton>
+            <RibbonButton icon={UnfoldVertical}>Break</RibbonButton>
+          </RibbonGroup>
           <RibbonGroup title="Tables">
             <RibbonButton icon={Table}>Table</RibbonButton>
           </RibbonGroup>
@@ -146,6 +174,14 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={LucideImage}>Picture</RibbonButton>
             <RibbonButton icon={Shapes}>Shapes</RibbonButton>
             <RibbonButton icon={BarChart3}>Chart</RibbonButton>
+          </RibbonGroup>
+           <RibbonGroup title="Header & Footer">
+            <RibbonButton icon={PanelTop}>Header</RibbonButton>
+            <RibbonButton icon={PanelBottom}>Footer</RibbonButton>
+            <RibbonButton icon={Hash}>Page #</RibbonButton>
+          </RibbonGroup>
+          <RibbonGroup title="Symbols">
+            <RibbonButton icon={Omega}>Symbol</RibbonButton>
           </RibbonGroup>
         </TabsContent>
 
@@ -156,6 +192,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           </RibbonGroup>
           <RibbonGroup title="Page Background">
              <RibbonButton icon={Square}>Borders</RibbonButton>
+             <RibbonButton icon={Copyright}>Watermark</RibbonButton>
           </RibbonGroup>
         </TabsContent>
         
@@ -163,6 +200,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
           <RibbonGroup title="Page Setup">
             <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
             <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
+            <RibbonButton icon={Scaling}>Size</RibbonButton>
             <RibbonButton icon={Columns}>Columns</RibbonButton>
           </RibbonGroup>
         </TabsContent>
@@ -192,6 +230,7 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
         <TabsContent value="review" className="bg-background p-2 flex items-start">
           <RibbonGroup title="Proofing">
             <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
+            <RibbonButton icon={ScanText}>Word Count</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Comments">
             <RibbonButton icon={MessageCircle}>Comment</RibbonButton>
@@ -214,7 +253,8 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
             <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Zoom">
-            <RibbonButton icon={ZoomIn}>Zoom</RibbonButton>
+            <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
+            <RibbonButton icon={ZoomOut}>Zoom Out</RibbonButton>
             <RibbonButton icon={Percent}>100%</RibbonButton>
             <RibbonButton icon={RectangleHorizontal}>One Page</RibbonButton>
             <RibbonButton icon={GalleryVerticalEnd}>Multi Page</RibbonButton>
@@ -245,3 +285,4 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
   );
 }
 
+    
