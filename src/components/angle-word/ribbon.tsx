@@ -39,7 +39,7 @@ import {
   ClipboardCheck,
   ClipboardPaste,
   Code2,
-  Columns,
+  Columns as ColumnsIcon,
   Copyright,
   Copy,
   ChevronDown,
@@ -931,7 +931,7 @@ export function AngleWordRibbon({
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                          <Columns className="w-5 h-5 mb-1" />
+                          <ColumnsIcon className="w-5 h-5 mb-1" />
                           <span className="text-xs text-center">Columns</span>
                       </Button>
                   </DropdownMenuTrigger>
@@ -1024,3 +1024,5 @@ export function AngleWordRibbon({
     </>
   );
 }
+
+    
