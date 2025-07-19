@@ -121,7 +121,7 @@ export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentNam
     { name: 'Open', icon: File, screen: 'open' },
     { name: 'Save', icon: Save, action: () => handleSave(false) },
     { name: 'Save As', icon: FileEdit, screen: 'save-as' },
-    { name: 'Print', icon: Printer, action: () => console.log("Print") },
+    { name: 'Print', icon: Printer, action: () => window.print() },
     { name: 'Share', icon: Share2, action: () => console.log("Share") },
   ];
 
