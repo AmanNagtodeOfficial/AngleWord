@@ -180,33 +180,44 @@ export function EditorArea({
 
   return (
     <div className="flex-grow p-4 lg:p-8 overflow-auto bg-muted/40">
-        <div className="mx-auto w-fit flex">
+        <div className="mx-auto w-fit relative">
             {isRulerVisible && (
-                <VerticalRuler 
-                    pageSize={pageSize}
-                    margins={margins}
-                    orientation={orientation}
-                />
+                <>
+                    <div className="absolute top-0 left-0">
+                        <div className="flex">
+                            <div className="w-5 flex-shrink-0" />
+                            <HorizontalRuler 
+                                pageSize={pageSize}
+                                margins={margins}
+                                orientation={orientation}
+                            />
+                        </div>
+                    </div>
+                    <div className="absolute top-0 left-0">
+                       <div className="flex">
+                            <VerticalRuler 
+                                pageSize={pageSize}
+                                margins={margins}
+                                orientation={orientation}
+                            />
+                             <div className="h-5 flex-shrink-0" />
+                       </div>
+                    </div>
+                </>
             )}
-            <div className="flex flex-col">
-                {isRulerVisible && (
-                    <HorizontalRuler 
-                        pageSize={pageSize}
-                        margins={margins}
-                        orientation={orientation}
-                    />
+            <div 
+                className={cn(
+                    "bg-background shadow-lg overflow-hidden rounded-sm",
+                    isRulerVisible && "mt-5 ml-5"
                 )}
-                <div 
-                    className="bg-background shadow-lg overflow-hidden rounded-sm"
-                    style={pageStyle}
-                >
-                    <DocumentEditor 
-                        content={content} 
-                        onUpdate={onContentUpdate}
-                        setEditor={setEditorInstance}
-                        className={cn('h-full', columnClasses[columns])}
-                    />
-                </div>
+                style={pageStyle}
+            >
+                <DocumentEditor 
+                    content={content} 
+                    onUpdate={onContentUpdate}
+                    setEditor={setEditorInstance}
+                    className={cn('h-full', columnClasses[columns])}
+                />
             </div>
         </div>
       
