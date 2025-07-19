@@ -305,7 +305,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
   return (
     <>
-      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} />
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} />
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
         <Tabs defaultValue="home" className="w-full">
           <div className="flex">

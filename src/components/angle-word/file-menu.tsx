@@ -4,16 +4,32 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, File, FilePlus, Info, Printer, Save, Share2, X } from "lucide-react";
 import { useState } from "react";
+import { type Editor } from "@tiptap/react";
+
 
 interface FileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  editor: Editor | null;
 }
 
 type MenuScreen = 'main' | 'info' | 'new' | 'open';
 
-export function FileMenu({ isOpen, onClose }: FileMenuProps) {
+export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
   const [activeScreen, setActiveScreen] = useState<MenuScreen>('main');
+
+  const handleSave = () => {
+    if (!editor) return;
+    const content = editor.getHTML();
+    const blob = new Blob([content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'document.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    console.log("Saving document...");
+  };
 
   if (!isOpen) return null;
 
@@ -34,7 +50,7 @@ export function FileMenu({ isOpen, onClose }: FileMenuProps) {
     { name: 'Info', icon: Info, screen: 'info' },
     { name: 'New', icon: FilePlus, screen: 'new' },
     { name: 'Open', icon: File, screen: 'open' },
-    { name: 'Save', icon: Save, action: () => console.log("Save") },
+    { name: 'Save', icon: Save, action: handleSave },
     { name: 'Print', icon: Printer, action: () => console.log("Print") },
     { name: 'Share', icon: Share2, action: () => console.log("Share") },
   ];
