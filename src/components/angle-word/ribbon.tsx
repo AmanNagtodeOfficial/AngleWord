@@ -168,6 +168,7 @@ interface RibbonProps {
   setColumns: (columns: ColumnsType) => void;
   isRulerVisible: boolean;
   toggleRuler: () => void;
+  onNewDocument: () => void;
 }
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -296,6 +297,7 @@ export function AngleWordRibbon({
   setColumns,
   isRulerVisible,
   toggleRuler,
+  onNewDocument,
 }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
@@ -499,7 +501,7 @@ export function AngleWordRibbon({
 
   return (
     <>
-      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} documentName={documentName} setDocumentName={setDocumentName} />
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} documentName={documentName} setDocumentName={setDocumentName} onNewDocument={onNewDocument} />
       <CustomMarginsDialog 
         isOpen={isCustomMarginsOpen}
         onClose={() => setIsCustomMarginsOpen(false)}
@@ -985,7 +987,7 @@ export function AngleWordRibbon({
           
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
-                <div className="flex items-center">
+                <div className="flex">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
@@ -1134,7 +1136,7 @@ export function AngleWordRibbon({
             </RibbonGroup>
             <RibbonGroup title="Show">
               <div className="flex flex-col">
-                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground" onClick={toggleRuler} data-active={isRulerVisible}>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent" onClick={toggleRuler} data-active={isRulerVisible}>
                   <Ruler className="w-4 h-4 mr-2" /> Ruler
                 </Button>
                 <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
@@ -1178,5 +1180,3 @@ export function AngleWordRibbon({
     </>
   );
 }
-
-    

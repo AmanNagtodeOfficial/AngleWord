@@ -98,7 +98,7 @@ function AngleWordPage() {
     setTimeout(() => {
       updateDocument(activeDocumentId, { saveStatus: "saved" });
     }, 1000);
-  }, [activeDocumentId]);
+  }, [activeDocumentId, updateDocument]);
 
   const handleContentUpdate = (content: string) => {
     if (!activeDocumentId) return;
@@ -232,6 +232,7 @@ function AngleWordPage() {
           setColumns={setDocumentColumns}
           isRulerVisible={isRulerVisible}
           toggleRuler={() => setIsRulerVisible(!isRulerVisible)}
+          onNewDocument={handleAddDocument}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea
