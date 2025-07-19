@@ -45,14 +45,14 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
 
     for (let i = 0; i <= totalTicks; i++) {
         const position = i * tickIncrement;
-        let height = 'h-1.5';
+        let height = 'h-1';
         let showNumber = false;
 
         if (i % 8 === 0) { // Whole inch
-            height = 'h-4';
+            height = 'h-3';
             showNumber = true;
         } else if (i % 4 === 0) { // Half inch
-            height = 'h-3';
+            height = 'h-2.5';
         } else if (i % 2 === 0) { // Quarter inch
             height = 'h-2';
         }
@@ -61,7 +61,7 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
             <div key={i} className="absolute top-0" style={{ left: `${position}px` }}>
                 <div className={`w-px bg-gray-500 ${height}`} />
                 {showNumber && i / 8 > 0 && (
-                    <span className="absolute -bottom-4 -translate-x-1/2 text-xs text-gray-600">
+                    <span className="absolute -bottom-3 -translate-x-1/2 text-[10px] text-gray-600">
                         {i / 8}
                     </span>
                 )}
@@ -72,14 +72,14 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
   };
 
   if (pageWidthPx === 0) {
-    return <div className="h-8 bg-gray-200 border-b border-gray-400" />;
+    return <div className="h-6 bg-gray-200 border-b border-gray-400" />;
   }
   
   const rulerContentWidth = pageWidthPx - leftMarginPx - rightMarginPx;
 
   return (
     <div
-      className="relative h-8 bg-gray-200 border-b border-gray-400 select-none overflow-hidden"
+      className="relative h-6 bg-gray-200 border-b border-gray-400 select-none overflow-hidden"
       style={{ width: `${pageWidthPx}px` }}
     >
       <div className="absolute h-full top-0 left-0 bg-gray-300" style={{ width: `${leftMarginPx}px` }} />
@@ -111,23 +111,23 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
 
       for (let i = 0; i <= totalTicks; i++) {
         const position = i * tickIncrement;
-        let width = 'w-1.5';
+        let width = 'w-1';
         let showNumber = false;
   
         if (i % 8 === 0) { // Whole inch
-          width = 'w-4';
+          width = 'w-3';
           showNumber = true;
         } else if (i % 4 === 0) { // Half inch
-          width = 'w-3';
+          width = 'w-2.5';
         } else if (i % 2 === 0) { // Quarter inch
           width = 'w-2';
         }
   
         ticks.push(
-          <div key={i} className="absolute" style={{ top: `${position}px` }}>
+          <div key={i} className="absolute left-0" style={{ top: `${position}px` }}>
             <div className={`h-px bg-gray-500 ${width}`} />
             {showNumber && i / 8 > 0 && (
-              <span className="absolute -right-4 -translate-y-1/2 text-xs text-gray-600" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+              <span className="absolute -right-3 -translate-y-1/2 text-[10px] text-gray-600" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
                 {i / 8}
               </span>
             )}
@@ -138,14 +138,14 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
     };
   
     if (pageHeightPx === 0) {
-      return <div className="w-8 bg-gray-200 border-r border-gray-400" />;
+      return <div className="w-6 bg-gray-200 border-r border-gray-400" />;
     }
 
     const rulerContentHeight = pageHeightPx - topMarginPx - bottomMarginPx;
   
     return (
       <div
-        className="relative w-8 bg-gray-200 border-r border-gray-400 select-none"
+        className="relative w-6 bg-gray-200 border-r border-gray-400 select-none"
         style={{ height: `${pageHeightPx}px` }}
       >
         <div className="absolute w-full top-0 left-0 bg-gray-300" style={{ height: `${topMarginPx}px` }} />
