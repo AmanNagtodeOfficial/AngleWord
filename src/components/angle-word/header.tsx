@@ -20,10 +20,12 @@ export function AngleWordHeader({ documentName, saveStatus }: AngleWordHeaderPro
   const [user, setUser] = useState<FirebaseUser | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
+    if (auth && typeof auth.onAuthStateChanged === 'function') {
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+      });
+      return () => unsubscribe();
+    }
   }, []);
 
   const handleSignOut = async () => {

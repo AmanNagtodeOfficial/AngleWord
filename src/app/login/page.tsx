@@ -13,18 +13,26 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push("/");
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
+    if (auth && typeof auth.onAuthStateChanged === 'function') {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          router.push("/");
+        } else {
+          setLoading(false);
+        }
+      });
+      return () => unsubscribe();
+    } else {
+      // If firebase is not configured, we just stop loading and show the page.
+      setLoading(false);
+    }
   }, [router]);
 
   const handleSignInWithGoogle = async () => {
+    if (!auth || typeof auth.onAuthStateChanged !== 'function') {
+      alert("Firebase is not configured. Please add your Firebase credentials to the .env file.");
+      return;
+    }
     try {
       await signInWithPopup(auth, googleProvider);
       router.push("/");

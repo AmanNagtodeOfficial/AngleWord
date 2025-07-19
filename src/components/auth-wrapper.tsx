@@ -12,15 +12,21 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push('/login');
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
+    // Check if auth object is valid and has onAuthStateChanged method
+    if (auth && typeof auth.onAuthStateChanged === 'function') {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          router.push('/login');
+        } else {
+          setLoading(false);
+        }
+      });
+      return () => unsubscribe();
+    } else {
+      // If auth is not configured, redirect to login as a fallback.
+      // This could also be handled by showing an error message.
+      router.push('/login');
+    }
   }, [router]);
 
   if (loading) {
