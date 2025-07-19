@@ -132,6 +132,7 @@ import { useRef, useState, useCallback } from "react";
 import { FileMenu } from "./file-menu";
 import { useToast } from "@/hooks/use-toast";
 import type { Margins } from "@/app/page";
+import { CustomMarginsDialog } from "./custom-margins-dialog";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -187,6 +188,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
 
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
+  const [isCustomMarginsOpen, setIsCustomMarginsOpen] = useState(false);
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
@@ -343,6 +345,15 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   return (
     <>
       <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} documentName={documentName} setDocumentName={setDocumentName} />
+      <CustomMarginsDialog 
+        isOpen={isCustomMarginsOpen}
+        onClose={() => setIsCustomMarginsOpen(false)}
+        currentMargins={margins}
+        onApply={(newMargins) => {
+            setMargins(newMargins);
+            setIsCustomMarginsOpen(false);
+        }}
+      />
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
         <Tabs defaultValue="home" className="w-full">
           <div className="flex">
@@ -753,7 +764,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
               <RibbonButton icon={Bookmark}>Bookmark</RibbonButton>
               <RibbonButton icon={Link2}>Cross-ref</RibbonButton>
             </RibbonGroup>
-            <RibbonGroup title="Comments">
+             <RibbonGroup title="Comments">
               <RibbonButton icon={MessageSquare}>Comment</RibbonButton>
             </RibbonGroup>
              <RibbonGroup title="Header & Footer">
@@ -835,6 +846,10 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                             {name}
                         </DropdownMenuItem>
                     ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>
+                        Custom Margins...
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
               </DropdownMenu>
               <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
@@ -923,5 +938,3 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </>
   );
 }
-
-    
