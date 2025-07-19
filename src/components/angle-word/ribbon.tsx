@@ -10,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuLabel,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   AlignCenter,
@@ -43,9 +46,10 @@ import {
   Droplet,
   Eraser,
   File,
+  FileEdit,
   FilePlus,
   FilePlus2,
-  FileTextIcon,
+  FileText as FileTextIcon,
   Footprints,
   GalleryHorizontal,
   GalleryThumbnails,
@@ -118,11 +122,15 @@ import {
   Wand2,
   ZoomIn,
   ZoomOut,
+  FileText,
+  Merge,
+  BringToFront,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
 import { useRef, useState, useCallback } from "react";
 import { FileMenu } from "./file-menu";
+import { useToast } from "@/hooks/use-toast";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -173,6 +181,8 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
   
+  const { toast } = useToast();
+
   const activeHighlightColor = editor?.getAttributes('highlight').color;
   const activeFontColor = editor?.getAttributes('textStyle').color;
 
@@ -194,6 +204,21 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
       const newColors = [color, ...prev.filter(c => c !== color)];
       return newColors.slice(0, 6); // Keep only the 6 most recent
     });
+  };
+  
+  const handlePasteTextOnly = async () => {
+    if (!editor) return;
+    try {
+      const text = await navigator.clipboard.readText();
+      editor.chain().focus().insertContent(text).run();
+    } catch (err) {
+      console.error('Failed to read clipboard contents: ', err);
+      toast({
+        title: "Paste Failed",
+        description: "Could not read text from clipboard. Your browser might not grant permission.",
+        variant: "destructive",
+      });
+    }
   };
 
   const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
@@ -333,10 +358,32 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
           <TabsContent value="home" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Clipboard" className="items-stretch">
               <div className="flex flex-col items-center">
-                <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
-                  <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
-                  <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
+                      <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
+                      <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                       <BringToFront className="w-4 h-4 mr-2" />
+                       <span>Keep Source Formatting</span>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem onClick={handlePasteTextOnly}>
+                       <FileText className="w-4 h-4 mr-2" />
+                       <span>Keep Text Only</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                       <Merge className="w-4 h-4 mr-2" />
+                       <span>Merge Formatting</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                     <DropdownMenuItem>
+                       <span>Paste Special...</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <div className="flex flex-col justify-center">
                 <SmallRibbonButton icon={Scissors} tooltip="Cut" />
@@ -850,3 +897,5 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </>
   );
 }
+
+    
