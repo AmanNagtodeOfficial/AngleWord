@@ -13,6 +13,7 @@ interface RulerProps {
 const DPI = 96;
 
 const convertToPx = (value: string): number => {
+    if (!value) return 0;
     if (value.endsWith('in')) {
         return parseFloat(value) * DPI;
     }
@@ -25,7 +26,7 @@ const convertToPx = (value: string): number => {
     return parseFloat(value); // Assume px if no unit
 };
 
-export function Ruler({ pageSize, margins, orientation }: RulerProps) {
+export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) {
   const [pageWidthPx, setPageWidthPx] = useState(0);
 
   useEffect(() => {
@@ -40,8 +41,9 @@ export function Ruler({ pageSize, margins, orientation }: RulerProps) {
   const renderTicks = () => {
     const ticks = [];
     const tickIncrement = DPI / 8; // Ticks every 1/8th of an inch
+    const totalTicks = Math.floor(totalWidthInches * 8);
 
-    for (let i = 0; i <= totalWidthInches * 8; i++) {
+    for (let i = 0; i <= totalTicks; i++) {
         const position = i * tickIncrement;
         let height = 'h-1.5';
         let showNumber = false;
@@ -56,7 +58,7 @@ export function Ruler({ pageSize, margins, orientation }: RulerProps) {
         }
 
         ticks.push(
-            <div key={i} className="absolute" style={{ left: `${position}px` }}>
+            <div key={i} className="absolute top-0" style={{ left: `${position}px` }}>
                 <div className={`w-px bg-gray-500 ${height}`} />
                 {showNumber && i / 8 > 0 && (
                     <span className="absolute -bottom-4 -translate-x-1/2 text-xs text-gray-600">
@@ -70,7 +72,7 @@ export function Ruler({ pageSize, margins, orientation }: RulerProps) {
   };
 
   if (pageWidthPx === 0) {
-    return null; // Don't render until width is calculated
+    return <div className="h-8 bg-gray-200 border-b border-gray-400" />;
   }
   
   const rulerContentWidth = pageWidthPx - leftMarginPx - rightMarginPx;
@@ -80,24 +82,78 @@ export function Ruler({ pageSize, margins, orientation }: RulerProps) {
       className="relative h-8 bg-gray-200 border-b border-gray-400 select-none overflow-hidden"
       style={{ width: `${pageWidthPx}px` }}
     >
-      {/* Left margin area */}
-      <div
-        className="absolute top-0 left-0 h-full bg-gray-300"
-        style={{ width: `${leftMarginPx}px` }}
-      />
-      
-      {/* Right margin area */}
-      <div
-        className="absolute top-0 right-0 h-full bg-gray-300"
-        style={{ width: `${rightMarginPx}px` }}
-      />
+      <div className="absolute h-full top-0 left-0 bg-gray-300" style={{ width: `${leftMarginPx}px` }} />
+      <div className="absolute h-full top-0 right-0 bg-gray-300" style={{ width: `${rightMarginPx}px` }} />
 
-      {/* Ticks and numbers */}
-      <div className="relative h-full" style={{ width: `${pageWidthPx}px` }}>
-          <div className="absolute top-0 h-full" style={{ left: `${leftMarginPx}px`, width: `${rulerContentWidth}px` }}>
-            {renderTicks()}
-          </div>
+      <div className="relative h-full" style={{ left: `${leftMarginPx}px`, width: `${rulerContentWidth}px` }}>
+          {renderTicks()}
       </div>
     </div>
   );
 }
+
+export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
+    const [pageHeightPx, setPageHeightPx] = useState(0);
+  
+    useEffect(() => {
+      const heightStr = orientation === 'portrait' ? pageSize.height : pageSize.width;
+      setPageHeightPx(convertToPx(heightStr));
+    }, [pageSize, orientation]);
+  
+    const topMarginPx = useMemo(() => convertToPx(margins.top), [margins.top]);
+    const bottomMarginPx = useMemo(() => convertToPx(margins.bottom), [margins.bottom]);
+    const totalHeightInches = useMemo(() => pageHeightPx / DPI, [pageHeightPx]);
+  
+    const renderTicks = () => {
+      const ticks = [];
+      const tickIncrement = DPI / 8;
+      const totalTicks = Math.floor(totalHeightInches * 8);
+
+      for (let i = 0; i <= totalTicks; i++) {
+        const position = i * tickIncrement;
+        let width = 'w-1.5';
+        let showNumber = false;
+  
+        if (i % 8 === 0) { // Whole inch
+          width = 'w-4';
+          showNumber = true;
+        } else if (i % 4 === 0) { // Half inch
+          width = 'w-3';
+        } else if (i % 2 === 0) { // Quarter inch
+          width = 'w-2';
+        }
+  
+        ticks.push(
+          <div key={i} className="absolute" style={{ top: `${position}px` }}>
+            <div className={`h-px bg-gray-500 ${width}`} />
+            {showNumber && i / 8 > 0 && (
+              <span className="absolute -right-4 -translate-y-1/2 text-xs text-gray-600" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+                {i / 8}
+              </span>
+            )}
+          </div>
+        );
+      }
+      return ticks;
+    };
+  
+    if (pageHeightPx === 0) {
+      return <div className="w-8 bg-gray-200 border-r border-gray-400" />;
+    }
+
+    const rulerContentHeight = pageHeightPx - topMarginPx - bottomMarginPx;
+  
+    return (
+      <div
+        className="relative w-8 bg-gray-200 border-r border-gray-400 select-none"
+        style={{ height: `${pageHeightPx}px` }}
+      >
+        <div className="absolute w-full top-0 left-0 bg-gray-300" style={{ height: `${topMarginPx}px` }} />
+        <div className="absolute w-full bottom-0 left-0 bg-gray-300" style={{ height: `${bottomMarginPx}px` }} />
+
+        <div className="relative w-full" style={{ top: `${topMarginPx}px`, height: `${rulerContentHeight}px` }}>
+            {renderTicks()}
+        </div>
+      </div>
+    );
+  }
