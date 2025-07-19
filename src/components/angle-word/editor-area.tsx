@@ -46,8 +46,14 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
   }, [editorInstance, setEditor]);
 
   const getTextForAI = useCallback(() => {
-    return editorInstance?.getText() || "";
-  }, [editorInstance]);
+    // Make sure we use the passed content prop for AI actions if the editor isn't ready
+    if (!editorInstance) {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
+      return tempDiv.textContent || tempDiv.innerText || "";
+    }
+    return editorInstance.getText();
+  }, [editorInstance, content]);
 
 
   const handleImproveWriting = useCallback(async () => {
@@ -58,6 +64,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     }
     setIsLoadingImprove(true);
     setImproveError(null);
+    setImproveResult(null);
     try {
       const result = await improveTextAction({ text });
       setImproveResult(result);
@@ -77,6 +84,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     }
     setIsLoadingTone(true);
     setToneError(null);
+    setToneResult(null);
     try {
       // Context can be added later if needed, e.g., from a form field
       const result = await detectToneAction({ text: text, context: "general writing" });
@@ -97,6 +105,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     }
     setIsLoadingSummarize(true);
     setSummarizeError(null);
+    setSummarizeResult(null);
     try {
       const result = await summarizeTextAction({ documentText: text });
       setSummarizeResult(result);
@@ -116,14 +125,24 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
   };
 
   useEffect(() => {
-    if (activeAITool === 'improve' && !isLoadingImprove && !improveResult && !improveError) {
+    if (activeAITool === 'improve') {
        handleImproveWriting();
-    } else if (activeAITool === 'tone' && !isLoadingTone && !toneResult && !toneError) {
+    } else if (activeAITool === 'tone') {
        handleDetectTone();
-    } else if (activeAITool === 'summarize' && !isLoadingSummarize && !summarizeResult && !summarizeError) {
+    } else if (activeAITool === 'summarize') {
        handleSummarizeDocument();
     }
-  }, [activeAITool, handleImproveWriting, handleDetectTone, handleSummarizeDocument, isLoadingImprove, improveResult, improveError, isLoadingTone, toneResult, toneError, isLoadingSummarize, summarizeResult, summarizeError]);
+  }, [activeAITool]);
+
+  const handleCloseModal = () => {
+    setActiveAITool(null);
+    setImproveResult(null);
+    setImproveError(null);
+    setToneResult(null);
+    setToneError(null);
+    setSummarizeResult(null);
+    setSummarizeError(null);
+  };
 
 
   return (
@@ -142,7 +161,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
       {activeAITool === "improve" && (
         <AIModal
           isOpen={activeAITool === "improve"}
-          onClose={() => setActiveAITool(null)}
+          onClose={handleCloseModal}
           title="Improve Writing Quality"
           isLoading={isLoadingImprove}
           error={improveError}
@@ -171,7 +190,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
       {activeAITool === "tone" && (
          <AIModal
           isOpen={activeAITool === "tone"}
-          onClose={() => setActiveAITool(null)}
+          onClose={handleCloseModal}
           title="Tone Detection & Suggestions"
           isLoading={isLoadingTone}
           error={toneError}
@@ -199,7 +218,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
       {activeAITool === "summarize" && (
         <AIModal
           isOpen={activeAITool === "summarize"}
-          onClose={() => setActiveAITool(null)}
+          onClose={handleCloseModal}
           title="Document Summary"
           isLoading={isLoadingSummarize}
           error={summarizeError}
