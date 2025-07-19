@@ -98,7 +98,6 @@ import {
   Save,
   Scaling,
   ScanText,
-  Search,
   Scissors,
   Shapes,
   Sigma,
@@ -958,88 +957,66 @@ export function AngleWordRibbon({
           
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
-              <div className="flex">
-                  <div className="flex flex-col gap-y-1">
-                      <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                                <FileTextIcon className="w-5 h-5 mb-1" />
-                                <span className="text-xs text-center">Margins</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-64">
+                <div className="flex items-center">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-64">
+                            <MarginMenuItem 
+                              title="Last Custom Setting" 
+                              details={['Top: 0 cm', 'Bottom: 0 cm', 'Left: 0 cm', 'Right: 0 cm']} 
+                              onSelect={() => setMargins({ top: '0', bottom: '0', left: '0', right: '0' })} 
+                              iconType="custom"
+                            />
+                            <DropdownMenuSeparator/>
+                            {Object.entries(MARGIN_PRESETS).map(([key, { name, values, details }]) => (
                               <MarginMenuItem 
-                                title="Last Custom Setting" 
-                                details={['Top: 0 cm', 'Bottom: 0 cm', 'Left: 0 cm', 'Right: 0 cm']} 
-                                onSelect={() => setMargins({ top: '0', bottom: '0', left: '0', right: '0' })} 
-                                iconType="custom"
+                                  key={key} 
+                                  title={name} 
+                                  details={details} 
+                                  onSelect={() => setMargins(values)}
+                                  iconType={key}
                               />
-                              <DropdownMenuSeparator/>
-                              {Object.entries(MARGIN_PRESETS).map(([key, { name, values, details }]) => (
-                                <MarginMenuItem 
-                                    key={key} 
-                                    title={name} 
-                                    details={details} 
-                                    onSelect={() => setMargins(values)}
-                                    iconType={key}
-                                />
-                              ))}
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)} className="cursor-pointer">
-                                  Custom Margins...
-                              </DropdownMenuItem>
-                          </DropdownMenuContent>
-                      </DropdownMenu>
-                      <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                                  <BookCopy className="w-5 h-5 mb-1" />
-                                  <span className="text-xs text-center">Orientation</span>
-                              </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                              <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
-                          </DropdownMenuContent>
-                      </DropdownMenu>
-                       
-                  </div>
-                   <div className="flex flex-col gap-y-1">
-                       <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                                  <Scaling className="w-5 h-5 mb-1" />
-                                  <span className="text-xs text-center">Size</span>
-                              </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                              {Object.values(PAGE_SIZES).map((size) => (
-                                  <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
-                                      {size.name} ({size.width} x {size.height})
-                                  </DropdownMenuItem>
-                              ))}
-                          </DropdownMenuContent>
-                      </DropdownMenu>
-                       <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                                  <ColumnsIcon className="w-5 h-5 mb-1" />
-                                  <span className="text-xs text-center">Columns</span>
-                              </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                              <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
-                          </DropdownMenuContent>
-                      </DropdownMenu>
-                   </div>
-                   <div className="flex flex-col pl-1">
-                        <SmallRibbonButton icon={UnfoldVertical} tooltip="Breaks" className="px-2 pb-1" disabled><span className="text-xs">Breaks</span></SmallRibbonButton>
-                        <SmallRibbonButton icon={ListOrdered} tooltip="Line Numbers" className="px-2 pb-1" disabled><span className="text-xs">Line Numbers</span></SmallRibbonButton>
-                        <SmallRibbonButton icon={Text} tooltip="Hyphenation" className="px-2" disabled><span className="text-xs">Hyphenation</span></SmallRibbonButton>
-                   </div>
-              </div>
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)} className="cursor-pointer">
+                                Custom Margins...
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={BookCopy}>Orientation</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={Scaling}>Size</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {Object.values(PAGE_SIZES).map((size) => (
+                                <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
+                                    {size.name} ({size.width} x {size.height})
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={ColumnsIcon}>Columns</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </RibbonGroup>
             <RibbonGroup title="Paragraph">
                 <div className="flex gap-4">
@@ -1117,10 +1094,17 @@ export function AngleWordRibbon({
               <RibbonButton icon={Globe}>Web Layout</RibbonButton>
             </RibbonGroup>
             <RibbonGroup title="Show">
-              <RibbonButton icon={ListTree}>Outline</RibbonButton>
-              <RibbonButton icon={Ruler} onClick={toggleRuler} data-active={isRulerVisible}>Ruler</RibbonButton>
-              <RibbonButton icon={Grid3x3}>Gridlines</RibbonButton>
-              <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
+              <div className="flex flex-col">
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground" onClick={toggleRuler} data-active={isRulerVisible}>
+                  <Ruler className="w-4 h-4 mr-2" /> Ruler
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Grid3x3 className="w-4 h-4 mr-2" /> Gridlines
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <PanelLeftOpen className="w-4 h-4 mr-2" /> Navigation Pane
+                </Button>
+              </div>
             </RibbonGroup>
             <RibbonGroup title="Zoom">
               <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
@@ -1156,4 +1140,5 @@ export function AngleWordRibbon({
   );
 }
 
+    
     
