@@ -253,7 +253,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
         transformedText = selectedText.toUpperCase();
         break;
       case 'capitalize':
-        transformedText = selectedText.replace(/\b\w/g, char => char.toUpperCase());
+        transformedText = selectedText.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
         break;
     }
     setLastCaseType(caseType);
@@ -770,5 +770,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
+
+    
 
     
