@@ -108,9 +108,10 @@ export default function AngleWordPage() {
     });
   };
 
-  const setDocumentName = (name: string) => {
-    if(activeDocumentId) {
-      updateDocument(activeDocumentId, { name });
+  const setDocumentName = (name: string, docId?: string) => {
+    const idToUpdate = docId || activeDocumentId;
+    if(idToUpdate) {
+      updateDocument(idToUpdate, { name, saveStatus: "unsaved" });
     }
   }
 
@@ -131,6 +132,7 @@ export default function AngleWordPage() {
         onSelectTab={setActiveDocumentId}
         onCloseTab={handleCloseDocument}
         onAddTab={handleAddDocument}
+        onRenameTab={setDocumentName}
       />
       <AngleWordRibbon
         editor={editor}
