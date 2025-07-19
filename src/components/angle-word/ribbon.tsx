@@ -31,6 +31,7 @@ import {
   Camera,
   CaseSensitive,
   CaseLower,
+  CaseUpper,
   ClipboardCheck,
   ClipboardPaste,
   Code2,
@@ -151,6 +152,8 @@ type LastActiveButton =
   | 'bold' | 'italic' | 'underline' | 'strike' | 'subscript' | 'superscript'
   | 'highlight' | 'fontColor' | 'clear' | null;
 
+type CaseType = 'sentence' | 'lower' | 'upper' | 'capitalize';
+
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
@@ -158,6 +161,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   const [lastActiveButton, setLastActiveButton] = useState<LastActiveButton>(null);
+  const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
   
   const activeHighlightColor = editor?.getAttributes('highlight').color;
   const activeFontColor = editor?.getAttributes('textStyle').color;
@@ -229,7 +233,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     return 'PT Sans'; // Default font
   };
   
-  const handleChangeCase = (caseType: 'sentence' | 'lower' | 'upper' | 'capitalize') => {
+  const handleChangeCase = (caseType: CaseType) => {
     if (!editor) return;
     const { from, to, empty } = editor.state.selection;
     if (empty) return;
@@ -252,7 +256,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
         transformedText = selectedText.replace(/\b\w/g, char => char.toUpperCase());
         break;
     }
-
+    setLastCaseType(caseType);
     editor.chain().focus().deleteRange({ from, to }).insertContent(transformedText).run();
   };
 
@@ -263,6 +267,17 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     if (currentIndex > -1 && currentIndex < FONT_SIZES.length - 1) {
       const newSize = FONT_SIZES[currentIndex + 1];
       editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+    }
+  };
+  
+  const CaseIcon = () => {
+    switch (lastCaseType) {
+      case 'upper':
+        return <CaseUpper className="w-4 h-4" />;
+      case 'lower':
+        return <CaseLower className="w-4 h-4" />;
+      default:
+        return <CaseSensitive className="w-4 h-4" />;
     }
   };
 
@@ -349,7 +364,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="p-1 h-auto" title="Change Case">
-                      <CaseSensitive className="w-4 h-4" />
+                      <CaseIcon />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -755,3 +770,5 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
+
+    
