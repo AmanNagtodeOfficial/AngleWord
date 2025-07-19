@@ -7,6 +7,7 @@ import { AngleWordRibbon } from "@/components/angle-word/ribbon";
 import { EditorArea, type AITool } from "@/components/angle-word/editor-area";
 import { DocumentTabs } from "@/components/angle-word/document-tabs";
 import { Editor } from "@tiptap/react";
+import AuthWrapper from "@/components/auth-wrapper";
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
 
@@ -24,7 +25,7 @@ const createNewDocument = (name: string): Document => ({
   saveStatus: "saved",
 });
 
-export default function AngleWordPage() {
+function AngleWordPage() {
   const [activeAITool, setActiveAITool] = useState<AITool>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [documents, setDocuments] = useState<Document[]>([
@@ -124,34 +125,38 @@ export default function AngleWordPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-muted/20 overflow-hidden">
-      <AngleWordHeader documentName={activeDocument.name} saveStatus={activeDocument.saveStatus} />
-      <DocumentTabs
-        documents={documents}
-        activeDocumentId={activeDocumentId}
-        onSelectTab={setActiveDocumentId}
-        onCloseTab={handleCloseDocument}
-        onAddTab={handleAddDocument}
-        onRenameTab={setDocumentName}
-      />
-      <AngleWordRibbon
-        editor={editor}
-        onImproveWriting={handleTriggerImproveWriting}
-        onDetectTone={handleTriggerDetectTone}
-        onSummarizeDocument={handleTriggerSummarizeDocument}
-        documentName={activeDocument.name}
-        setDocumentName={setDocumentName}
-      />
-      <main className="flex-grow overflow-auto">
-        <EditorArea
-          key={activeDocument.id} // Re-mounts editor area on tab change
-          activeAITool={activeAITool}
-          setActiveAITool={setActiveAITool}
-          setEditor={setEditor}
-          content={activeDocument.content}
-          onContentUpdate={handleContentUpdate}
+    <AuthWrapper>
+      <div className="flex flex-col h-screen bg-muted/20 overflow-hidden">
+        <AngleWordHeader documentName={activeDocument.name} saveStatus={activeDocument.saveStatus} />
+        <DocumentTabs
+          documents={documents}
+          activeDocumentId={activeDocumentId}
+          onSelectTab={setActiveDocumentId}
+          onCloseTab={handleCloseDocument}
+          onAddTab={handleAddDocument}
+          onRenameTab={setDocumentName}
         />
-      </main>
-    </div>
+        <AngleWordRibbon
+          editor={editor}
+          onImproveWriting={handleTriggerImproveWriting}
+          onDetectTone={handleTriggerDetectTone}
+          onSummarizeDocument={handleTriggerSummarizeDocument}
+          documentName={activeDocument.name}
+          setDocumentName={setDocumentName}
+        />
+        <main className="flex-grow overflow-auto">
+          <EditorArea
+            key={activeDocument.id} // Re-mounts editor area on tab change
+            activeAITool={activeAITool}
+            setActiveAITool={setActiveAITool}
+            setEditor={setEditor}
+            content={activeDocument.content}
+            onContentUpdate={handleContentUpdate}
+          />
+        </main>
+      </div>
+    </AuthWrapper>
   );
 }
+
+export default AngleWordPage;
