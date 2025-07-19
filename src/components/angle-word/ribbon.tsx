@@ -138,6 +138,10 @@ const FONT_FAMILIES = [
   { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
   { name: 'Verdana', value: 'Verdana, sans-serif' },
 ];
+const FONT_COLORS = [
+  '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
+  '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#C0C0C0', '#808080',
+];
 const HIGHLIGHT_COLORS = [
   '#FFFF00', '#00FF00', '#FFC0CB', '#ADD8E6', '#FFA500', '#800080',
   '#FF0000', '#C0C0C0', '#00FFFF', '#F0E68C', '#E6E6FA', '#FFF0F5',
@@ -147,9 +151,22 @@ const HIGHLIGHT_COLORS = [
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
+
+  const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   
   const activeHighlightColor = editor?.getAttributes('highlight').color;
+  const activeFontColor = editor?.getAttributes('textStyle').color;
+
+  const handleFontColorSelect = (color: string) => {
+    if (!color) return;
+    editor?.chain().focus().setColor(color).run();
+
+    setRecentFontColors(prev => {
+      const newColors = [color, ...prev.filter(c => c !== color)];
+      return newColors.slice(0, 6);
+    });
+  };
 
   const handleHighlightColorSelect = (color: string) => {
     if (!color) return;
@@ -431,20 +448,70 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   onChange={(e) => handleHighlightColorSelect(e.target.value)}
                 />
 
-                <div className="relative">
-                  <SmallRibbonButton 
-                    icon={Palette} 
-                    tooltip="Font Color"
-                    onClick={() => fontColorInputRef.current?.click()}
-                  />
-                  <input
-                    type="color"
-                    ref={fontColorInputRef}
-                    className="absolute w-0 h-0 opacity-0"
-                    onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
-                    value={editor?.getAttributes('textStyle').color || '#000000'}
-                  />
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                     <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={!!activeFontColor}>
+                        <div className="flex flex-col items-center">
+                            <Palette className="w-4 h-4" />
+                            <div
+                                className="w-4 h-[3px] rounded-sm mt-0.5"
+                                style={{ backgroundColor: activeFontColor || 'transparent' }}
+                            />
+                        </div>
+                     </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="p-2">
+                    {recentFontColors.length > 0 && (
+                      <>
+                        <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
+                        <div className="grid grid-cols-6 gap-1 mb-2">
+                          {recentFontColors.map(color => (
+                            <DropdownMenuItem
+                              key={color}
+                              className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                              onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
+                            >
+                              <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
+                            </DropdownMenuItem>
+                          ))}
+                        </div>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                    <div className="grid grid-cols-8 gap-1">
+                      {FONT_COLORS.map(color => (
+                        <DropdownMenuItem
+                          key={color}
+                          className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                          onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
+                        >
+                           <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                        </DropdownMenuItem>
+                      ))}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetColor().run(); }}
+                      className="cursor-pointer"
+                    >
+                      Automatic
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={(e) => { e.preventDefault(); fontColorInputRef.current?.click(); }}
+                      className="cursor-pointer"
+                    >
+                      More Colors...
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <input
+                  type="color"
+                  ref={fontColorInputRef}
+                  className="absolute w-0 h-0 opacity-0"
+                  onChange={(e) => handleFontColorSelect(e.target.value)}
+                  value={activeFontColor || '#000000'}
+                />
               </div>
             </div>
           </RibbonGroup>
