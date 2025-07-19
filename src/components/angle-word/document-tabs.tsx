@@ -23,7 +23,7 @@ export function DocumentTabs({
   onAddTab,
 }: DocumentTabsProps) {
   return (
-    <div className="bg-muted/60 border-b border-t flex items-center">
+    <div className="bg-muted/60 border-b border-t flex items-center pr-2">
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex items-center h-full px-2">
           {documents.map((doc) => (
@@ -54,18 +54,18 @@ export function DocumentTabs({
               </div>
             </button>
           ))}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0 ml-1 rounded-full"
+            onClick={onAddTab}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="sr-only">New Document</span>
+          </Button>
         </div>
         <ScrollBar orientation="horizontal" className="h-0.5" />
       </ScrollArea>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 shrink-0 mx-1 rounded-full"
-        onClick={onAddTab}
-      >
-        <Plus className="h-4 w-4" />
-        <span className="sr-only">New Document</span>
-      </Button>
     </div>
   );
 }
