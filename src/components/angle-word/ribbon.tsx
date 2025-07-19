@@ -125,6 +125,19 @@ import {
   FileText,
   Merge,
   BringToFront,
+  Minus,
+  Plus,
+  Text,
+  RotateCw,
+  SendToBack,
+  FlipHorizontal,
+  Group as GroupIcon,
+  Combine,
+  TextSelect,
+  WrapText,
+  MoveUp,
+  MoveDown,
+  ChevronUp
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
@@ -134,6 +147,8 @@ import { useToast } from "@/hooks/use-toast";
 import type { Margins, Orientation, PageSize, Columns as ColumnsType } from "@/app/page";
 import { PAGE_SIZES } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -391,6 +406,24 @@ export function AngleWordRibbon({
     if (editor.isActive('listItem')) return editor.can().liftListItem('listItem');
     return editor.can().outdent();
   };
+  
+  const NumberInputWithSteppers = ({ label, value, unit }: {label: string, value: string, unit: string}) => (
+    <div className="flex items-center gap-1">
+        <Label className="text-xs text-muted-foreground w-12">{label}</Label>
+        <div className="relative">
+            <Input 
+                className="h-6 w-24 text-xs pr-6" 
+                value={`${value} ${unit}`}
+                readOnly 
+            />
+            <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center">
+                <Button variant="ghost" className="h-3 w-4 p-0 rounded-none"><ChevronUp className="w-3 h-3" /></Button>
+                <Button variant="ghost" className="h-3 w-4 p-0 rounded-none"><ChevronDown className="w-3 h-3" /></Button>
+            </div>
+        </div>
+    </div>
+  );
+
 
   return (
     <>
@@ -880,67 +913,112 @@ export function AngleWordRibbon({
           
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                        <FileTextIcon className="w-5 h-5 mb-1" />
-                        <span className="text-xs text-center">Margins</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Margin Presets</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {Object.entries(MARGIN_PRESETS).map(([key, { name, values }]) => (
-                        <DropdownMenuItem key={key} onClick={() => setMargins(values)}>
-                            {name}
-                        </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>
-                        Custom Margins...
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                          <BookOpen className="w-5 h-5 mb-1" />
-                          <span className="text-xs text-center">Orientation</span>
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                      <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                          <Scaling className="w-5 h-5 mb-1" />
-                          <span className="text-xs text-center">Size</span>
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                      {Object.values(PAGE_SIZES).map((size) => (
-                          <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
-                              {size.name} ({size.width} x {size.height})
-                          </DropdownMenuItem>
-                      ))}
-                  </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
-                          <ColumnsIcon className="w-5 h-5 mb-1" />
-                          <span className="text-xs text-center">Columns</span>
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                      <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex">
+                  <div className="flex flex-col">
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                                <FileTextIcon className="w-5 h-5 mb-1" />
+                                <span className="text-xs text-center">Margins</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuLabel>Margin Presets</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {Object.entries(MARGIN_PRESETS).map(([key, { name, values }]) => (
+                                <DropdownMenuItem key={key} onClick={() => setMargins(values)}>
+                                    {name}
+                                </DropdownMenuItem>
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>
+                                Custom Margins...
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                                  <BookCopy className="w-5 h-5 mb-1" />
+                                  <span className="text-xs text-center">Orientation</span>
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                  </div>
+                  <div className="flex flex-col">
+                       <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                                  <Scaling className="w-5 h-5 mb-1" />
+                                  <span className="text-xs text-center">Size</span>
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              {Object.values(PAGE_SIZES).map((size) => (
+                                  <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
+                                      {size.name} ({size.width} x {size.height})
+                                  </DropdownMenuItem>
+                              ))}
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                                  <ColumnsIcon className="w-5 h-5 mb-1" />
+                                  <span className="text-xs text-center">Columns</span>
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
+                              <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                  </div>
+                   <div className="flex flex-col pl-1">
+                        <SmallRibbonButton icon={UnfoldVertical} tooltip="Breaks" className="px-2 pb-1" disabled><span className="text-xs">Breaks</span></SmallRibbonButton>
+                        <SmallRibbonButton icon={ListOrdered} tooltip="Line Numbers" className="px-2 pb-1" disabled><span className="text-xs">Line Numbers</span></SmallRibbonButton>
+                        <SmallRibbonButton icon={Text} tooltip="Hyphenation" className="px-2" disabled><span className="text-xs">Hyphenation</span></SmallRibbonButton>
+                   </div>
+              </div>
+            </RibbonGroup>
+            <RibbonGroup title="Paragraph">
+                <div className="flex gap-4">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm">Indent</span>
+                        <NumberInputWithSteppers label="Left" value="0" unit="cm" />
+                        <NumberInputWithSteppers label="Right" value="0" unit="cm" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm">Spacing</span>
+                        <NumberInputWithSteppers label="Before" value="0" unit="pt" />
+                        <NumberInputWithSteppers label="After" value="8" unit="pt" />
+                    </div>
+                </div>
+            </RibbonGroup>
+            <RibbonGroup title="Arrange">
+                <div className="flex">
+                    <div className="flex flex-col">
+                        <RibbonButton icon={LucideImage} disabled>Position</RibbonButton>
+                        <RibbonButton icon={WrapText} disabled>Wrap Text</RibbonButton>
+                    </div>
+                    <div className="flex flex-col">
+                        <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
+                        <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
+                    </div>
+                     <div className="flex flex-col">
+                        <RibbonButton icon={TextSelect} disabled>Selection Pane</RibbonButton>
+                        <div className="flex flex-col items-start pl-1">
+                           <SmallRibbonButton icon={AlignLeft} tooltip="Align" className="px-2" disabled><span className="text-xs">Align</span></SmallRibbonButton>
+                           <SmallRibbonButton icon={Combine} tooltip="Group" className="px-2" disabled><span className="text-xs">Group</span></SmallRibbonButton>
+                           <SmallRibbonButton icon={RotateCw} tooltip="Rotate" className="px-2" disabled><span className="text-xs">Rotate</span></SmallRibbonButton>
+                        </div>
+                    </div>
+                </div>
             </RibbonGroup>
           </TabsContent>
 
