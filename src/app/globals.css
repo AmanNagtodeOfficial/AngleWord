@@ -92,6 +92,17 @@ body {
   .tiptap > p:first-child {
     margin-top: 0;
   }
+  
+  .tiptap ul[data-list-style-type="disc"] {
+    list-style-type: disc;
+  }
+  .tiptap ul[data-list-style-type="circle"] {
+    list-style-type: circle;
+  }
+  .tiptap ul[data-list-style-type="square"] {
+    list-style-type: square;
+  }
+
 
   button[data-active="true"] {
     @apply bg-primary/20 text-primary;

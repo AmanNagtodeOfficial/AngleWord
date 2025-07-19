@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import {
   AlignCenter,
@@ -150,6 +151,16 @@ const HIGHLIGHT_COLORS = [
 
 type CaseType = 'sentence' | 'lower' | 'upper' | 'capitalize';
 
+const BulletDiscIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>;
+const BulletCircleIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3.5" stroke="currentColor"/></svg>;
+const BulletSquareIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="8" height="8" fill="currentColor"/></svg>;
+
+const BULLET_STYLES = [
+  { name: 'disc', icon: BulletDiscIcon, label: 'Solid Circle' },
+  { name: 'circle', icon: BulletCircleIcon, label: 'Hollow Circle' },
+  { name: 'square', icon: BulletSquareIcon, label: 'Solid Square' },
+];
+
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
@@ -278,6 +289,15 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
         return <CaseLower className="w-4 h-4" />;
       default:
         return <CaseSensitive className="w-4 h-4" />;
+    }
+  };
+  
+  const handleBulletList = (style: string) => {
+    if (!editor) return;
+    if (editor.isActive('bulletList', { 'data-list-style-type': style })) {
+      editor.chain().focus().toggleBulletList().run();
+    } else {
+      editor.chain().focus().toggleBulletList().updateAttributes('bulletList', { 'data-list-style-type': style }).run();
     }
   };
 
@@ -552,12 +572,23 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
           <RibbonGroup title="Paragraph">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <SmallRibbonButton 
-                  icon={List} 
-                  tooltip="Bullets"
-                  onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                  data-active={editor?.isActive('bulletList')}
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 h-auto" title="Bullets" data-active={editor?.isActive('bulletList')}>
+                      <List className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Bullet Library</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {BULLET_STYLES.map(({ name, icon: Icon, label }) => (
+                      <DropdownMenuItem key={name} onClick={() => handleBulletList(name)}>
+                        <Icon />
+                        <span className="ml-2">{label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <SmallRibbonButton 
                   icon={ListOrdered} 
                   tooltip="Numbering"

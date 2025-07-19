@@ -14,6 +14,24 @@ import { useEffect } from "react";
 import TextAlign from "@tiptap/extension-text-align";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
+import { BulletList as TiptapBulletList } from '@tiptap/extension-bullet-list';
+
+// Extend the BulletList to support custom list styles
+export const BulletList = TiptapBulletList.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      'data-list-style-type': {
+        default: 'disc',
+        parseHTML: element => element.getAttribute('data-list-style-type') || 'disc',
+        renderHTML: attributes => {
+          return { 'data-list-style-type': attributes['data-list-style-type'] };
+        },
+      },
+    };
+  },
+});
+
 
 interface DocumentEditorProps {
   content: string;
@@ -26,9 +44,9 @@ export function DocumentEditor({ content, onUpdate, setEditor, className }: Docu
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Disabling strikethrough in StarterKit to avoid conflicts if we add it separately
-        // but it's fine to leave it on.
+        bulletList: false, // Disable default to use our custom one
       }),
+      BulletList,
       Underline,
       Subscript,
       Superscript,
