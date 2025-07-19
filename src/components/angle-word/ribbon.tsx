@@ -420,7 +420,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                 <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={editor?.isActive('highlight')}>
+                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={!!activeHighlightColor}>
                         <div className="flex flex-col items-center">
                             <Highlighter className="w-4 h-4" />
                             <div
@@ -814,5 +814,3 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
-
-    
