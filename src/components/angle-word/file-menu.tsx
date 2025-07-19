@@ -2,9 +2,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Info, Printer, Save, Share2, X } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Info, Printer, Save, Share2, FileEdit } from "lucide-react";
 import { useState } from "react";
 import { type Editor } from "@tiptap/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 interface FileMenuProps {
@@ -13,22 +16,51 @@ interface FileMenuProps {
   editor: Editor | null;
 }
 
-type MenuScreen = 'main' | 'info' | 'new' | 'open';
+type MenuScreen = 'main' | 'info' | 'new' | 'open' | 'save-as';
+type SaveFormat = 'html' | 'txt';
 
 export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
   const [activeScreen, setActiveScreen] = useState<MenuScreen>('main');
+  const [fileName, setFileName] = useState('document');
+  const [saveFormat, setSaveFormat] = useState<SaveFormat>('html');
 
-  const handleSave = () => {
+  const handleSave = (asNewFile: boolean = false) => {
     if (!editor) return;
-    const content = editor.getHTML();
-    const blob = new Blob([content], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'document.html';
-    a.click();
-    URL.revokeObjectURL(url);
-    console.log("Saving document...");
+
+    if (asNewFile || activeScreen === 'save-as') {
+      let content: string;
+      let blobType: string;
+      let extension: string;
+
+      if (saveFormat === 'txt') {
+        content = editor.getText();
+        blobType = 'text/plain';
+        extension = 'txt';
+      } else {
+        content = editor.getHTML();
+        blobType = 'text/html';
+        extension = 'html';
+      }
+
+      const blob = new Blob([content], { type: blobType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileName || 'document'}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      // Default quick save
+      const content = editor.getHTML();
+      const blob = new Blob([content], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'document.html';
+      a.click();
+      URL.revokeObjectURL(url);
+      console.log("Saving document...");
+    }
   };
 
   if (!isOpen) return null;
@@ -41,6 +73,38 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
         return <div>New Screen Content</div>;
       case 'open':
         return <div>Open Screen Content</div>;
+      case 'save-as':
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Save As</h2>
+            <div className="space-y-4 max-w-sm">
+              <div>
+                <Label htmlFor="filename">File name</Label>
+                <Input 
+                  id="filename" 
+                  value={fileName}
+                  onChange={(e) => setFileName(e.target.value)}
+                  placeholder="document"
+                />
+              </div>
+              <div>
+                <Label htmlFor="format">Save as type</Label>
+                <Select value={saveFormat} onValueChange={(value: SaveFormat) => setSaveFormat(value)}>
+                  <SelectTrigger id="format">
+                    <SelectValue placeholder="Select a format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="html">HTML Document</SelectItem>
+                    <SelectItem value="txt">Plain Text</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end pt-4">
+                 <Button onClick={() => handleSave(true)}>Save</Button>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return <div>Main Content Area</div>;
     }
@@ -50,7 +114,8 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
     { name: 'Info', icon: Info, screen: 'info' },
     { name: 'New', icon: FilePlus, screen: 'new' },
     { name: 'Open', icon: File, screen: 'open' },
-    { name: 'Save', icon: Save, action: handleSave },
+    { name: 'Save', icon: Save, action: () => handleSave(false) },
+    { name: 'Save As', icon: FileEdit, screen: 'save-as' },
     { name: 'Print', icon: Printer, action: () => console.log("Print") },
     { name: 'Share', icon: Share2, action: () => console.log("Share") },
   ];
@@ -58,7 +123,7 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       <div className="flex items-center p-2 border-b">
-        <Button variant="ghost" size="icon" onClick={onClose}>
+        <Button variant="ghost" size="icon" onClick={() => activeScreen !== 'main' ? setActiveScreen('main') : onClose()}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <span className="ml-4 font-semibold text-lg">File</span>
