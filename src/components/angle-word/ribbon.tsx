@@ -914,7 +914,7 @@ export function AngleWordRibbon({
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
               <div className="flex">
-                  <div className="flex flex-col">
+                  <div className="grid grid-cols-2 gap-x-1">
                       <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
@@ -948,8 +948,6 @@ export function AngleWordRibbon({
                               <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
                           </DropdownMenuContent>
                       </DropdownMenu>
-                  </div>
-                  <div className="flex flex-col">
                        <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                               <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
@@ -1007,17 +1005,15 @@ export function AngleWordRibbon({
                         <RibbonButton icon={WrapText} disabled>Wrap Text</RibbonButton>
                     </div>
                     <div className="flex flex-col">
-                        <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
-                        <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
+                        <SmallRibbonButton icon={BringToFront} tooltip="Bring Forward" disabled><span className="text-xs">Bring Forward</span></SmallRibbonButton>
+                        <SmallRibbonButton icon={SendToBack} tooltip="Send Backward" disabled><span className="text-xs">Send Backward</span></SmallRibbonButton>
+                        <SmallRibbonButton icon={TextSelect} tooltip="Selection Pane" disabled><span className="text-xs">Selection Pane</span></SmallRibbonButton>
                     </div>
-                     <div className="flex flex-col">
-                        <RibbonButton icon={TextSelect} disabled>Selection Pane</RibbonButton>
-                        <div className="flex flex-col items-start pl-1">
+                     <div className="flex flex-col items-start pl-1">
                            <SmallRibbonButton icon={AlignLeft} tooltip="Align" className="px-2" disabled><span className="text-xs">Align</span></SmallRibbonButton>
                            <SmallRibbonButton icon={Combine} tooltip="Group" className="px-2" disabled><span className="text-xs">Group</span></SmallRibbonButton>
                            <SmallRibbonButton icon={RotateCw} tooltip="Rotate" className="px-2" disabled><span className="text-xs">Rotate</span></SmallRibbonButton>
                         </div>
-                    </div>
                 </div>
             </RibbonGroup>
           </TabsContent>
@@ -1102,5 +1098,3 @@ export function AngleWordRibbon({
     </>
   );
 }
-
-    
