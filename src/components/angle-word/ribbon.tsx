@@ -364,6 +364,30 @@ export function AngleWordRibbon({
     }
   };
 
+  const handleIndent = () => {
+    if (!editor) return;
+    if (editor.isActive('listItem')) {
+        editor.chain().focus().sinkListItem('listItem').run();
+    } else if (editor.can().indent()) {
+        editor.chain().focus().indent().run();
+    }
+  };
+
+  const handleOutdent = () => {
+    if (!editor) return;
+    if (editor.isActive('listItem')) {
+        editor.chain().focus().liftListItem('listItem').run();
+    } else if (editor.can().outdent()) {
+        editor.chain().focus().outdent().run();
+    }
+  };
+
+  const canOutdent = () => {
+    if (!editor) return false;
+    if (editor.isActive('listItem')) return editor.can().liftListItem('listItem');
+    return editor.can().outdent();
+  };
+
   return (
     <>
       <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} documentName={documentName} setDocumentName={setDocumentName} />
@@ -698,14 +722,13 @@ export function AngleWordRibbon({
                   <SmallRibbonButton 
                     icon={IndentDecrease} 
                     tooltip="Decrease Indent"
-                    onClick={() => editor?.chain().focus().liftListItem('listItem').run()}
-                    disabled={!editor?.can().liftListItem('listItem')}
+                    onClick={handleOutdent}
+                    disabled={!canOutdent()}
                   />
                   <SmallRibbonButton 
                     icon={IndentIncrease} 
                     tooltip="Increase Indent"
-                    onClick={() => editor?.chain().focus().sinkListItem('listItem').run()}
-                    disabled={!editor?.can().sinkListItem('listItem')}
+                    onClick={handleIndent}
                   />
                   <SmallRibbonButton icon={ArrowDownAZ} tooltip="Sort"/>
                   <SmallRibbonButton icon={Pilcrow} tooltip="Show/Hide ¶"/>

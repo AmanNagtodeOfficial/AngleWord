@@ -15,6 +15,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { BulletList as TiptapBulletList } from '@tiptap/extension-bullet-list';
+import { Paragraph } from '@tiptap/extension-paragraph';
 
 // Extend the BulletList to support custom list styles
 export const BulletList = TiptapBulletList.extend({
@@ -32,6 +33,42 @@ export const BulletList = TiptapBulletList.extend({
   },
 });
 
+const IndentableParagraph = Paragraph.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      indent: {
+        default: 0,
+        renderHTML: attributes => {
+          if (!attributes.indent) {
+            return {}
+          }
+          return { 'style': `margin-left: ${attributes.indent * 40}px` }
+        },
+        parseHTML: element => {
+            const indent = parseInt(element.style.marginLeft || '0', 10) / 40;
+            return indent > 0 ? indent : null;
+        },
+      },
+    };
+  },
+  addCommands() {
+    return {
+      ...this.parent?.(),
+      indent: () => ({ commands }) => {
+        return commands.updateAttributes(this.name, {
+          indent: (this.options.HTMLAttributes?.indent || 0) + 1,
+        });
+      },
+      outdent: () => ({ commands }) => {
+        return commands.updateAttributes(this.name, {
+          indent: Math.max(0, (this.options.HTMLAttributes?.indent || 0) - 1),
+        });
+      },
+    }
+  }
+});
+
 
 interface DocumentEditorProps {
   content: string;
@@ -46,7 +83,9 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
     extensions: [
       StarterKit.configure({
         bulletList: false, // Disable default to use our custom one
+        paragraph: false, // Disable default to use our custom one
       }),
+      IndentableParagraph,
       BulletList,
       Underline,
       Subscript,
