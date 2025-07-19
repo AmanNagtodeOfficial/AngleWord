@@ -73,6 +73,7 @@ function AngleWordPage() {
   const [activeDocumentId, setActiveDocumentId] = useState<string>(
     documents[0].id
   );
+  const [isRulerVisible, setIsRulerVisible] = useState(true);
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -215,6 +216,8 @@ function AngleWordPage() {
           setPageSize={setDocumentPageSize}
           columns={activeDocument.columns}
           setColumns={setDocumentColumns}
+          isRulerVisible={isRulerVisible}
+          toggleRuler={() => setIsRulerVisible(!isRulerVisible)}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea
@@ -228,6 +231,7 @@ function AngleWordPage() {
             orientation={activeDocument.orientation}
             pageSize={activeDocument.pageSize}
             columns={activeDocument.columns}
+            isRulerVisible={isRulerVisible}
           />
         </main>
       </div>

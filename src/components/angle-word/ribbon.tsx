@@ -150,6 +150,8 @@ interface RibbonProps {
   setPageSize: (pageSize: PageSize) => void;
   columns: ColumnsType;
   setColumns: (columns: ColumnsType) => void;
+  isRulerVisible: boolean;
+  toggleRuler: () => void;
 }
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -204,7 +206,9 @@ export function AngleWordRibbon({
   pageSize,
   setPageSize,
   columns,
-  setColumns
+  setColumns,
+  isRulerVisible,
+  toggleRuler,
 }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
@@ -983,7 +987,7 @@ export function AngleWordRibbon({
             </RibbonGroup>
             <RibbonGroup title="Show">
               <RibbonButton icon={ListTree}>Outline</RibbonButton>
-              <RibbonButton icon={Ruler}>Ruler</RibbonButton>
+              <RibbonButton icon={Ruler} onClick={toggleRuler} data-active={isRulerVisible}>Ruler</RibbonButton>
               <RibbonButton icon={Grid3x3}>Gridlines</RibbonButton>
               <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
             </RibbonGroup>

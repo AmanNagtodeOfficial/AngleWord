@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Editor } from "@tiptap/react";
 import type { Margins, Orientation, PageSize, Columns } from "@/app/page";
 import { cn } from "@/lib/utils";
+import { Ruler } from "./ruler";
 
 
 export type AITool = "improve" | "tone" | "summarize" | null;
@@ -29,6 +30,7 @@ interface EditorAreaProps {
   orientation: Orientation;
   pageSize: PageSize;
   columns: Columns;
+  isRulerVisible: boolean;
 }
 
 export function EditorArea({
@@ -41,6 +43,7 @@ export function EditorArea({
   orientation,
   pageSize,
   columns,
+  isRulerVisible,
 }: EditorAreaProps) {
   const { toast } = useToast();
 
@@ -167,6 +170,11 @@ export function EditorArea({
     paddingLeft: margins.left,
     paddingRight: margins.right,
   };
+  
+  const pageContainerStyle: CSSProperties = {
+    width: orientation === 'portrait' ? pageSize.width : pageSize.height,
+  };
+
 
   const columnClasses = {
     1: 'columns-1',
@@ -178,6 +186,13 @@ export function EditorArea({
   return (
     <div className="flex-grow p-4 lg:p-8 overflow-auto bg-muted/40">
       <div className="mx-auto w-fit">
+        {isRulerVisible && (
+            <Ruler 
+              pageSize={pageSize}
+              margins={margins}
+              orientation={orientation}
+            />
+        )}
         <div 
           className="bg-background shadow-lg overflow-hidden rounded-sm"
           style={pageStyle}
