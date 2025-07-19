@@ -36,7 +36,10 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
 
   const leftMarginPx = useMemo(() => convertToPx(margins.left), [margins.left]);
   const rightMarginPx = useMemo(() => convertToPx(margins.right), [margins.right]);
-  const totalWidthInches = useMemo(() => pageWidthPx / DPI, [pageWidthPx]);
+  
+  const rulerContentWidth = useMemo(() => pageWidthPx - leftMarginPx - rightMarginPx, [pageWidthPx, leftMarginPx, rightMarginPx]);
+  const totalWidthInches = useMemo(() => rulerContentWidth / DPI, [rulerContentWidth]);
+
 
   const renderTicks = () => {
     const ticks = [];
@@ -60,7 +63,7 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
         ticks.push(
             <div key={i} className="absolute top-0" style={{ left: `${position}px` }}>
                 <div className={`w-px bg-muted-foreground ${height}`} />
-                {showNumber && i / 8 > 0 && (
+                {showNumber && (
                     <span className="absolute -bottom-4 -translate-x-1/2 text-[10px] text-muted-foreground">
                         {i / 8}
                     </span>
@@ -75,8 +78,6 @@ export function HorizontalRuler({ pageSize, margins, orientation }: RulerProps) 
     return <div className="h-5 bg-transparent border-b border-gray-300" />;
   }
   
-  const rulerContentWidth = pageWidthPx - leftMarginPx - rightMarginPx;
-
   return (
     <div
       className="relative h-5 bg-transparent border-b border-gray-300 select-none overflow-hidden"
@@ -102,7 +103,9 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
   
     const topMarginPx = useMemo(() => convertToPx(margins.top), [margins.top]);
     const bottomMarginPx = useMemo(() => convertToPx(margins.bottom), [margins.bottom]);
-    const totalHeightInches = useMemo(() => pageHeightPx / DPI, [pageHeightPx]);
+
+    const rulerContentHeight = useMemo(() => pageHeightPx - topMarginPx - bottomMarginPx, [pageHeightPx, topMarginPx, bottomMarginPx]);
+    const totalHeightInches = useMemo(() => rulerContentHeight / DPI, [rulerContentHeight]);
   
     const renderTicks = () => {
       const ticks = [];
@@ -126,8 +129,8 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
         ticks.push(
           <div key={i} className="absolute left-0" style={{ top: `${position}px` }}>
             <div className={`h-px bg-muted-foreground ${width}`} />
-            {showNumber && i / 8 > 0 && (
-              <span className="absolute -right-4 -translate-y-1/2 text-[10px] text-muted-foreground" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+            {showNumber && (
+              <span className="absolute -right-4 -translate-y-1/2 text-[10px] text-muted-foreground" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'translateY(-50%) rotate(180deg)' }}>
                 {i / 8}
               </span>
             )}
@@ -140,8 +143,6 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
     if (pageHeightPx === 0) {
       return <div className="w-5 bg-transparent border-r border-gray-300" />;
     }
-
-    const rulerContentHeight = pageHeightPx - topMarginPx - bottomMarginPx;
   
     return (
       <div
@@ -157,4 +158,3 @@ export function VerticalRuler({ pageSize, margins, orientation }: RulerProps) {
       </div>
     );
   }
-
