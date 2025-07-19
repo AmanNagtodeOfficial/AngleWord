@@ -119,7 +119,7 @@ import {
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -147,6 +147,9 @@ const HIGHLIGHT_COLORS = [
   '#FF0000', '#C0C0C0', '#00FFFF', '#F0E68C', '#E6E6FA', '#FFF0F5',
 ];
 
+type LastActiveButton = 
+  | 'bold' | 'italic' | 'underline' | 'strike' | 'subscript' | 'superscript'
+  | 'highlight' | 'fontColor' | 'clear' | null;
 
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
@@ -154,13 +157,19 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
+  const [lastActiveButton, setLastActiveButton] = useState<LastActiveButton>(null);
   
   const activeHighlightColor = editor?.getAttributes('highlight').color;
   const activeFontColor = editor?.getAttributes('textStyle').color;
 
+  const handleButtonClick = useCallback((buttonType: LastActiveButton, action: () => void) => {
+    action();
+    setLastActiveButton(buttonType);
+  }, []);
+
   const handleFontColorSelect = (color: string) => {
     if (!color) return;
-    editor?.chain().focus().setColor(color).run();
+    handleButtonClick('fontColor', () => editor?.chain().focus().setColor(color).run());
 
     setRecentFontColors(prev => {
       const newColors = [color, ...prev.filter(c => c !== color)];
@@ -170,8 +179,8 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
   const handleHighlightColorSelect = (color: string) => {
     if (!color) return;
-    editor?.chain().focus().toggleHighlight({ color }).run();
-
+    handleButtonClick('highlight', () => editor?.chain().focus().toggleHighlight({ color }).run());
+    
     setRecentHighlightColors(prev => {
       const newColors = [color, ...prev.filter(c => c !== color)];
       return newColors.slice(0, 6); // Keep only the 6 most recent
@@ -185,7 +194,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </Button>
   );
 
-  const SmallRibbonButton = ({ children, icon: Icon, tooltip, ...props }: { children?: React.ReactNode, icon: React.ElementType, tooltip: string, [key: string]: any }) => (
+  const SmallRibbonButton = ({ children, icon: Icon, tooltip, buttonType, ...props }: { children?: React.ReactNode, icon: React.ElementType, tooltip: string, buttonType?: LastActiveButton, [key: string]: any }) => (
     // Tooltip can be added here if ShadCN Tooltip is integrated
     <Button variant="ghost" className="p-1 h-auto" title={tooltip} {...props}>
       <div className="flex flex-col items-center">
@@ -343,50 +352,51 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                 <SmallRibbonButton
                   icon={Eraser}
                   tooltip="Clear All Formatting"
-                  onClick={() => editor?.chain().focus().unsetAllMarks().run()}
+                  onClick={() => handleButtonClick('clear', () => editor?.chain().focus().unsetAllMarks().run())}
+                  data-active={lastActiveButton === 'clear'}
                 />
               </div>
               <div className="flex items-center mt-1">
                 <SmallRibbonButton
                   icon={Bold}
                   tooltip="Bold"
-                  onClick={() => editor?.chain().focus().toggleBold().run()}
-                  data-active={editor?.isActive('bold')}
+                  onClick={() => handleButtonClick('bold', () => editor?.chain().focus().toggleBold().run())}
+                  data-active={lastActiveButton === 'bold' && editor?.isActive('bold')}
                 />
                 <SmallRibbonButton
                   icon={Italic}
                   tooltip="Italic"
-                  onClick={() => editor?.chain().focus().toggleItalic().run()}
-                  data-active={editor?.isActive('italic')}
+                  onClick={() => handleButtonClick('italic', () => editor?.chain().focus().toggleItalic().run())}
+                  data-active={lastActiveButton === 'italic' && editor?.isActive('italic')}
                 />
                 <SmallRibbonButton
                   icon={Underline}
                   tooltip="Underline"
-                  onClick={() => editor?.chain().focus().toggleUnderline().run()}
-                  data-active={editor?.isActive('underline')}
+                  onClick={() => handleButtonClick('underline', () => editor?.chain().focus().toggleUnderline().run())}
+                  data-active={lastActiveButton === 'underline' && editor?.isActive('underline')}
                 />
                 <SmallRibbonButton
                   icon={Strikethrough}
                   tooltip="Strikethrough"
-                  onClick={() => editor?.chain().focus().toggleStrike().run()}
-                  data-active={editor?.isActive('strike')}
+                  onClick={() => handleButtonClick('strike', () => editor?.chain().focus().toggleStrike().run())}
+                  data-active={lastActiveButton === 'strike' && editor?.isActive('strike')}
                 />
                 <SmallRibbonButton
                   icon={Subscript}
                   tooltip="Subscript"
-                  onClick={() => editor?.chain().focus().toggleSubscript().run()}
-                  data-active={editor?.isActive('subscript')}
+                  onClick={() => handleButtonClick('subscript', () => editor?.chain().focus().toggleSubscript().run())}
+                  data-active={lastActiveButton === 'subscript' && editor?.isActive('subscript')}
                 />
                 <SmallRibbonButton
                   icon={Superscript}
                   tooltip="Superscript"
-                  onClick={() => editor?.chain().focus().toggleSuperscript().run()}
-                  data-active={editor?.isActive('superscript')}
+                  onClick={() => handleButtonClick('superscript', () => editor?.chain().focus().toggleSuperscript().run())}
+                  data-active={lastActiveButton === 'superscript' && editor?.isActive('superscript')}
                 />
                 <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={editor?.isActive('highlight')}>
+                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={lastActiveButton === 'highlight' && editor?.isActive('highlight')}>
                         <div className="flex flex-col items-center">
                             <Highlighter className="w-4 h-4" />
                             <div
@@ -428,7 +438,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetHighlight().run(); }}
+                      onSelect={(e) => { e.preventDefault(); handleButtonClick('highlight', () => editor?.chain().focus().unsetHighlight().run()); }}
                       className="cursor-pointer"
                     >
                       No Color
@@ -450,7 +460,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={!!activeFontColor}>
+                     <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={lastActiveButton === 'fontColor' && !!activeFontColor}>
                         <div className="flex flex-col items-center">
                             <Palette className="w-4 h-4" />
                             <div
@@ -492,7 +502,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetColor().run(); }}
+                      onSelect={(e) => { e.preventDefault(); handleButtonClick('fontColor', () => editor?.chain().focus().unsetColor().run()); }}
                       className="cursor-pointer"
                     >
                       Automatic
@@ -735,5 +745,3 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
-
-    
