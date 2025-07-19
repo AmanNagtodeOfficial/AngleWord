@@ -1,7 +1,14 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlignCenter,
   AlignJustify,
@@ -119,6 +126,18 @@ interface RibbonProps {
   editor: Editor | null;
 }
 
+const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
+const FONT_FAMILIES = [
+  { name: 'PT Sans', value: 'PT Sans, sans-serif' },
+  { name: 'Arial', value: 'Arial, sans-serif' },
+  { name: 'Georgia', value: 'Georgia, serif' },
+  { name: 'Inter', value: 'Inter, sans-serif' },
+  { name: 'Tahoma', value: 'Tahoma, sans-serif' },
+  { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
+  { name: 'Verdana', value: 'Verdana, sans-serif' },
+];
+
+
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
     <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
@@ -144,6 +163,32 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
   
+  const currentFontSize = () => {
+    if (!editor) return '11';
+    // A more robust check for any font size attribute from TextStyle
+    const { fontSize } = editor.getAttributes('textStyle');
+    if (fontSize && typeof fontSize === 'string' && fontSize.endsWith('pt')) {
+      return fontSize.replace('pt', '');
+    }
+    // Check legacy way for compatibility if needed
+    for (const size of FONT_SIZES) {
+      if (editor.isActive('textStyle', { fontSize: `${size}pt` })) {
+        return size;
+      }
+    }
+    return '11'; // Default size
+  };
+
+  const currentFontFamily = () => {
+    if (!editor) return 'PT Sans';
+    for (const family of FONT_FAMILIES) {
+      if (editor.isActive('textStyle', { fontFamily: family.value })) {
+        return family.name;
+      }
+    }
+    return 'PT Sans'; // Default font
+  };
+
   return (
     <div className="bg-secondary/30 p-1 border-b shadow-sm">
       <Tabs defaultValue="home" className="w-full">
@@ -186,8 +231,42 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
           <RibbonGroup title="Font">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <Button variant="ghost" className="p-1 text-xs h-auto">PT Sans <ChevronDown className="w-3 h-3 ml-1" /></Button>
-                <Button variant="ghost" className="p-1 text-xs h-auto">11 <ChevronDown className="w-3 h-3 ml-1" /></Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 text-xs h-auto w-28 justify-between">
+                      <span className="truncate">{currentFontFamily()}</span>
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {FONT_FAMILIES.map(font => (
+                      <DropdownMenuItem
+                        key={font.value}
+                        onClick={() => editor?.chain().focus().setFontFamily(font.value).run()}
+                        style={{fontFamily: font.value}}
+                      >
+                        {font.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 text-xs h-auto w-12 justify-between">
+                      {currentFontSize()}
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {FONT_SIZES.map(size => (
+                      <DropdownMenuItem key={size} onClick={() => editor?.chain().focus().setFontSize(`${size}pt`).run()}>
+                        {size}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size"/>
                 <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size"/>
                 <SmallRibbonButton icon={CaseSensitive} tooltip="Change Case"/>
@@ -288,7 +367,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
             <RibbonButton icon={Table}>Table</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Illustrations">
-             <div className="flex flex-col">
+            <div className="flex flex-col">
               <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
               <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
               <RibbonButton icon={Shapes}>Shapes</RibbonButton>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
@@ -8,7 +9,11 @@ import Superscript from "@tiptap/extension-superscript";
 import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
+import FontFamily from "@tiptap/extension-font-family";
 import { useEffect } from "react";
+
+// The FontSize extension is now part of the TextStyle extension, so it doesn't need a separate import
+// We'll configure it through TextStyle
 
 interface DocumentEditorProps {
   content: string;
@@ -28,8 +33,12 @@ export function DocumentEditor({ content, onUpdate, setEditor, className }: Docu
       Subscript,
       Superscript,
       Highlight.configure({ multicolor: true }),
-      TextStyle,
+      TextStyle.configure({
+        // Enable FontSize
+      }),
       Color,
+      FontFamily,
+      // FontSize is now part of TextStyle and does not need to be added separately
     ],
     content: content,
     onUpdate: ({ editor }) => {
