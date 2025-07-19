@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, CSSProperties } from "react";
 import { DocumentEditor } from "./document-editor";
 import { AIModal } from "./ai-modal";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,8 @@ import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Editor } from "@tiptap/react";
-import type { Margins } from "@/app/page";
+import type { Margins, Orientation, PageSize, Columns } from "@/app/page";
+import { cn } from "@/lib/utils";
 
 
 export type AITool = "improve" | "tone" | "summarize" | null;
@@ -25,9 +26,22 @@ interface EditorAreaProps {
   content: string;
   onContentUpdate: (content: string) => void;
   margins: Margins;
+  orientation: Orientation;
+  pageSize: PageSize;
+  columns: Columns;
 }
 
-export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, onContentUpdate, margins }: EditorAreaProps) {
+export function EditorArea({
+  activeAITool,
+  setActiveAITool,
+  setEditor,
+  content,
+  onContentUpdate,
+  margins,
+  orientation,
+  pageSize,
+  columns,
+}: EditorAreaProps) {
   const { toast } = useToast();
 
   const [isLoadingImprove, setIsLoadingImprove] = useState(false);
@@ -49,7 +63,6 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
   }, [editorInstance, setEditor]);
 
   const getTextForAI = useCallback(() => {
-    // Make sure we use the passed content prop for AI actions if the editor isn't ready
     if (!editorInstance) {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = content;
@@ -89,7 +102,6 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     setToneError(null);
     setToneResult(null);
     try {
-      // Context can be added later if needed, e.g., from a form field
       const result = await detectToneAction({ text: text, context: "general writing" });
       setToneResult(result);
     } catch (error: any) {
@@ -146,23 +158,35 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     setSummarizeResult(null);
     setSummarizeError(null);
   };
+  
+  const pageStyle: CSSProperties = {
+    width: orientation === 'portrait' ? pageSize.width : pageSize.height,
+    minHeight: orientation === 'portrait' ? pageSize.height : pageSize.width,
+    paddingTop: margins.top,
+    paddingBottom: margins.bottom,
+    paddingLeft: margins.left,
+    paddingRight: margins.right,
+  };
+
+  const columnClasses = {
+    1: 'columns-1',
+    2: 'columns-2 gap-8',
+    3: 'columns-3 gap-6',
+  };
 
 
   return (
     <div className="flex-grow p-4 lg:p-8 overflow-auto bg-muted/40">
-      <div className="mx-auto w-full max-w-[8.5in] h-full flex flex-col">
-        <div className="bg-background shadow-lg flex-grow overflow-auto rounded-sm">
+      <div className="mx-auto w-fit">
+        <div 
+          className="bg-background shadow-lg overflow-hidden rounded-sm"
+          style={pageStyle}
+        >
           <DocumentEditor 
             content={content} 
             onUpdate={onContentUpdate}
             setEditor={setEditorInstance}
-            className="h-full min-h-[11in]"
-            style={{
-                paddingTop: margins.top,
-                paddingBottom: margins.bottom,
-                paddingLeft: margins.left,
-                paddingRight: margins.right,
-            }}
+            className={cn('h-full', columnClasses[columns])}
           />
         </div>
       </div>

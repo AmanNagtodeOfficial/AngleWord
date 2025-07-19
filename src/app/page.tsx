@@ -18,12 +18,25 @@ export interface Margins {
   right: string;
 }
 
+export type Orientation = "portrait" | "landscape";
+
+export interface PageSize {
+  name: string;
+  width: string;
+  height: string;
+}
+
+export type Columns = 1 | 2 | 3;
+
 export interface Document {
   id: string;
   name: string;
   content: string;
   saveStatus: SaveStatus;
   margins: Margins;
+  orientation: Orientation;
+  pageSize: PageSize;
+  columns: Columns;
 }
 
 const defaultMargins: Margins = {
@@ -33,12 +46,22 @@ const defaultMargins: Margins = {
     right: '1in',
 };
 
+export const PAGE_SIZES: { [key: string]: PageSize } = {
+  letter: { name: 'Letter', width: '8.5in', height: '11in' },
+  a4: { name: 'A4', width: '210mm', height: '297mm' },
+  legal: { name: 'Legal', width: '8.5in', height: '14in' },
+};
+
+
 const createNewDocument = (name: string): Document => ({
   id: Date.now().toString(),
   name,
   content: `<p>Start writing your document here...</p>`,
   saveStatus: "saved",
   margins: defaultMargins,
+  orientation: 'portrait',
+  pageSize: PAGE_SIZES.letter,
+  columns: 1,
 });
 
 function AngleWordPage() {
@@ -138,6 +161,24 @@ function AngleWordPage() {
     }
   }
 
+  const setDocumentOrientation = (orientation: Orientation) => {
+    if (activeDocumentId) {
+      updateDocument(activeDocumentId, { orientation, saveStatus: "unsaved" });
+    }
+  };
+
+  const setDocumentPageSize = (pageSize: PageSize) => {
+    if (activeDocumentId) {
+      updateDocument(activeDocumentId, { pageSize, saveStatus: "unsaved" });
+    }
+  };
+
+  const setDocumentColumns = (columns: Columns) => {
+    if (activeDocumentId) {
+      updateDocument(activeDocumentId, { columns, saveStatus: "unsaved" });
+    }
+  };
+
 
   if (!activeDocument) {
     return (
@@ -168,6 +209,12 @@ function AngleWordPage() {
           setDocumentName={setDocumentName}
           margins={activeDocument.margins}
           setMargins={setDocumentMargins}
+          orientation={activeDocument.orientation}
+          setOrientation={setDocumentOrientation}
+          pageSize={activeDocument.pageSize}
+          setPageSize={setDocumentPageSize}
+          columns={activeDocument.columns}
+          setColumns={setDocumentColumns}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea
@@ -178,6 +225,9 @@ function AngleWordPage() {
             content={activeDocument.content}
             onContentUpdate={handleContentUpdate}
             margins={activeDocument.margins}
+            orientation={activeDocument.orientation}
+            pageSize={activeDocument.pageSize}
+            columns={activeDocument.columns}
           />
         </main>
       </div>

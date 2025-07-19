@@ -131,7 +131,8 @@ import { Editor } from "@tiptap/react";
 import { useRef, useState, useCallback } from "react";
 import { FileMenu } from "./file-menu";
 import { useToast } from "@/hooks/use-toast";
-import type { Margins } from "@/app/page";
+import type { Margins, Orientation, PageSize, Columns as ColumnsType } from "@/app/page";
+import { PAGE_SIZES } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
 
 interface RibbonProps {
@@ -143,6 +144,12 @@ interface RibbonProps {
   setDocumentName: (name: string) => void;
   margins: Margins;
   setMargins: (margins: Margins) => void;
+  orientation: Orientation;
+  setOrientation: (orientation: Orientation) => void;
+  pageSize: PageSize;
+  setPageSize: (pageSize: PageSize) => void;
+  columns: ColumnsType;
+  setColumns: (columns: ColumnsType) => void;
 }
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -183,7 +190,22 @@ const MARGIN_PRESETS: { [key: string]: { name: string; values: Margins } } = {
     wide: { name: 'Wide', values: { top: '1in', bottom: '1in', left: '2in', right: '2in' } },
 };
 
-export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument, documentName, setDocumentName, margins, setMargins }: RibbonProps) {
+export function AngleWordRibbon({
+  editor,
+  onImproveWriting,
+  onDetectTone,
+  onSummarizeDocument,
+  documentName,
+  setDocumentName,
+  margins,
+  setMargins,
+  orientation,
+  setOrientation,
+  pageSize,
+  setPageSize,
+  columns,
+  setColumns
+}: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
 
@@ -852,9 +874,46 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                     </DropdownMenuItem>
                   </DropdownMenuContent>
               </DropdownMenu>
-              <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
-              <RibbonButton icon={Scaling}>Size</RibbonButton>
-              <RibbonButton icon={Columns}>Columns</RibbonButton>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                          <BookOpen className="w-5 h-5 mb-1" />
+                          <span className="text-xs text-center">Orientation</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                      <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                          <Scaling className="w-5 h-5 mb-1" />
+                          <span className="text-xs text-center">Size</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                      {Object.values(PAGE_SIZES).map((size) => (
+                          <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
+                              {size.name} ({size.width} x {size.height})
+                          </DropdownMenuItem>
+                      ))}
+                  </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                          <Columns className="w-5 h-5 mb-1" />
+                          <span className="text-xs text-center">Columns</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                      <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
             </RibbonGroup>
           </TabsContent>
 

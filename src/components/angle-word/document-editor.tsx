@@ -69,7 +69,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
     },
     editorProps: {
       attributes: {
-        class: `prose dark:prose-invert max-w-none w-full h-full focus:outline-none ${className}`,
+        class: `prose dark:prose-invert max-w-none focus:outline-none ${className}`,
       },
     },
   });
