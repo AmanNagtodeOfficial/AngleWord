@@ -122,6 +122,7 @@ import {
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
 import { useRef, useState, useCallback } from "react";
+import { FileMenu } from "./file-menu";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -165,6 +166,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
 
+  const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
@@ -302,546 +304,547 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   };
 
   return (
-    <div className="bg-secondary/30 p-1 border-b shadow-sm">
-      <Tabs defaultValue="home" className="w-full">
-        <TabsList className="bg-transparent p-0 h-auto justify-start">
-          <TabsTrigger value="file" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">File</TabsTrigger>
-          <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
-          <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
-          <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
-          <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
-          <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
-          <TabsTrigger value="mailings" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Mailings</TabsTrigger>
-          <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
-          <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
-          <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
-        </TabsList>
+    <>
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} />
+      <div className="bg-secondary/30 p-1 border-b shadow-sm">
+        <Tabs defaultValue="home" className="w-full">
+          <div className="flex">
+            <Button
+              onClick={() => setIsFileMenuOpen(true)}
+              className="text-sm px-4 py-1.5 rounded-b-none rounded-t-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              File
+            </Button>
+            <TabsList className="bg-transparent p-0 h-auto justify-start">
+              <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
+              <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
+              <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
+              <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
+              <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
+              <TabsTrigger value="mailings" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Mailings</TabsTrigger>
+              <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
+              <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
+              <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
+            </TabsList>
+          </div>
 
-        <TabsContent value="file" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="File">
-            <RibbonButton icon={FilePlus}>New</RibbonButton>
-            <RibbonButton icon={File}>Open</RibbonButton>
-            <RibbonButton icon={Save}>Save</RibbonButton>
-            <RibbonButton icon={Printer}>Print</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="home" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Clipboard" className="items-stretch">
+              <div className="flex flex-col items-center">
+                <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
+                  <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
+                  <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
+                </Button>
+              </div>
+              <div className="flex flex-col justify-center">
+                <SmallRibbonButton icon={Scissors} tooltip="Cut" />
+                <SmallRibbonButton icon={Copy} tooltip="Copy" />
+                <SmallRibbonButton icon={Paintbrush} tooltip="Format Painter" />
+              </div>
+            </RibbonGroup>
+            <RibbonGroup title="Font">
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 text-xs h-auto w-28 justify-between">
+                        <span className="truncate">{currentFontFamily()}</span>
+                        <ChevronDown className="w-3 h-3 ml-1" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {FONT_FAMILIES.map(font => (
+                        <DropdownMenuItem
+                          key={font.value}
+                          onClick={() => editor?.chain().focus().setFontFamily(font.value).run()}
+                          style={{fontFamily: font.value}}
+                        >
+                          {font.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-        <TabsContent value="home" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Clipboard" className="items-stretch">
-            <div className="flex flex-col items-center">
-              <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
-                <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
-                <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
-              </Button>
-            </div>
-            <div className="flex flex-col justify-center">
-              <SmallRibbonButton icon={Scissors} tooltip="Cut" />
-              <SmallRibbonButton icon={Copy} tooltip="Copy" />
-              <SmallRibbonButton icon={Paintbrush} tooltip="Format Painter" />
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Font">
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-1 text-xs h-auto w-28 justify-between">
-                      <span className="truncate">{currentFontFamily()}</span>
-                      <ChevronDown className="w-3 h-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {FONT_FAMILIES.map(font => (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 text-xs h-auto w-12 justify-between">
+                        {currentFontSize()}
+                        <ChevronDown className="w-3 h-3 ml-1" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {FONT_SIZES.map(size => (
+                        <DropdownMenuItem key={size} onClick={() => editor?.chain().focus().setMark('textStyle', { fontSize: `${size}pt` }).run()}>
+                          {size}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size" onClick={handleIncreaseFontSize}/>
+                  <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size" onClick={handleDecreaseFontSize}/>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 h-auto" title="Change Case">
+                        <CaseIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => handleChangeCase('sentence')}>Sentence case.</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleChangeCase('lower')}>lowercase</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleChangeCase('upper')}>UPPERCASE</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleChangeCase('capitalize')}>Capitalize Each Word</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <SmallRibbonButton
+                    icon={Eraser}
+                    tooltip="Clear All Formatting"
+                    onClick={() => editor?.chain().focus().unsetAllMarks().run()}
+                  />
+                </div>
+                <div className="flex items-center mt-1">
+                  <SmallRibbonButton
+                    icon={Bold}
+                    tooltip="Bold"
+                    onClick={() => editor?.chain().focus().toggleBold().run()}
+                    data-active={editor?.isActive('bold')}
+                  />
+                  <SmallRibbonButton
+                    icon={Italic}
+                    tooltip="Italic"
+                    onClick={() => editor?.chain().focus().toggleItalic().run()}
+                    data-active={editor?.isActive('italic')}
+                  />
+                  <SmallRibbonButton
+                    icon={Underline}
+                    tooltip="Underline"
+                    onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                    data-active={editor?.isActive('underline')}
+                  />
+                  <SmallRibbonButton
+                    icon={Strikethrough}
+                    tooltip="Strikethrough"
+                    onClick={() => editor?.chain().focus().toggleStrike().run()}
+                    data-active={editor?.isActive('strike')}
+                  />
+                  <SmallRibbonButton
+                    icon={Subscript}
+                    tooltip="Subscript"
+                    onClick={() => editor?.chain().focus().toggleSubscript().run()}
+                    data-active={editor?.isActive('subscript')}
+                  />
+                  <SmallRibbonButton
+                    icon={Superscript}
+                    tooltip="Superscript"
+                    onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+                    data-active={editor?.isActive('superscript')}
+                  />
+                  <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                       <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={!!activeHighlightColor}>
+                          <div className="flex flex-col items-center">
+                              <Highlighter className="w-4 h-4" />
+                              <div
+                                  className="w-4 h-[3px] rounded-sm mt-0.5"
+                                  style={{ backgroundColor: activeHighlightColor || 'transparent' }}
+                              />
+                          </div>
+                       </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="p-2">
+                      {recentHighlightColors.length > 0 && (
+                        <>
+                          <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
+                          <div className="grid grid-cols-6 gap-1 mb-2">
+                            {recentHighlightColors.map(color => (
+                              <DropdownMenuItem
+                                key={color}
+                                className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                                onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
+                              >
+                                <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
+                      <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                      <div className="grid grid-cols-6 gap-1">
+                        {HIGHLIGHT_COLORS.map(color => (
+                          <DropdownMenuItem
+                            key={color}
+                            className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                            onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
+                          >
+                             <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        key={font.value}
-                        onClick={() => editor?.chain().focus().setFontFamily(font.value).run()}
-                        style={{fontFamily: font.value}}
+                        onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetHighlight().run(); }}
+                        className="cursor-pointer"
                       >
-                        {font.name}
+                        No Color
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-1 text-xs h-auto w-12 justify-between">
-                      {currentFontSize()}
-                      <ChevronDown className="w-3 h-3 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {FONT_SIZES.map(size => (
-                      <DropdownMenuItem key={size} onClick={() => editor?.chain().focus().setMark('textStyle', { fontSize: `${size}pt` }).run()}>
-                        {size}
+                      <DropdownMenuItem
+                        onSelect={(e) => { e.preventDefault(); highlightColorInputRef.current?.click(); }}
+                        className="cursor-pointer"
+                      >
+                        More Colors...
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <input
+                    type="color"
+                    ref={highlightColorInputRef}
+                    className="absolute w-0 h-0 opacity-0"
+                    onChange={(e) => handleHighlightColorSelect(e.target.value)}
+                  />
 
-                <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size" onClick={handleIncreaseFontSize}/>
-                <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size" onClick={handleDecreaseFontSize}/>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-1 h-auto" title="Change Case">
-                      <CaseIcon />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleChangeCase('sentence')}>Sentence case.</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleChangeCase('lower')}>lowercase</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleChangeCase('upper')}>UPPERCASE</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleChangeCase('capitalize')}>Capitalize Each Word</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <SmallRibbonButton
-                  icon={Eraser}
-                  tooltip="Clear All Formatting"
-                  onClick={() => editor?.chain().focus().unsetAllMarks().run()}
-                />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                       <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={!!activeFontColor}>
+                          <div className="flex flex-col items-center">
+                              <Palette className="w-4 h-4" />
+                              <div
+                                  className="w-4 h-[3px] rounded-sm mt-0.5"
+                                  style={{ backgroundColor: activeFontColor || 'transparent' }}
+                              />
+                          </div>
+                       </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="p-2">
+                      {recentFontColors.length > 0 && (
+                        <>
+                          <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
+                          <div className="grid grid-cols-6 gap-1 mb-2">
+                            {recentFontColors.map(color => (
+                              <DropdownMenuItem
+                                key={color}
+                                className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                                onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
+                              >
+                                <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
+                      <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                      <div className="grid grid-cols-8 gap-1">
+                        {FONT_COLORS.map(color => (
+                          <DropdownMenuItem
+                            key={color}
+                            className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                            onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
+                          >
+                             <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetColor().run(); }}
+                        className="cursor-pointer"
+                      >
+                        Automatic
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={(e) => { e.preventDefault(); fontColorInputRef.current?.click(); }}
+                        className="cursor-pointer"
+                      >
+                        More Colors...
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <input
+                    type="color"
+                    ref={fontColorInputRef}
+                    className="absolute w-0 h-0 opacity-0"
+                    onChange={(e) => handleFontColorSelect(e.target.value)}
+                    value={activeFontColor || '#000000'}
+                  />
+                </div>
               </div>
-              <div className="flex items-center mt-1">
-                <SmallRibbonButton
-                  icon={Bold}
-                  tooltip="Bold"
-                  onClick={() => editor?.chain().focus().toggleBold().run()}
-                  data-active={editor?.isActive('bold')}
-                />
-                <SmallRibbonButton
-                  icon={Italic}
-                  tooltip="Italic"
-                  onClick={() => editor?.chain().focus().toggleItalic().run()}
-                  data-active={editor?.isActive('italic')}
-                />
-                <SmallRibbonButton
-                  icon={Underline}
-                  tooltip="Underline"
-                  onClick={() => editor?.chain().focus().toggleUnderline().run()}
-                  data-active={editor?.isActive('underline')}
-                />
-                <SmallRibbonButton
-                  icon={Strikethrough}
-                  tooltip="Strikethrough"
-                  onClick={() => editor?.chain().focus().toggleStrike().run()}
-                  data-active={editor?.isActive('strike')}
-                />
-                <SmallRibbonButton
-                  icon={Subscript}
-                  tooltip="Subscript"
-                  onClick={() => editor?.chain().focus().toggleSubscript().run()}
-                  data-active={editor?.isActive('subscript')}
-                />
-                <SmallRibbonButton
-                  icon={Superscript}
-                  tooltip="Superscript"
-                  onClick={() => editor?.chain().focus().toggleSuperscript().run()}
-                  data-active={editor?.isActive('superscript')}
-                />
-                <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={!!activeHighlightColor}>
-                        <div className="flex flex-col items-center">
-                            <Highlighter className="w-4 h-4" />
-                            <div
-                                className="w-4 h-[3px] rounded-sm mt-0.5"
-                                style={{ backgroundColor: activeHighlightColor || 'transparent' }}
-                            />
-                        </div>
-                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="p-2">
-                    {recentHighlightColors.length > 0 && (
-                      <>
-                        <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
-                        <div className="grid grid-cols-6 gap-1 mb-2">
-                          {recentHighlightColors.map(color => (
-                            <DropdownMenuItem
-                              key={color}
-                              className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
-                              onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
-                            >
-                              <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
-                            </DropdownMenuItem>
-                          ))}
-                        </div>
-                        <DropdownMenuSeparator />
-                      </>
-                    )}
-                    <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
-                    <div className="grid grid-cols-6 gap-1">
-                      {HIGHLIGHT_COLORS.map(color => (
-                        <DropdownMenuItem
-                          key={color}
-                          className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
-                          onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
-                        >
-                           <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+            </RibbonGroup>
+            <RibbonGroup title="Paragraph">
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 h-auto" title="Bullets" data-active={editor?.isActive('bulletList')}>
+                        <List className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Bullet Library</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {BULLET_STYLES.map(({ name, icon: Icon, label }) => (
+                        <DropdownMenuItem key={name} onClick={() => handleBulletList(name)}>
+                          <Icon />
+                          <span className="ml-2">{label}</span>
                         </DropdownMenuItem>
                       ))}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetHighlight().run(); }}
-                      className="cursor-pointer"
-                    >
-                      No Color
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); highlightColorInputRef.current?.click(); }}
-                      className="cursor-pointer"
-                    >
-                      More Colors...
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <input
-                  type="color"
-                  ref={highlightColorInputRef}
-                  className="absolute w-0 h-0 opacity-0"
-                  onChange={(e) => handleHighlightColorSelect(e.target.value)}
-                />
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={!!activeFontColor}>
-                        <div className="flex flex-col items-center">
-                            <Palette className="w-4 h-4" />
-                            <div
-                                className="w-4 h-[3px] rounded-sm mt-0.5"
-                                style={{ backgroundColor: activeFontColor || 'transparent' }}
-                            />
-                        </div>
-                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="p-2">
-                    {recentFontColors.length > 0 && (
-                      <>
-                        <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
-                        <div className="grid grid-cols-6 gap-1 mb-2">
-                          {recentFontColors.map(color => (
-                            <DropdownMenuItem
-                              key={color}
-                              className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
-                              onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
-                            >
-                              <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
-                            </DropdownMenuItem>
-                          ))}
-                        </div>
-                        <DropdownMenuSeparator />
-                      </>
-                    )}
-                    <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
-                    <div className="grid grid-cols-8 gap-1">
-                      {FONT_COLORS.map(color => (
-                        <DropdownMenuItem
-                          key={color}
-                          className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
-                          onSelect={(e) => { e.preventDefault(); handleFontColorSelect(color); }}
-                        >
-                           <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
-                        </DropdownMenuItem>
-                      ))}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetColor().run(); }}
-                      className="cursor-pointer"
-                    >
-                      Automatic
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={(e) => { e.preventDefault(); fontColorInputRef.current?.click(); }}
-                      className="cursor-pointer"
-                    >
-                      More Colors...
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <input
-                  type="color"
-                  ref={fontColorInputRef}
-                  className="absolute w-0 h-0 opacity-0"
-                  onChange={(e) => handleFontColorSelect(e.target.value)}
-                  value={activeFontColor || '#000000'}
-                />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <SmallRibbonButton 
+                    icon={ListOrdered} 
+                    tooltip="Numbering"
+                    onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                    data-active={editor?.isActive('orderedList')}
+                  />
+                  <SmallRibbonButton 
+                    icon={ListChecks} 
+                    tooltip="Multilevel List"
+                    onClick={() => editor?.chain().focus().toggleTaskList().run()}
+                    data-active={editor?.isActive('taskList')}
+                  />
+                  <SmallRibbonButton 
+                    icon={IndentDecrease} 
+                    tooltip="Decrease Indent"
+                    onClick={() => editor?.chain().focus().liftListItem('listItem').run()}
+                    disabled={!editor?.can().liftListItem('listItem')}
+                  />
+                  <SmallRibbonButton 
+                    icon={IndentIncrease} 
+                    tooltip="Increase Indent"
+                    onClick={() => editor?.chain().focus().sinkListItem('listItem').run()}
+                    disabled={!editor?.can().sinkListItem('listItem')}
+                  />
+                  <SmallRibbonButton icon={ArrowDownAZ} tooltip="Sort"/>
+                  <SmallRibbonButton icon={Pilcrow} tooltip="Show/Hide ¶"/>
+                </div>
+                <div className="flex items-center mt-1">
+                  <SmallRibbonButton 
+                    icon={AlignLeft} 
+                    tooltip="Align Left"
+                    onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                    data-active={editor?.isActive({ textAlign: 'left' })}
+                  />
+                  <SmallRibbonButton 
+                    icon={AlignCenter} 
+                    tooltip="Align Center"
+                    onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                    data-active={editor?.isActive({ textAlign: 'center' })}
+                  />
+                  <SmallRibbonButton 
+                    icon={AlignRight} 
+                    tooltip="Align Right"
+                    onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                    data-active={editor?.isActive({ textAlign: 'right' })}
+                  />
+                  <SmallRibbonButton 
+                    icon={AlignJustify} 
+                    tooltip="Justify"
+                    onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
+                    data-active={editor?.isActive({ textAlign: 'justify' })}
+                  />
+                  <SmallRibbonButton icon={Baseline} tooltip="Line Spacing"/>
+                  <SmallRibbonButton icon={PaintBucket} tooltip="Shading"/>
+                  <SmallRibbonButton icon={Grid} tooltip="Borders"/>
+                </div>
               </div>
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Paragraph">
-            <div className="flex flex-col">
-              <div className="flex items-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-1 h-auto" title="Bullets" data-active={editor?.isActive('bulletList')}>
-                      <List className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Bullet Library</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {BULLET_STYLES.map(({ name, icon: Icon, label }) => (
-                      <DropdownMenuItem key={name} onClick={() => handleBulletList(name)}>
-                        <Icon />
-                        <span className="ml-2">{label}</span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <SmallRibbonButton 
-                  icon={ListOrdered} 
-                  tooltip="Numbering"
-                  onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                  data-active={editor?.isActive('orderedList')}
-                />
-                <SmallRibbonButton 
-                  icon={ListChecks} 
-                  tooltip="Multilevel List"
-                  onClick={() => editor?.chain().focus().toggleTaskList().run()}
-                  data-active={editor?.isActive('taskList')}
-                />
-                <SmallRibbonButton 
-                  icon={IndentDecrease} 
-                  tooltip="Decrease Indent"
-                  onClick={() => editor?.chain().focus().liftListItem('listItem').run()}
-                  disabled={!editor?.can().liftListItem('listItem')}
-                />
-                <SmallRibbonButton 
-                  icon={IndentIncrease} 
-                  tooltip="Increase Indent"
-                  onClick={() => editor?.chain().focus().sinkListItem('listItem').run()}
-                  disabled={!editor?.can().sinkListItem('listItem')}
-                />
-                <SmallRibbonButton icon={ArrowDownAZ} tooltip="Sort"/>
-                <SmallRibbonButton icon={Pilcrow} tooltip="Show/Hide ¶"/>
+            </RibbonGroup>
+            <RibbonGroup title="Styles">
+              <RibbonButton icon={LayoutList}>Styles</RibbonButton>
+               {/* Placeholder for style gallery items */}
+            </RibbonGroup>
+            <RibbonGroup title="Editing">
+               <RibbonButton icon={Search}>Find</RibbonButton>
+               <RibbonButton icon={Replace}>Replace</RibbonButton>
+               <RibbonButton icon={Pointer}>Select</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
+
+          <TabsContent value="insert" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Pages">
+              <RibbonButton icon={Newspaper}>Cover Page</RibbonButton>
+              <RibbonButton icon={FilePlus2}>Blank Page</RibbonButton>
+              <RibbonButton icon={UnfoldVertical}>Page Break</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Tables">
+              <RibbonButton icon={Table}>Table</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Illustrations">
+              <div className="flex flex-col">
+                <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
+                <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
+                <RibbonButton icon={Shapes}>Shapes</RibbonButton>
               </div>
-              <div className="flex items-center mt-1">
-                <SmallRibbonButton 
-                  icon={AlignLeft} 
-                  tooltip="Align Left"
-                  onClick={() => editor?.chain().focus().setTextAlign('left').run()}
-                  data-active={editor?.isActive({ textAlign: 'left' })}
-                />
-                <SmallRibbonButton 
-                  icon={AlignCenter} 
-                  tooltip="Align Center"
-                  onClick={() => editor?.chain().focus().setTextAlign('center').run()}
-                  data-active={editor?.isActive({ textAlign: 'center' })}
-                />
-                <SmallRibbonButton 
-                  icon={AlignRight} 
-                  tooltip="Align Right"
-                  onClick={() => editor?.chain().focus().setTextAlign('right').run()}
-                  data-active={editor?.isActive({ textAlign: 'right' })}
-                />
-                <SmallRibbonButton 
-                  icon={AlignJustify} 
-                  tooltip="Justify"
-                  onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
-                  data-active={editor?.isActive({ textAlign: 'justify' })}
-                />
-                <SmallRibbonButton icon={Baseline} tooltip="Line Spacing"/>
-                <SmallRibbonButton icon={PaintBucket} tooltip="Shading"/>
-                <SmallRibbonButton icon={Grid} tooltip="Borders"/>
+              <div className="flex flex-col">
+                <RibbonButton icon={Projector}>SmartArt</RibbonButton>
+                <RibbonButton icon={BarChart3}>Chart</RibbonButton>
+                <RibbonButton icon={Camera}>Screenshot</RibbonButton>
               </div>
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Styles">
-            <RibbonButton icon={LayoutList}>Styles</RibbonButton>
-             {/* Placeholder for style gallery items */}
-          </RibbonGroup>
-          <RibbonGroup title="Editing">
-             <RibbonButton icon={Search}>Find</RibbonButton>
-             <RibbonButton icon={Replace}>Replace</RibbonButton>
-             <RibbonButton icon={Pointer}>Select</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+            </RibbonGroup>
+            <RibbonGroup title="Apps">
+              <RibbonButton icon={StoreIcon}>Store</RibbonButton>
+              <RibbonButton icon={GalleryThumbnails}>My Apps</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Media">
+              <RibbonButton icon={Library}>Wikipedia</RibbonButton>
+              <RibbonButton icon={Video}>Online Video</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Links">
+              <RibbonButton icon={LinkIcon}>Hyperlink</RibbonButton>
+              <RibbonButton icon={Bookmark}>Bookmark</RibbonButton>
+              <RibbonButton icon={Link2}>Cross-ref</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Comments">
+              <RibbonButton icon={MessageSquare}>Comment</RibbonButton>
+            </RibbonGroup>
+             <RibbonGroup title="Header & Footer">
+              <RibbonButton icon={PanelTop}>Header</RibbonButton>
+              <RibbonButton icon={PanelBottom}>Footer</RibbonButton>
+              <RibbonButton icon={Hash}>Page #</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Text">
+              <div className="flex flex-col">
+                <RibbonButton icon={SquarePen}>Text Box</RibbonButton>
+                <RibbonButton icon={Blocks}>Quick Parts</RibbonButton>
+                <RibbonButton icon={Type}>WordArt</RibbonButton>
+              </div>
+              <div className="flex flex-col">
+                <RibbonButton icon={Baseline}>Drop Cap</RibbonButton>
+                <RibbonButton icon={PenTool}>Signature</RibbonButton>
+                <RibbonButton icon={CalendarDays}>Date & Time</RibbonButton>
+                <RibbonButton icon={Package}>Object</RibbonButton>
+              </div>
+            </RibbonGroup>
+            <RibbonGroup title="Symbols">
+              <RibbonButton icon={Sigma}>Equation</RibbonButton>
+              <RibbonButton icon={Omega}>Symbol</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="insert" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Pages">
-            <RibbonButton icon={Newspaper}>Cover Page</RibbonButton>
-            <RibbonButton icon={FilePlus2}>Blank Page</RibbonButton>
-            <RibbonButton icon={UnfoldVertical}>Page Break</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Tables">
-            <RibbonButton icon={Table}>Table</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Illustrations">
-            <div className="flex flex-col">
-              <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
-              <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
-              <RibbonButton icon={Shapes}>Shapes</RibbonButton>
-            </div>
-            <div className="flex flex-col">
-              <RibbonButton icon={Projector}>SmartArt</RibbonButton>
-              <RibbonButton icon={BarChart3}>Chart</RibbonButton>
-              <RibbonButton icon={Camera}>Screenshot</RibbonButton>
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Apps">
-            <RibbonButton icon={StoreIcon}>Store</RibbonButton>
-            <RibbonButton icon={GalleryThumbnails}>My Apps</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Media">
-            <RibbonButton icon={Library}>Wikipedia</RibbonButton>
-            <RibbonButton icon={Video}>Online Video</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Links">
-            <RibbonButton icon={LinkIcon}>Hyperlink</RibbonButton>
-            <RibbonButton icon={Bookmark}>Bookmark</RibbonButton>
-            <RibbonButton icon={Link2}>Cross-ref</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Comments">
-            <RibbonButton icon={MessageSquare}>Comment</RibbonButton>
-          </RibbonGroup>
-           <RibbonGroup title="Header & Footer">
-            <RibbonButton icon={PanelTop}>Header</RibbonButton>
-            <RibbonButton icon={PanelBottom}>Footer</RibbonButton>
-            <RibbonButton icon={Hash}>Page #</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Text">
-            <div className="flex flex-col">
-              <RibbonButton icon={SquarePen}>Text Box</RibbonButton>
-              <RibbonButton icon={Blocks}>Quick Parts</RibbonButton>
-              <RibbonButton icon={Type}>WordArt</RibbonButton>
-            </div>
-            <div className="flex flex-col">
-              <RibbonButton icon={Baseline}>Drop Cap</RibbonButton>
-              <RibbonButton icon={PenTool}>Signature</RibbonButton>
-              <RibbonButton icon={CalendarDays}>Date & Time</RibbonButton>
-              <RibbonButton icon={Package}>Object</RibbonButton>
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Symbols">
-            <RibbonButton icon={Sigma}>Equation</RibbonButton>
-            <RibbonButton icon={Omega}>Symbol</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="design" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Document Formatting">
+              <RibbonButton icon={Palette}>
+                Themes
+                <ChevronDown className="inline w-3 h-3 ml-0.5" />
+              </RibbonButton>
+              {/* Style Gallery placeholder would go here if implemented */}
+              <div className="flex flex-col items-start pl-2 space-y-0.5">
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Droplet className="w-4 h-4 mr-2" /> Colors <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Baseline className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Sparkles className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                  <Save className="w-4 h-4 mr-2" /> Set as Default
+                </Button>
+              </div>
+            </RibbonGroup>
+            <RibbonGroup title="Page Background">
+               <RibbonButton icon={Copyright}>
+                 Watermark
+                 <ChevronDown className="inline w-3 h-3 ml-0.5" />
+               </RibbonButton>
+               <RibbonButton icon={PaintBucket}>
+                 Page Color
+                 <ChevronDown className="inline w-3 h-3 ml-0.5" />
+               </RibbonButton>
+               <RibbonButton icon={Square}>Page Borders</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
+          
+          <TabsContent value="layout" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Page Setup">
+              <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
+              <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
+              <RibbonButton icon={Scaling}>Size</RibbonButton>
+              <RibbonButton icon={Columns}>Columns</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="design" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Document Formatting">
-            <RibbonButton icon={Palette}>
-              Themes
-              <ChevronDown className="inline w-3 h-3 ml-0.5" />
-            </RibbonButton>
-            {/* Style Gallery placeholder would go here if implemented */}
-            <div className="flex flex-col items-start pl-2 space-y-0.5">
-              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
-                <Droplet className="w-4 h-4 mr-2" /> Colors <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
-                <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
-                <Baseline className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
-                <Sparkles className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
-                <Save className="w-4 h-4 mr-2" /> Set as Default
-              </Button>
-            </div>
-          </RibbonGroup>
-          <RibbonGroup title="Page Background">
-             <RibbonButton icon={Copyright}>
-               Watermark
-               <ChevronDown className="inline w-3 h-3 ml-0.5" />
-             </RibbonButton>
-             <RibbonButton icon={PaintBucket}>
-               Page Color
-               <ChevronDown className="inline w-3 h-3 ml-0.5" />
-             </RibbonButton>
-             <RibbonButton icon={Square}>Page Borders</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
-        
-        <TabsContent value="layout" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Page Setup">
-            <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
-            <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
-            <RibbonButton icon={Scaling}>Size</RibbonButton>
-            <RibbonButton icon={Columns}>Columns</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="references" className="bg-background p-2 flex items-start">
+             <RibbonGroup title="Table of Contents">
+              <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Citations">
+              <RibbonButton icon={Book}>Bibliography</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Footnotes">
+              <RibbonButton icon={Footprints}>Footnote</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="references" className="bg-background p-2 flex items-start">
-           <RibbonGroup title="Table of Contents">
-            <RibbonButton icon={ListOrdered}>Contents</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Citations">
-            <RibbonButton icon={Book}>Bibliography</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Footnotes">
-            <RibbonButton icon={Footprints}>Footnote</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="mailings" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Create">
+              <RibbonButton icon={Mail}>Envelopes</RibbonButton>
+              <RibbonButton icon={Tags}>Labels</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Start Mail Merge">
+              <RibbonButton icon={Users2}>Mail Merge</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="mailings" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Create">
-            <RibbonButton icon={Mail}>Envelopes</RibbonButton>
-            <RibbonButton icon={Tags}>Labels</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Start Mail Merge">
-            <RibbonButton icon={Users2}>Mail Merge</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="review" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Proofing">
+              <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
+              <RibbonButton icon={ScanText}>Word Count</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Comments">
+              <RibbonButton icon={MessageCircle}>Comment</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Tracking">
+              <RibbonButton icon={ClipboardCheck}>Track Changes</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="review" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Proofing">
-            <RibbonButton icon={SpellCheck}>Spelling</RibbonButton>
-            <RibbonButton icon={ScanText}>Word Count</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Comments">
-            <RibbonButton icon={MessageCircle}>Comment</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Tracking">
-            <RibbonButton icon={ClipboardCheck}>Track Changes</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
+          <TabsContent value="view" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Views">
+              <RibbonButton icon={BookOpen}>Read Mode</RibbonButton>
+              <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
+              <RibbonButton icon={Globe}>Web Layout</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Show">
+              <RibbonButton icon={ListTree}>Outline</RibbonButton>
+              <RibbonButton icon={Ruler}>Ruler</RibbonButton>
+              <RibbonButton icon={Grid3x3}>Gridlines</RibbonButton>
+              <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Zoom">
+              <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
+              <RibbonButton icon={ZoomOut}>Zoom Out</RibbonButton>
+              <RibbonButton icon={Percent}>100%</RibbonButton>
+              <RibbonButton icon={RectangleHorizontal}>One Page</RibbonButton>
+              <RibbonButton icon={GalleryVerticalEnd}>Multi Page</RibbonButton>
+              <RibbonButton icon={StretchHorizontal}>Page Width</RibbonButton>
+            </RibbonGroup>
+             <RibbonGroup title="Window">
+              <RibbonButton icon={AppWindow}>New</RibbonButton>
+              <RibbonButton icon={LayoutGrid}>Arrange All</RibbonButton>
+              <RibbonButton icon={SplitSquareVertical}>Split</RibbonButton>
+              <RibbonButton icon={GalleryHorizontal}>Switch</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Macros">
+              <RibbonButton icon={Code2}>Macros</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
 
-        <TabsContent value="view" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Views">
-            <RibbonButton icon={BookOpen}>Read Mode</RibbonButton>
-            <RibbonButton icon={PrinterIcon}>Print Layout</RibbonButton>
-            <RibbonButton icon={Globe}>Web Layout</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Show">
-            <RibbonButton icon={ListTree}>Outline</RibbonButton>
-            <RibbonButton icon={Ruler}>Ruler</RibbonButton>
-            <RibbonButton icon={Grid3x3}>Gridlines</RibbonButton>
-            <RibbonButton icon={PanelLeftOpen}>Nav Pane</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Zoom">
-            <RibbonButton icon={ZoomIn}>Zoom In</RibbonButton>
-            <RibbonButton icon={ZoomOut}>Zoom Out</RibbonButton>
-            <RibbonButton icon={Percent}>100%</RibbonButton>
-            <RibbonButton icon={RectangleHorizontal}>One Page</RibbonButton>
-            <RibbonButton icon={GalleryVerticalEnd}>Multi Page</RibbonButton>
-            <RibbonButton icon={StretchHorizontal}>Page Width</RibbonButton>
-          </RibbonGroup>
-           <RibbonGroup title="Window">
-            <RibbonButton icon={AppWindow}>New</RibbonButton>
-            <RibbonButton icon={LayoutGrid}>Arrange All</RibbonButton>
-            <RibbonButton icon={SplitSquareVertical}>Split</RibbonButton>
-            <RibbonButton icon={GalleryHorizontal}>Switch</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Macros">
-            <RibbonButton icon={Code2}>Macros</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
-
-        <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
-          <RibbonGroup title="Writing Assistant">
-            <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
-            <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
-          </RibbonGroup>
-          <RibbonGroup title="Document Analysis">
-            <RibbonButton icon={FileTextIcon} onClick={onSummarizeDocument}>Summarize</RibbonButton>
-          </RibbonGroup>
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="ai-tools" className="bg-background p-2 flex items-start">
+            <RibbonGroup title="Writing Assistant">
+              <RibbonButton icon={Sparkles} onClick={onImproveWriting}>Improve</RibbonButton>
+              <RibbonButton icon={Brain} onClick={onDetectTone}>Tone</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Document Analysis">
+              <RibbonButton icon={FileTextIcon} onClick={onSummarizeDocument}>Summarize</RibbonButton>
+            </RibbonGroup>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </>
   );
 }

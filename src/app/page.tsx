@@ -5,6 +5,7 @@ import { AngleWordHeader } from "@/components/angle-word/header";
 import { AngleWordRibbon } from "@/components/angle-word/ribbon";
 import { EditorArea, type AITool } from "@/components/angle-word/editor-area";
 import { Editor } from "@tiptap/react";
+import { FileMenu } from "@/components/angle-word/file-menu";
 
 export default function AngleWordPage() {
   const [activeAITool, setActiveAITool] = useState<AITool>(null);
