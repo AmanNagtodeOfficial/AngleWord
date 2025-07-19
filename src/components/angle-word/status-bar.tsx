@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { Globe, Minus, Monitor, Plus } from "lucide-react";
+import { BookOpen, Crosshair, Globe, Languages, Minus, Monitor, Plus, SpellCheck, CheckCircle } from "lucide-react";
 import type { ViewMode } from "@/app/page";
 import { cn } from "@/lib/utils";
 
@@ -48,8 +48,35 @@ export function StatusBar({
         </span>
         <Separator orientation="vertical" className="h-4" />
         <span>{wordCount} words</span>
+        <Separator orientation="vertical" className="h-4" />
+         <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5">
+           <CheckCircle className="h-4 w-4 text-green-500" />
+           No grammar issues
+        </Button>
+        <Separator orientation="vertical" className="h-4" />
+        <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5">
+            <Languages className="h-4 w-4" />
+            English (United States)
+        </Button>
       </div>
       <div className="flex items-center gap-2">
+        <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            title="Focus Mode"
+            >
+            <Crosshair className="h-4 w-4" />
+        </Button>
+        <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            title="Read Mode"
+            >
+            <BookOpen className="h-4 w-4" />
+        </Button>
+         <Separator orientation="vertical" className="h-4 mx-1" />
         <Button
           variant="ghost"
           size="icon"
@@ -90,3 +117,4 @@ export function StatusBar({
     </footer>
   );
 }
+
