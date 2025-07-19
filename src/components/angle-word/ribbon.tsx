@@ -252,6 +252,33 @@ const MarginMenuItem: FC<{ title: string; details: string[]; onSelect: () => voi
     </DropdownMenuItem>
 );
 
+const BreaksIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 8V6H19V8H5Z" fill="currentColor"/>
+        <path d="M5 18V16H19V18H5Z" fill="currentColor"/>
+        <path d="M7 12H9V10H7V12Z" fill="#3B82F6"/>
+        <path d="M11 12H13V10H11V12Z" fill="#3B82F6"/>
+        <path d="M15 12H17V10H15V12Z" fill="#3B82F6"/>
+    </svg>
+);
+
+const LineNumbersIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 8H17V6H7V8Z" fill="currentColor"/>
+        <path d="M7 16H17V14H7V16Z" fill="currentColor"/>
+        <text x="5" y="10" fontFamily="sans-serif" fontSize="8" fill="#3B82F6" textAnchor="end">1</text>
+        <text x="5" y="18" fontFamily="sans-serif" fontSize="8" fill="#3B82F6" textAnchor="end">2</text>
+    </svg>
+);
+
+const HyphenationIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="10" fontFamily="sans-serif" fontSize="8" fill="#3B82F6" textAnchor="end">a-</text>
+        <text x="6" y="19" fontFamily="sans-serif" fontSize="8" fill="#3B82F6" textAnchor="end">bc</text>
+    </svg>
+);
+
+
 export function AngleWordRibbon({
   editor,
   onImproveWriting,
@@ -1018,6 +1045,17 @@ export function AngleWordRibbon({
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
+                 <div className="flex flex-col space-y-1 ml-2 pl-2 border-l">
+                    <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                        <BreaksIcon /> <span className="ml-1">Breaks</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                     <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                        <LineNumbersIcon /> <span className="ml-1">Line Numbers</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                     <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                        <HyphenationIcon /> <span className="ml-1">Hyphenation</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                </div>
             </RibbonGroup>
             <RibbonGroup title="Paragraph">
                 <div className="flex gap-4">
@@ -1141,5 +1179,4 @@ export function AngleWordRibbon({
   );
 }
 
-    
     
