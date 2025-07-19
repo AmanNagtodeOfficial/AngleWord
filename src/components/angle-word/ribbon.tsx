@@ -118,6 +118,7 @@ import {
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
+import { useRef } from "react";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -139,6 +140,8 @@ const FONT_FAMILIES = [
 
 
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
+  const colorInputRef = useRef<HTMLInputElement>(null);
+
   const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
     <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
       <Icon className="w-5 h-5 mb-1" />
@@ -349,7 +352,19 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   onClick={() => editor?.chain().focus().toggleHighlight({ color: '#FFF3A3' }).run()}
                   data-active={editor?.isActive('highlight')}
                 />
-                <SmallRibbonButton icon={Palette} tooltip="Font Color"/>
+                <div className="relative">
+                  <SmallRibbonButton 
+                    icon={Palette} 
+                    tooltip="Font Color"
+                    onClick={() => colorInputRef.current?.click()}
+                  />
+                  <input
+                    type="color"
+                    ref={colorInputRef}
+                    className="absolute w-0 h-0 opacity-0"
+                    onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
+                  />
+                </div>
               </div>
             </div>
           </RibbonGroup>
