@@ -137,11 +137,12 @@ import {
   WrapText,
   MoveUp,
   MoveDown,
-  ChevronUp
+  ChevronUp,
+  Star,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, FC } from "react";
 import { FileMenu } from "./file-menu";
 import { useToast } from "@/hooks/use-toast";
 import type { Margins, Orientation, PageSize, Columns as ColumnsType } from "@/app/page";
@@ -200,12 +201,56 @@ const BULLET_STYLES = [
   { name: 'square', icon: BulletSquareIcon, label: 'Solid Square' },
 ];
 
-const MARGIN_PRESETS: { [key: string]: { name: string; values: Margins } } = {
-    normal: { name: 'Normal', values: { top: '1in', bottom: '1in', left: '1in', right: '1in' } },
-    narrow: { name: 'Narrow', values: { top: '0.5in', bottom: '0.5in', left: '0.5in', right: '0.5in' } },
-    moderate: { name: 'Moderate', values: { top: '1in', bottom: '1in', left: '0.75in', right: '0.75in' } },
-    wide: { name: 'Wide', values: { top: '1in', bottom: '1in', left: '2in', right: '2in' } },
+const MARGIN_PRESETS: { [key: string]: { name: string; values: Margins, details: string[] } } = {
+    normal: { name: 'Normal', values: { top: '2.54cm', bottom: '2.54cm', left: '2.54cm', right: '2.54cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 2.54 cm', 'Right: 2.54 cm'] },
+    narrow: { name: 'Narrow', values: { top: '1.27cm', bottom: '1.27cm', left: '1.27cm', right: '1.27cm' }, details: ['Top: 1.27 cm', 'Bottom: 1.27 cm', 'Left: 1.27 cm', 'Right: 1.27 cm'] },
+    moderate: { name: 'Moderate', values: { top: '2.54cm', bottom: '2.54cm', left: '1.91cm', right: '1.91cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 1.91 cm', 'Right: 1.91 cm'] },
+    wide: { name: 'Wide', values: { top: '2.54cm', bottom: '2.54cm', left: '5.08cm', right: '5.08cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 5.08 cm', 'Right: 5.08 cm'] },
+    mirrored: { name: 'Mirrored', values: { top: '2.54cm', bottom: '2.54cm', left: '3.18cm', right: '2.54cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Inside: 3.18 cm', 'Outside: 2.54 cm'] },
+    office2003: { name: 'Office 2003 Default', values: { top: '2.54cm', bottom: '2.54cm', left: '3.18cm', right: '3.18cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 3.18 cm', 'Right: 3.18 cm'] },
 };
+
+const MarginIcon: FC<{ type: string }> = ({ type }) => {
+    const baseStyle = {
+      width: '32px',
+      height: '32px',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: 1.5,
+    };
+
+    switch (type) {
+        case 'normal':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="6" y="6" width="12" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'narrow':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="5" y="5" width="14" height="14" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'moderate':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="5.5" y="6" width="13" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'wide':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="8" y="6" width="8" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'mirrored':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><path d="M12 6V18" stroke="#3b82f6" strokeDasharray="2 2" /><rect x="6" y="6" width="5" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /><rect x="13" y="6" width="5" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'custom':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><Star x="8" y="8" width="8" height="8" fill="#f59e0b" stroke="#f59e0b" /></svg>;
+        default:
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /></svg>;
+    }
+};
+
+const MarginMenuItem: FC<{ title: string; details: string[]; onSelect: () => void; iconType: string }> = ({ title, details, onSelect, iconType }) => (
+    <DropdownMenuItem className="p-2 cursor-pointer items-start" onSelect={onSelect}>
+        <div className="mr-3 flex-shrink-0">
+            <MarginIcon type={iconType} />
+        </div>
+        <div className="flex-grow">
+            <p className="font-semibold text-sm">{title}</p>
+            <div className="grid grid-cols-2 text-xs text-muted-foreground gap-x-2">
+                {details.map((detail, i) => <span key={i}>{detail}</span>)}
+            </div>
+        </div>
+    </DropdownMenuItem>
+);
 
 export function AngleWordRibbon({
   editor,
@@ -914,7 +959,7 @@ export function AngleWordRibbon({
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
               <div className="flex">
-                  <div className="grid grid-cols-2 gap-x-1">
+                  <div className="flex flex-col gap-y-1">
                       <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
@@ -922,18 +967,27 @@ export function AngleWordRibbon({
                                 <span className="text-xs text-center">Margins</span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuLabel>Margin Presets</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            {Object.entries(MARGIN_PRESETS).map(([key, { name, values }]) => (
-                                <DropdownMenuItem key={key} onClick={() => setMargins(values)}>
-                                    {name}
-                                </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>
-                                Custom Margins...
-                            </DropdownMenuItem>
+                          <DropdownMenuContent className="w-64">
+                              <MarginMenuItem 
+                                title="Last Custom Setting" 
+                                details={['Top: 0 cm', 'Bottom: 0 cm', 'Left: 0 cm', 'Right: 0 cm']} 
+                                onSelect={() => setMargins({ top: '0', bottom: '0', left: '0', right: '0' })} 
+                                iconType="custom"
+                              />
+                              <DropdownMenuSeparator/>
+                              {Object.entries(MARGIN_PRESETS).map(([key, { name, values, details }]) => (
+                                <MarginMenuItem 
+                                    key={key} 
+                                    title={name} 
+                                    details={details} 
+                                    onSelect={() => setMargins(values)}
+                                    iconType={key}
+                                />
+                              ))}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)} className="cursor-pointer">
+                                  Custom Margins...
+                              </DropdownMenuItem>
                           </DropdownMenuContent>
                       </DropdownMenu>
                       <DropdownMenu>
@@ -948,6 +1002,9 @@ export function AngleWordRibbon({
                               <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
                           </DropdownMenuContent>
                       </DropdownMenu>
+                       
+                  </div>
+                   <div className="flex flex-col gap-y-1">
                        <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                               <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
@@ -963,7 +1020,7 @@ export function AngleWordRibbon({
                               ))}
                           </DropdownMenuContent>
                       </DropdownMenu>
-                      <DropdownMenu>
+                       <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                               <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
                                   <ColumnsIcon className="w-5 h-5 mb-1" />
@@ -976,7 +1033,7 @@ export function AngleWordRibbon({
                               <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
                           </DropdownMenuContent>
                       </DropdownMenu>
-                  </div>
+                   </div>
                    <div className="flex flex-col pl-1">
                         <SmallRibbonButton icon={UnfoldVertical} tooltip="Breaks" className="px-2 pb-1" disabled><span className="text-xs">Breaks</span></SmallRibbonButton>
                         <SmallRibbonButton icon={ListOrdered} tooltip="Line Numbers" className="px-2 pb-1" disabled><span className="text-xs">Line Numbers</span></SmallRibbonButton>
@@ -1098,3 +1155,5 @@ export function AngleWordRibbon({
     </>
   );
 }
+
+    
