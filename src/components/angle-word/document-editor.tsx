@@ -11,9 +11,9 @@ import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import { useEffect } from "react";
-
-// The FontSize extension is now part of the TextStyle extension, so it doesn't need a separate import
-// We'll configure it through TextStyle
+import TextAlign from "@tiptap/extension-text-align";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
 
 interface DocumentEditorProps {
   content: string;
@@ -36,7 +36,13 @@ export function DocumentEditor({ content, onUpdate, setEditor, className }: Docu
       TextStyle,
       Color,
       FontFamily,
-      // FontSize is now part of TextStyle and does not need to be added separately
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
     ],
     content: content,
     onUpdate: ({ editor }) => {

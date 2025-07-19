@@ -553,19 +553,64 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
           <RibbonGroup title="Paragraph">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <SmallRibbonButton icon={List} tooltip="Bullets"/>
-                <SmallRibbonButton icon={ListOrdered} tooltip="Numbering"/>
-                <SmallRibbonButton icon={ListChecks} tooltip="Multilevel List"/>
-                <SmallRibbonButton icon={IndentDecrease} tooltip="Decrease Indent"/>
-                <SmallRibbonButton icon={IndentIncrease} tooltip="Increase Indent"/>
+                <SmallRibbonButton 
+                  icon={List} 
+                  tooltip="Bullets"
+                  onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                  data-active={editor?.isActive('bulletList')}
+                />
+                <SmallRibbonButton 
+                  icon={ListOrdered} 
+                  tooltip="Numbering"
+                  onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                  data-active={editor?.isActive('orderedList')}
+                />
+                <SmallRibbonButton 
+                  icon={ListChecks} 
+                  tooltip="Multilevel List"
+                  onClick={() => editor?.chain().focus().toggleTaskList().run()}
+                  data-active={editor?.isActive('taskList')}
+                />
+                <SmallRibbonButton 
+                  icon={IndentDecrease} 
+                  tooltip="Decrease Indent"
+                  onClick={() => editor?.chain().focus().liftListItem('listItem').run()}
+                  disabled={!editor?.can().liftListItem('listItem')}
+                />
+                <SmallRibbonButton 
+                  icon={IndentIncrease} 
+                  tooltip="Increase Indent"
+                  onClick={() => editor?.chain().focus().sinkListItem('listItem').run()}
+                  disabled={!editor?.can().sinkListItem('listItem')}
+                />
                 <SmallRibbonButton icon={ArrowDownAZ} tooltip="Sort"/>
                 <SmallRibbonButton icon={Pilcrow} tooltip="Show/Hide ¶"/>
               </div>
               <div className="flex items-center mt-1">
-                <SmallRibbonButton icon={AlignLeft} tooltip="Align Left"/>
-                <SmallRibbonButton icon={AlignCenter} tooltip="Align Center"/>
-                <SmallRibbonButton icon={AlignRight} tooltip="Align Right"/>
-                <SmallRibbonButton icon={AlignJustify} tooltip="Justify"/>
+                <SmallRibbonButton 
+                  icon={AlignLeft} 
+                  tooltip="Align Left"
+                  onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                  data-active={editor?.isActive({ textAlign: 'left' })}
+                />
+                <SmallRibbonButton 
+                  icon={AlignCenter} 
+                  tooltip="Align Center"
+                  onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                  data-active={editor?.isActive({ textAlign: 'center' })}
+                />
+                <SmallRibbonButton 
+                  icon={AlignRight} 
+                  tooltip="Align Right"
+                  onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                  data-active={editor?.isActive({ textAlign: 'right' })}
+                />
+                <SmallRibbonButton 
+                  icon={AlignJustify} 
+                  tooltip="Justify"
+                  onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
+                  data-active={editor?.isActive({ textAlign: 'justify' })}
+                />
                 <SmallRibbonButton icon={Baseline} tooltip="Line Spacing"/>
                 <SmallRibbonButton icon={PaintBucket} tooltip="Shading"/>
                 <SmallRibbonButton icon={Grid} tooltip="Borders"/>
@@ -770,7 +815,3 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
-
-    
-
-    
