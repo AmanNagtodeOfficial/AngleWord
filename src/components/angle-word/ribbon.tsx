@@ -148,6 +148,8 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
+  
+  const activeHighlightColor = editor?.getAttributes('highlight').color;
 
   const handleHighlightColorSelect = (color: string) => {
     if (!color) return;
@@ -166,10 +168,12 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </Button>
   );
 
-  const SmallRibbonButton = ({ icon: Icon, tooltip, ...props }: { icon: React.ElementType, tooltip: string, [key: string]: any }) => (
+  const SmallRibbonButton = ({ children, icon: Icon, tooltip, ...props }: { children?: React.ReactNode, icon: React.ElementType, tooltip: string, [key: string]: any }) => (
     // Tooltip can be added here if ShadCN Tooltip is integrated
     <Button variant="ghost" className="p-1 h-auto" title={tooltip} {...props}>
-      <Icon className="w-4 h-4" />
+      <div className="flex flex-col items-center">
+        {children || <Icon className="w-4 h-4" />}
+      </div>
     </Button>
   );
 
@@ -365,9 +369,15 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                 <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={editor?.isActive('highlight')}>
-                      <Highlighter className="w-4 h-4" />
-                    </Button>
+                     <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={editor?.isActive('highlight')}>
+                        <div className="flex flex-col items-center">
+                            <Highlighter className="w-4 h-4" />
+                            <div
+                                className="w-4 h-[3px] rounded-sm mt-0.5"
+                                style={{ backgroundColor: activeHighlightColor || 'transparent' }}
+                            />
+                        </div>
+                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="p-2">
                     {recentHighlightColors.length > 0 && (
