@@ -11,18 +11,34 @@ import AuthWrapper from "@/components/auth-wrapper";
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
 
+export interface Margins {
+  top: string;
+  bottom: string;
+  left: string;
+  right: string;
+}
+
 export interface Document {
   id: string;
   name: string;
   content: string;
   saveStatus: SaveStatus;
+  margins: Margins;
 }
+
+const defaultMargins: Margins = {
+    top: '1in',
+    bottom: '1in',
+    left: '1in',
+    right: '1in',
+};
 
 const createNewDocument = (name: string): Document => ({
   id: Date.now().toString(),
   name,
   content: `<p>Start writing your document here...</p>`,
   saveStatus: "saved",
+  margins: defaultMargins,
 });
 
 function AngleWordPage() {
@@ -116,6 +132,13 @@ function AngleWordPage() {
     }
   }
 
+  const setDocumentMargins = (margins: Margins) => {
+    if (activeDocumentId) {
+      updateDocument(activeDocumentId, { margins, saveStatus: "unsaved" });
+    }
+  }
+
+
   if (!activeDocument) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -143,6 +166,8 @@ function AngleWordPage() {
           onSummarizeDocument={handleTriggerSummarizeDocument}
           documentName={activeDocument.name}
           setDocumentName={setDocumentName}
+          margins={activeDocument.margins}
+          setMargins={setDocumentMargins}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea
@@ -152,6 +177,7 @@ function AngleWordPage() {
             setEditor={setEditor}
             content={activeDocument.content}
             onContentUpdate={handleContentUpdate}
+            margins={activeDocument.margins}
           />
         </main>
       </div>

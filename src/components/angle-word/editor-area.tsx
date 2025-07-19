@@ -13,6 +13,8 @@ import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Editor } from "@tiptap/react";
+import type { Margins } from "@/app/page";
+
 
 export type AITool = "improve" | "tone" | "summarize" | null;
 
@@ -22,9 +24,10 @@ interface EditorAreaProps {
   setEditor: (editor: Editor | null) => void;
   content: string;
   onContentUpdate: (content: string) => void;
+  margins: Margins;
 }
 
-export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, onContentUpdate }: EditorAreaProps) {
+export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, onContentUpdate, margins }: EditorAreaProps) {
   const { toast } = useToast();
 
   const [isLoadingImprove, setIsLoadingImprove] = useState(false);
@@ -132,7 +135,7 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
     } else if (activeAITool === 'summarize') {
        handleSummarizeDocument();
     }
-  }, [activeAITool]);
+  }, [activeAITool, handleImproveWriting, handleDetectTone, handleSummarizeDocument]);
 
   const handleCloseModal = () => {
     setActiveAITool(null);
@@ -153,7 +156,13 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, 
             content={content} 
             onUpdate={onContentUpdate}
             setEditor={setEditorInstance}
-            className="h-full min-h-[11in] px-[1in] py-[1in]"
+            className="h-full min-h-[11in]"
+            style={{
+                paddingTop: margins.top,
+                paddingBottom: margins.bottom,
+                paddingLeft: margins.left,
+                paddingRight: margins.right,
+            }}
           />
         </div>
       </div>

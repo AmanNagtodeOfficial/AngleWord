@@ -131,6 +131,7 @@ import { Editor } from "@tiptap/react";
 import { useRef, useState, useCallback } from "react";
 import { FileMenu } from "./file-menu";
 import { useToast } from "@/hooks/use-toast";
+import type { Margins } from "@/app/page";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -139,6 +140,8 @@ interface RibbonProps {
   editor: Editor | null;
   documentName: string;
   setDocumentName: (name: string) => void;
+  margins: Margins;
+  setMargins: (margins: Margins) => void;
 }
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -172,7 +175,14 @@ const BULLET_STYLES = [
   { name: 'square', icon: BulletSquareIcon, label: 'Solid Square' },
 ];
 
-export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument, documentName, setDocumentName }: RibbonProps) {
+const MARGIN_PRESETS: { [key: string]: { name: string; values: Margins } } = {
+    normal: { name: 'Normal', values: { top: '1in', bottom: '1in', left: '1in', right: '1in' } },
+    narrow: { name: 'Narrow', values: { top: '0.5in', bottom: '0.5in', left: '0.5in', right: '0.5in' } },
+    moderate: { name: 'Moderate', values: { top: '1in', bottom: '1in', left: '0.75in', right: '0.75in' } },
+    wide: { name: 'Wide', values: { top: '1in', bottom: '1in', left: '2in', right: '2in' } },
+};
+
+export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument, documentName, setDocumentName, margins, setMargins }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
 
@@ -810,7 +820,23 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
           
           <TabsContent value="layout" className="bg-background p-2 flex items-start">
             <RibbonGroup title="Page Setup">
-              <RibbonButton icon={FileTextIcon}>Margins</RibbonButton>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex flex-col items-center h-auto p-2">
+                        <FileTextIcon className="w-5 h-5 mb-1" />
+                        <span className="text-xs text-center">Margins</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Margin Presets</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {Object.entries(MARGIN_PRESETS).map(([key, { name, values }]) => (
+                        <DropdownMenuItem key={key} onClick={() => setMargins(values)}>
+                            {name}
+                        </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+              </DropdownMenu>
               <RibbonButton icon={BookOpen}>Orientation</RibbonButton> 
               <RibbonButton icon={Scaling}>Size</RibbonButton>
               <RibbonButton icon={Columns}>Columns</RibbonButton>
