@@ -198,7 +198,7 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <Button variant="outline" className="w-full" onClick={handleSignInWithGoogle}>
-              Sign in with Google
+              Continue with Google
             </Button>
             <Button variant="link" className="w-full" onClick={handleContinueAnonymously}>
               Continue without signing in
