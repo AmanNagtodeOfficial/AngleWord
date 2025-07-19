@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -112,14 +110,16 @@ import {
   ZoomOut,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
+import { Editor } from "@tiptap/react";
 
 interface RibbonProps {
   onImproveWriting: () => void;
   onDetectTone: () => void;
   onSummarizeDocument: () => void;
+  editor: Editor | null;
 }
 
-export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
+export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
   const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
     <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
       <Icon className="w-5 h-5 mb-1" />
@@ -194,9 +194,24 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
                 <SmallRibbonButton icon={Eraser} tooltip="Clear All Formatting"/>
               </div>
               <div className="flex items-center mt-1">
-                <SmallRibbonButton icon={Bold} tooltip="Bold"/>
-                <SmallRibbonButton icon={Italic} tooltip="Italic"/>
-                <SmallRibbonButton icon={Underline} tooltip="Underline"/>
+                <SmallRibbonButton
+                  icon={Bold}
+                  tooltip="Bold"
+                  onClick={() => editor?.chain().focus().toggleBold().run()}
+                  data-active={editor?.isActive('bold')}
+                />
+                <SmallRibbonButton
+                  icon={Italic}
+                  tooltip="Italic"
+                  onClick={() => editor?.chain().focus().toggleItalic().run()}
+                  data-active={editor?.isActive('italic')}
+                />
+                <SmallRibbonButton
+                  icon={Underline}
+                  tooltip="Underline"
+                  onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                  data-active={editor?.isActive('underline')}
+                />
                 <SmallRibbonButton icon={Strikethrough} tooltip="Strikethrough"/>
                 <SmallRibbonButton icon={Subscript} tooltip="Subscript"/>
                 <SmallRibbonButton icon={Superscript} tooltip="Superscript"/>
@@ -426,6 +441,3 @@ export function AngleWordRibbon({ onImproveWriting, onDetectTone, onSummarizeDoc
     </div>
   );
 }
-
-
-

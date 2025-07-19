@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { DocumentEditor } from "./document-editor";
 import { AIModal } from "./ai-modal";
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,18 @@ import type { DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-t
 import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Editor } from "@tiptap/react";
 
 export type AITool = "improve" | "tone" | "summarize" | null;
 
 interface EditorAreaProps {
   activeAITool: AITool;
   setActiveAITool: (tool: AITool) => void;
+  setEditor: (editor: Editor | null) => void;
 }
 
-export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
-  const [documentText, setDocumentText] = useState<string>("");
+export function EditorArea({ activeAITool, setActiveAITool, setEditor }: EditorAreaProps) {
+  const [documentText, setDocumentText] = useState<string>("<p>Start writing your document here...</p>");
   const { toast } = useToast();
 
   const [isLoadingImprove, setIsLoadingImprove] = useState(false);
@@ -34,16 +36,28 @@ export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
   const [isLoadingSummarize, setIsLoadingSummarize] = useState(false);
   const [summarizeResult, setSummarizeResult] = useState<SummarizeDocumentOutput | null>(null);
   const [summarizeError, setSummarizeError] = useState<string | null>(null);
+  
+  const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
+  
+  useEffect(() => {
+    setEditor(editorInstance);
+  }, [editorInstance, setEditor]);
+
+  const getTextForAI = useCallback(() => {
+    return editorInstance?.getText() || "";
+  }, [editorInstance]);
+
 
   const handleImproveWriting = useCallback(async () => {
-    if (!documentText.trim()) {
+    const text = getTextForAI();
+    if (!text.trim()) {
       toast({ title: "Input Required", description: "Please enter some text to improve.", variant: "destructive" });
       return;
     }
     setIsLoadingImprove(true);
     setImproveError(null);
     try {
-      const result = await improveTextAction({ text: documentText });
+      const result = await improveTextAction({ text });
       setImproveResult(result);
     } catch (error: any) {
       setImproveError(error.message || "Failed to improve writing.");
@@ -51,10 +65,11 @@ export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
     } finally {
       setIsLoadingImprove(false);
     }
-  }, [documentText, toast]);
+  }, [getTextForAI, toast]);
 
   const handleDetectTone = useCallback(async () => {
-    if (!documentText.trim()) {
+    const text = getTextForAI();
+    if (!text.trim()) {
       toast({ title: "Input Required", description: "Please enter some text to detect tone.", variant: "destructive" });
       return;
     }
@@ -62,7 +77,7 @@ export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
     setToneError(null);
     try {
       // Context can be added later if needed, e.g., from a form field
-      const result = await detectToneAction({ text: documentText, context: "general writing" });
+      const result = await detectToneAction({ text: text, context: "general writing" });
       setToneResult(result);
     } catch (error: any) {
       setToneError(error.message || "Failed to detect tone.");
@@ -70,17 +85,18 @@ export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
     } finally {
       setIsLoadingTone(false);
     }
-  }, [documentText, toast]);
+  }, [getTextForAI, toast]);
 
   const handleSummarizeDocument = useCallback(async () => {
-    if (!documentText.trim()) {
+    const text = getTextForAI();
+    if (!text.trim()) {
       toast({ title: "Input Required", description: "Please enter some text to summarize.", variant: "destructive" });
       return;
     }
     setIsLoadingSummarize(true);
     setSummarizeError(null);
     try {
-      const result = await summarizeTextAction({ documentText: documentText });
+      const result = await summarizeTextAction({ documentText: text });
       setSummarizeResult(result);
     } catch (error: any) {
       setSummarizeError(error.message || "Failed to summarize document.");
@@ -88,40 +104,34 @@ export function EditorArea({ activeAITool, setActiveAITool }: EditorAreaProps) {
     } finally {
       setIsLoadingSummarize(false);
     }
-  }, [documentText, toast]);
+  }, [getTextForAI, toast]);
   
   const applyImprovedText = () => {
     if (improveResult?.improvedText) {
-      setDocumentText(improveResult.improvedText);
+      editorInstance?.commands.setContent(improveResult.improvedText);
       setActiveAITool(null);
     }
   };
 
-  // Trigger AI actions when activeAITool changes
-  // This logic is now effectively moved to the page.tsx via ribbon button clicks
-  // The modal opening is handled by `activeAITool` prop.
-  // The API call should be triggered when the modal is opened AND the data is not yet fetched.
-
-  // For example, if a ribbon button sets activeAITool to 'improve', and the modal for 'improve' opens,
-  // it should then call handleImproveWriting. This might be better handled inside the modal content,
-  // or by having the page.tsx orchestrate this. For now, the ribbon directly calls these handlers.
-
-  if (activeAITool === 'improve' && !isLoadingImprove && !improveResult && !improveError) {
-     handleImproveWriting();
-  } else if (activeAITool === 'tone' && !isLoadingTone && !toneResult && !toneError) {
-     handleDetectTone();
-  } else if (activeAITool === 'summarize' && !isLoadingSummarize && !summarizeResult && !summarizeError) {
-     handleSummarizeDocument();
-  }
+  useEffect(() => {
+    if (activeAITool === 'improve' && !isLoadingImprove && !improveResult && !improveError) {
+       handleImproveWriting();
+    } else if (activeAITool === 'tone' && !isLoadingTone && !toneResult && !toneError) {
+       handleDetectTone();
+    } else if (activeAITool === 'summarize' && !isLoadingSummarize && !summarizeResult && !summarizeError) {
+       handleSummarizeDocument();
+    }
+  }, [activeAITool, handleImproveWriting, handleDetectTone, handleSummarizeDocument, isLoadingImprove, improveResult, improveError, isLoadingTone, toneResult, toneError, isLoadingSummarize, summarizeResult, summarizeError]);
 
 
   return (
     <div className="flex-grow flex flex-col items-center justify-center bg-background p-4 overflow-hidden">
       <Card className="w-full max-w-4xl h-[calc(100vh-200px)] shadow-xl flex flex-col overflow-hidden">
-        <CardContent className="p-0 flex-grow overflow-hidden">
+        <CardContent className="p-0 flex-grow overflow-auto">
           <DocumentEditor 
-            value={documentText} 
-            onChange={setDocumentText}
+            content={documentText} 
+            onUpdate={setDocumentText}
+            setEditor={setEditorInstance}
             className="h-full"
           />
         </CardContent>

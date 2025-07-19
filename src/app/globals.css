@@ -86,4 +86,14 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .tiptap {
+    @apply rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .tiptap > p:first-child {
+    margin-top: 0;
+  }
+
+  button[data-active="true"] {
+    @apply bg-primary/20 text-primary;
+  }
 }
