@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -16,20 +17,20 @@ import {
   AlignRight,
   AppWindow,
   ArrowDownAZ,
-  ALargeSmall, // Used for Increase Font Size
+  ALargeSmall,
   BarChart3,
   Baseline,
-  Blocks, // For Quick Parts
+  Blocks,
   Bold,
   Book,
   BookCopy,
   BookOpen,
-  Bookmark, // For Links group
+  Bookmark,
   Brain,
-  CalendarDays, // For Date & Time
-  Camera, // For Screenshot
-  CaseSensitive, // For Change Case (Aa)
-  CaseLower, // Used for Decrease Font Size
+  CalendarDays,
+  Camera,
+  CaseSensitive,
+  CaseLower,
   ClipboardCheck,
   ClipboardPaste,
   Code2,
@@ -37,88 +38,88 @@ import {
   Copyright,
   Copy,
   ChevronDown,
-  Droplet, // For Design > Colors
-  Eraser, // For Clear All Formatting
+  Droplet,
+  Eraser,
   File,
   FilePlus,
   FilePlus2,
   FileTextIcon,
   Footprints,
   GalleryHorizontal,
-  GalleryThumbnails, // For My Apps
+  GalleryThumbnails,
   GalleryVerticalEnd,
   Globe,
-  Grid, // For Borders in Paragraph group
+  Grid,
   Grid3x3,
   Hash,
   Highlighter,
-  ImageUp, // For Online Pictures
+  ImageUp,
   Image as LucideImage,
   IndentDecrease,
   IndentIncrease,
   Italic,
   LayoutGrid,
-  LayoutList, // For Styles group
-  Library, // For Wikipedia
-  Link as LinkIcon, // For Hyperlink
-  Link2, // For Cross-reference
+  LayoutList,
+  Library,
+  Link as LinkIcon,
+  Link2,
   List,
-  ListChecks, // For Multilevel List
+  ListChecks,
   ListOrdered,
   ListTree,
   Mail,
   MessageCircle,
-  MessageSquare, // For Comment
+  MessageSquare,
   Newspaper,
   Omega,
-  Package, // For Object
-  PaintBucket, // For Shading & Page Color
-  Paintbrush, // For Format Painter & Design Colors (Used for Design > Colors in image, but Droplet is better)
-  Palette, // For Font Color & Design Themes
+  Package,
+  PaintBucket,
+  Paintbrush,
+  Palette,
   PanelBottom,
   PanelLeftOpen,
   PanelTop,
-  PenTool, // For Signature Line
+  PenTool,
   Percent,
-  Pilcrow, // For Show/Hide Paragraph marks
-  Pointer, // For Select in Editing
+  Pilcrow,
+  Pointer,
   Printer,
   PrinterIcon,
-  Projector, // For SmartArt
+  Projector,
   RectangleHorizontal,
   Replace,
   Ruler,
-  Save, // For Save action & Design > Set as Default
+  Save,
   Scaling,
   ScanText,
   Search,
   Scissors,
   Shapes,
-  Sigma, // For Equation
-  Sparkles, // For AI Improve & Design > Effects
+  Sigma,
+  Sparkles,
   SpellCheck,
   SplitSquareVertical,
-  Square, // For Page Borders (Design)
-  SquarePen, // For Text Box
-  Store as StoreIcon, // For Store
+  Square,
+  SquarePen,
+  Store as StoreIcon,
   StretchHorizontal,
   Strikethrough,
-  Subscript, // For Subscript x,
-  Superscript, // For Superscript x²
+  Subscript,
+  Superscript,
   Table,
   Tags,
-  Type, // For WordArt & Design > Fonts
+  Type,
   Underline,
   UnfoldVertical,
   Users2,
-  Video, // For Online Video
-  Wand2, // For Text Effects
+  Video,
+  Wand2,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 interface RibbonProps {
   onImproveWriting: () => void;
@@ -144,7 +145,19 @@ const HIGHLIGHT_COLORS = [
 
 
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
-  const colorInputRef = useRef<HTMLInputElement>(null);
+  const fontColorInputRef = useRef<HTMLInputElement>(null);
+  const highlightColorInputRef = useRef<HTMLInputElement>(null);
+  const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
+
+  const handleHighlightColorSelect = (color: string) => {
+    if (!color) return;
+    editor?.chain().focus().toggleHighlight({ color }).run();
+
+    setRecentHighlightColors(prev => {
+      const newColors = [color, ...prev.filter(c => c !== color)];
+      return newColors.slice(0, 6); // Keep only the 6 most recent
+    });
+  };
 
   const RibbonButton = ({ children, icon: Icon, className: extraClassName, ...props }: { children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }) => (
     <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
@@ -356,43 +369,67 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                       <Highlighter className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <div className="grid grid-cols-6 gap-1 p-1">
+                  <DropdownMenuContent className="p-2">
+                    {recentHighlightColors.length > 0 && (
+                      <>
+                        <div className="text-xs text-muted-foreground px-1 pb-1">Recent Colors</div>
+                        <div className="grid grid-cols-6 gap-1 mb-2">
+                          {recentHighlightColors.map(color => (
+                            <DropdownMenuItem
+                              key={color}
+                              className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                              onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
+                            >
+                              <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }} />
+                            </DropdownMenuItem>
+                          ))}
+                        </div>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                    <div className="grid grid-cols-6 gap-1">
                       {HIGHLIGHT_COLORS.map(color => (
                         <DropdownMenuItem
                           key={color}
-                          className="p-0 w-6 h-6 flex items-center justify-center"
-                          onClick={() => editor?.chain().focus().toggleHighlight({ color }).run()}
-                          onSelect={(e) => e.preventDefault()}
+                          className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                          onSelect={(e) => { e.preventDefault(); handleHighlightColorSelect(color); }}
                         >
-                          <div
-                            className="w-4 h-4 rounded-sm border"
-                            style={{ backgroundColor: color }}
-                          />
+                           <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
                         </DropdownMenuItem>
                       ))}
-                      <DropdownMenuItem
-                        className="p-0 w-6 h-6 flex items-center justify-center"
-                        onClick={() => editor?.chain().focus().unsetHighlight().run()}
-                      >
-                        <div
-                          className="w-4 h-4 rounded-sm border bg-no-color bg-cover"
-                          style={{ backgroundImage: `url("data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='100' x2='100' y2='0' stroke='red' stroke-width='2'/%3e%3c/svg%3e")` }}
-                        />
-                      </DropdownMenuItem>
                     </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onSelect={(e) => { e.preventDefault(); editor?.chain().focus().unsetHighlight().run(); }}
+                      className="cursor-pointer"
+                    >
+                      No Color
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={(e) => { e.preventDefault(); highlightColorInputRef.current?.click(); }}
+                      className="cursor-pointer"
+                    >
+                      More Colors...
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <input
+                  type="color"
+                  ref={highlightColorInputRef}
+                  className="absolute w-0 h-0 opacity-0"
+                  onChange={(e) => handleHighlightColorSelect(e.target.value)}
+                />
 
                 <div className="relative">
                   <SmallRibbonButton 
                     icon={Palette} 
                     tooltip="Font Color"
-                    onClick={() => colorInputRef.current?.click()}
+                    onClick={() => fontColorInputRef.current?.click()}
                   />
                   <input
                     type="color"
-                    ref={colorInputRef}
+                    ref={fontColorInputRef}
                     className="absolute w-0 h-0 opacity-0"
                     onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
                     value={editor?.getAttributes('textStyle').color || '#000000'}
@@ -621,3 +658,5 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     </div>
   );
 }
+
+    
