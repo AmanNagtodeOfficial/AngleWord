@@ -137,6 +137,10 @@ const FONT_FAMILIES = [
   { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
   { name: 'Verdana', value: 'Verdana, sans-serif' },
 ];
+const HIGHLIGHT_COLORS = [
+  '#FFFF00', '#00FF00', '#FFC0CB', '#ADD8E6', '#FFA500', '#800080',
+  '#FF0000', '#C0C0C0', '#00FFFF', '#F0E68C', '#E6E6FA', '#FFF0F5',
+];
 
 
 export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
@@ -346,12 +350,40 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   data-active={editor?.isActive('superscript')}
                 />
                 <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
-                <SmallRibbonButton
-                  icon={Highlighter}
-                  tooltip="Text Highlight Color"
-                  onClick={() => editor?.chain().focus().toggleHighlight({ color: '#FFF3A3' }).run()}
-                  data-active={editor?.isActive('highlight')}
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={editor?.isActive('highlight')}>
+                      <Highlighter className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <div className="grid grid-cols-6 gap-1 p-1">
+                      {HIGHLIGHT_COLORS.map(color => (
+                        <DropdownMenuItem
+                          key={color}
+                          className="p-0 w-6 h-6 flex items-center justify-center"
+                          onClick={() => editor?.chain().focus().toggleHighlight({ color }).run()}
+                          onSelect={(e) => e.preventDefault()}
+                        >
+                          <div
+                            className="w-4 h-4 rounded-sm border"
+                            style={{ backgroundColor: color }}
+                          />
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuItem
+                        className="p-0 w-6 h-6 flex items-center justify-center"
+                        onClick={() => editor?.chain().focus().unsetHighlight().run()}
+                      >
+                        <div
+                          className="w-4 h-4 rounded-sm border bg-no-color bg-cover"
+                          style={{ backgroundImage: `url("data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='100' x2='100' y2='0' stroke='red' stroke-width='2'/%3e%3c/svg%3e")` }}
+                        />
+                      </DropdownMenuItem>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <div className="relative">
                   <SmallRibbonButton 
                     icon={Palette} 
@@ -363,6 +395,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                     ref={colorInputRef}
                     className="absolute w-0 h-0 opacity-0"
                     onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
+                    value={editor?.getAttributes('textStyle').color || '#000000'}
                   />
                 </div>
               </div>
