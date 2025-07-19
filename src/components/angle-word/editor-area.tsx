@@ -125,18 +125,18 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor }: EditorA
 
 
   return (
-    <div className="flex-grow flex flex-col items-center justify-center bg-background p-4 overflow-hidden">
-      <Card className="w-full max-w-4xl h-[calc(100vh-200px)] shadow-xl flex flex-col overflow-hidden">
-        <CardContent className="p-0 flex-grow overflow-auto">
+    <div className="flex-grow p-4 lg:p-8 overflow-auto bg-muted/40">
+      <div className="mx-auto w-full max-w-[8.5in] h-full flex flex-col">
+        <div className="bg-background shadow-lg flex-grow overflow-auto rounded-sm">
           <DocumentEditor 
             content={documentText} 
             onUpdate={setDocumentText}
             setEditor={setEditorInstance}
-            className="h-full"
+            className="h-full min-h-[11in] px-[1in] py-[1in]"
           />
-        </CardContent>
-      </Card>
-
+        </div>
+      </div>
+      
       {activeAITool === "improve" && (
         <AIModal
           isOpen={activeAITool === "improve"}

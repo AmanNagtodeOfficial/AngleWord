@@ -44,7 +44,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className }: Docu
     },
     editorProps: {
       attributes: {
-        class: `prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none w-full h-full p-6 text-base border-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-inner bg-background ${className}`,
+        class: `prose dark:prose-invert max-w-none w-full h-full focus:outline-none ${className}`,
       },
     },
   });
