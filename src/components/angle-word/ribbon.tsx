@@ -256,6 +256,16 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     editor.chain().focus().deleteRange({ from, to }).insertContent(transformedText).run();
   };
 
+  const handleIncreaseFontSize = () => {
+    if (!editor) return;
+    const currentSize = currentFontSize();
+    const currentIndex = FONT_SIZES.indexOf(currentSize);
+    if (currentIndex > -1 && currentIndex < FONT_SIZES.length - 1) {
+      const newSize = FONT_SIZES[currentIndex + 1];
+      editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+    }
+  };
+
   return (
     <div className="bg-secondary/30 p-1 border-b shadow-sm">
       <Tabs defaultValue="home" className="w-full">
@@ -334,7 +344,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size"/>
+                <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size" onClick={handleIncreaseFontSize}/>
                 <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size"/>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
