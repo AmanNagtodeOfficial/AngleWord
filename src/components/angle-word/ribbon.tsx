@@ -165,18 +165,8 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
   
   const currentFontSize = () => {
     if (!editor) return '11';
-    // A more robust check for any font size attribute from TextStyle
     const { fontSize } = editor.getAttributes('textStyle');
-    if (fontSize && typeof fontSize === 'string' && fontSize.endsWith('pt')) {
-      return fontSize.replace('pt', '');
-    }
-    // Check legacy way for compatibility if needed
-    for (const size of FONT_SIZES) {
-      if (editor.isActive('textStyle', { fontSize: `${size}pt` })) {
-        return size;
-      }
-    }
-    return '11'; // Default size
+    return fontSize?.replace('pt', '') || '11';
   };
 
   const currentFontFamily = () => {
@@ -260,7 +250,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {FONT_SIZES.map(size => (
-                      <DropdownMenuItem key={size} onClick={() => editor?.chain().focus().setFontSize(`${size}pt`).run()}>
+                      <DropdownMenuItem key={size} onClick={() => editor?.chain().focus().setMark('textStyle', { fontSize: `${size}pt` }).run()}>
                         {size}
                       </DropdownMenuItem>
                     ))}

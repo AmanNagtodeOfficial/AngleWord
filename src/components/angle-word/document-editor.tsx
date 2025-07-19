@@ -33,9 +33,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className }: Docu
       Subscript,
       Superscript,
       Highlight.configure({ multicolor: true }),
-      TextStyle.configure({
-        // Enable FontSize
-      }),
+      TextStyle,
       Color,
       FontFamily,
       // FontSize is now part of TextStyle and does not need to be added separately
