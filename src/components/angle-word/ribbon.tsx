@@ -178,6 +178,33 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
     }
     return 'PT Sans'; // Default font
   };
+  
+  const handleChangeCase = (caseType: 'sentence' | 'lower' | 'upper' | 'capitalize') => {
+    if (!editor) return;
+    const { from, to, empty } = editor.state.selection;
+    if (empty) return;
+
+    const selectedText = editor.state.doc.textBetween(from, to);
+    let transformedText = selectedText;
+
+    switch (caseType) {
+      case 'sentence':
+        transformedText = selectedText.charAt(0).toUpperCase() + selectedText.slice(1).toLowerCase();
+        // This is a simplified version. A full implementation would need to handle multiple sentences.
+        break;
+      case 'lower':
+        transformedText = selectedText.toLowerCase();
+        break;
+      case 'upper':
+        transformedText = selectedText.toUpperCase();
+        break;
+      case 'capitalize':
+        transformedText = selectedText.replace(/\b\w/g, char => char.toUpperCase());
+        break;
+    }
+
+    editor.chain().focus().deleteRange({ from, to }).insertContent(transformedText).run();
+  };
 
   return (
     <div className="bg-secondary/30 p-1 border-b shadow-sm">
@@ -259,7 +286,19 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
                 <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size"/>
                 <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size"/>
-                <SmallRibbonButton icon={CaseSensitive} tooltip="Change Case"/>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 h-auto" title="Change Case">
+                      <CaseSensitive className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => handleChangeCase('sentence')}>Sentence case.</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleChangeCase('lower')}>lowercase</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleChangeCase('upper')}>UPPERCASE</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleChangeCase('capitalize')}>Capitalize Each Word</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <SmallRibbonButton
                   icon={Eraser}
                   tooltip="Clear All Formatting"
