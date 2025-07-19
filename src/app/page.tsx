@@ -6,6 +6,7 @@ import { AngleWordHeader } from "@/components/angle-word/header";
 import { AngleWordRibbon } from "@/components/angle-word/ribbon";
 import { EditorArea, type AITool } from "@/components/angle-word/editor-area";
 import { DocumentTabs } from "@/components/angle-word/document-tabs";
+import { StatusBar } from "@/components/angle-word/status-bar";
 import { Editor } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
 
@@ -27,6 +28,8 @@ export interface PageSize {
 }
 
 export type Columns = 1 | 2 | 3;
+
+export type ViewMode = "print" | "web";
 
 export interface Document {
   id: string;
@@ -74,6 +77,9 @@ function AngleWordPage() {
     documents[0].id
   );
   const [isRulerVisible, setIsRulerVisible] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>("print");
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [wordCount, setWordCount] = useState(0);
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -105,6 +111,14 @@ function AngleWordPage() {
       handleAutoSave();
     }, 2000); // Auto-save after 2 seconds of inactivity
   };
+
+  useEffect(() => {
+    if (editor) {
+        const text = editor.getText();
+        const count = text.trim().split(/\s+/).filter(Boolean).length;
+        setWordCount(count);
+    }
+  }, [editor, activeDocument?.content]);
 
   useEffect(() => {
     return () => {
@@ -232,8 +246,19 @@ function AngleWordPage() {
             pageSize={activeDocument.pageSize}
             columns={activeDocument.columns}
             isRulerVisible={isRulerVisible}
+            viewMode={viewMode}
+            zoomLevel={zoomLevel}
           />
         </main>
+        <StatusBar
+          pageNumber={1}
+          pageCount={1}
+          wordCount={wordCount}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          zoomLevel={zoomLevel}
+          setZoomLevel={setZoomLevel}
+        />
       </div>
     </AuthWrapper>
   );

@@ -13,7 +13,7 @@ import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Editor } from "@tiptap/react";
-import type { Margins, Orientation, PageSize, Columns } from "@/app/page";
+import type { Margins, Orientation, PageSize, Columns, ViewMode } from "@/app/page";
 import { cn } from "@/lib/utils";
 import { HorizontalRuler, VerticalRuler } from "./ruler";
 
@@ -31,6 +31,8 @@ interface EditorAreaProps {
   pageSize: PageSize;
   columns: Columns;
   isRulerVisible: boolean;
+  viewMode: ViewMode;
+  zoomLevel: number;
 }
 
 export function EditorArea({
@@ -44,6 +46,8 @@ export function EditorArea({
   pageSize,
   columns,
   isRulerVisible,
+  viewMode,
+  zoomLevel,
 }: EditorAreaProps) {
   const { toast } = useToast();
 
@@ -71,7 +75,11 @@ export function EditorArea({
       tempDiv.innerHTML = content;
       return tempDiv.textContent || tempDiv.innerText || "";
     }
-    return editorInstance.getText();
+    const text = editorInstance.getText();
+    if(editorInstance.storage.characterCount.words() > 0){
+        return text;
+    }
+    return "";
   }, [editorInstance, content]);
 
 
@@ -162,13 +170,17 @@ export function EditorArea({
     setSummarizeError(null);
   };
   
-  const pageStyle: CSSProperties = {
+  const pageStyle: CSSProperties = viewMode === 'print' ? {
     width: orientation === 'portrait' ? pageSize.width : pageSize.height,
     minHeight: orientation === 'portrait' ? pageSize.height : pageSize.width,
     paddingTop: margins.top,
     paddingBottom: margins.bottom,
     paddingLeft: margins.left,
     paddingRight: margins.right,
+  } : {
+    width: '100%',
+    maxWidth: '1200px',
+    padding: '2rem',
   };
 
   const columnClasses = {
@@ -179,11 +191,11 @@ export function EditorArea({
 
 
   return (
-    <div className="flex-grow p-4 lg:p-8 overflow-auto bg-muted/40">
-        <div className="mx-auto w-fit relative">
-            {isRulerVisible && (
+    <div className={cn("flex-grow overflow-auto bg-muted/40", viewMode === 'print' ? 'p-4 lg:p-8' : 'p-2')}>
+        <div className="mx-auto w-fit relative" style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}>
+            {isRulerVisible && viewMode === 'print' && (
                 <>
-                    <div className="absolute top-0 left-0">
+                    <div className="absolute top-0 left-0 -z-10">
                         <div className="flex">
                             <div className="w-5 flex-shrink-0" />
                             <HorizontalRuler 
@@ -193,7 +205,7 @@ export function EditorArea({
                             />
                         </div>
                     </div>
-                    <div className="absolute top-0 left-0">
+                    <div className="absolute top-0 left-0 -z-10">
                        <div className="flex">
                             <VerticalRuler 
                                 pageSize={pageSize}
@@ -207,8 +219,9 @@ export function EditorArea({
             )}
             <div 
                 className={cn(
-                    "bg-background shadow-lg overflow-hidden rounded-sm",
-                    isRulerVisible && "mt-5 ml-5"
+                    "bg-background overflow-hidden",
+                    viewMode === 'print' && "shadow-lg rounded-sm",
+                    isRulerVisible && viewMode === 'print' && "mt-5 ml-5"
                 )}
                 style={pageStyle}
             >
