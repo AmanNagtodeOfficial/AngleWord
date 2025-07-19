@@ -191,7 +191,11 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                 <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size"/>
                 <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size"/>
                 <SmallRibbonButton icon={CaseSensitive} tooltip="Change Case"/>
-                <SmallRibbonButton icon={Eraser} tooltip="Clear All Formatting"/>
+                <SmallRibbonButton
+                  icon={Eraser}
+                  tooltip="Clear All Formatting"
+                  onClick={() => editor?.chain().focus().unsetAllMarks().run()}
+                />
               </div>
               <div className="flex items-center mt-1">
                 <SmallRibbonButton
@@ -212,11 +216,31 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
                   onClick={() => editor?.chain().focus().toggleUnderline().run()}
                   data-active={editor?.isActive('underline')}
                 />
-                <SmallRibbonButton icon={Strikethrough} tooltip="Strikethrough"/>
-                <SmallRibbonButton icon={Subscript} tooltip="Subscript"/>
-                <SmallRibbonButton icon={Superscript} tooltip="Superscript"/>
+                <SmallRibbonButton
+                  icon={Strikethrough}
+                  tooltip="Strikethrough"
+                  onClick={() => editor?.chain().focus().toggleStrike().run()}
+                  data-active={editor?.isActive('strike')}
+                />
+                <SmallRibbonButton
+                  icon={Subscript}
+                  tooltip="Subscript"
+                  onClick={() => editor?.chain().focus().toggleSubscript().run()}
+                  data-active={editor?.isActive('subscript')}
+                />
+                <SmallRibbonButton
+                  icon={Superscript}
+                  tooltip="Superscript"
+                  onClick={() => editor?.chain().focus().toggleSuperscript().run()}
+                  data-active={editor?.isActive('superscript')}
+                />
                 <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
-                <SmallRibbonButton icon={Highlighter} tooltip="Text Highlight Color"/>
+                <SmallRibbonButton
+                  icon={Highlighter}
+                  tooltip="Text Highlight Color"
+                  onClick={() => editor?.chain().focus().toggleHighlight({ color: '#FFF3A3' }).run()}
+                  data-active={editor?.isActive('highlight')}
+                />
                 <SmallRibbonButton icon={Palette} tooltip="Font Color"/>
               </div>
             </div>
@@ -264,7 +288,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
             <RibbonButton icon={Table}>Table</RibbonButton>
           </RibbonGroup>
           <RibbonGroup title="Illustrations">
-            <div className="flex flex-col">
+             <div className="flex flex-col">
               <RibbonButton icon={LucideImage}>Pictures</RibbonButton>
               <RibbonButton icon={ImageUp}>Online Pics</RibbonButton>
               <RibbonButton icon={Shapes}>Shapes</RibbonButton>

@@ -3,6 +3,11 @@
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import Highlight from "@tiptap/extension-highlight";
+import TextStyle from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
 import { useEffect } from "react";
 
 interface DocumentEditorProps {
@@ -14,7 +19,18 @@ interface DocumentEditorProps {
 
 export function DocumentEditor({ content, onUpdate, setEditor, className }: DocumentEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit, Underline],
+    extensions: [
+      StarterKit.configure({
+        // Disabling strikethrough in StarterKit to avoid conflicts if we add it separately
+        // but it's fine to leave it on.
+      }),
+      Underline,
+      Subscript,
+      Superscript,
+      Highlight.configure({ multicolor: true }),
+      TextStyle,
+      Color,
+    ],
     content: content,
     onUpdate: ({ editor }) => {
       onUpdate(editor.getHTML());
