@@ -14,14 +14,16 @@ interface FileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   editor: Editor | null;
+  documentName: string;
+  setDocumentName: (name: string) => void;
 }
 
 type MenuScreen = 'main' | 'info' | 'new' | 'open' | 'save-as';
 type SaveFormat = 'html' | 'txt';
 
-export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
+export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentName }: FileMenuProps) {
   const [activeScreen, setActiveScreen] = useState<MenuScreen>('main');
-  const [fileName, setFileName] = useState('document');
+  const [fileName, setFileName] = useState(documentName);
   const [saveFormat, setSaveFormat] = useState<SaveFormat>('html');
 
   const handleSave = (asNewFile: boolean = false) => {
@@ -31,6 +33,7 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
       let content: string;
       let blobType: string;
       let extension: string;
+      const finalFileName = fileName || 'document';
 
       if (saveFormat === 'txt') {
         content = editor.getText();
@@ -41,12 +44,14 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
         blobType = 'text/html';
         extension = 'html';
       }
+      
+      setDocumentName(finalFileName);
 
       const blob = new Blob([content], { type: blobType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${fileName || 'document'}.${extension}`;
+      a.download = `${finalFileName}.${extension}`;
       a.click();
       URL.revokeObjectURL(url);
     } else {
@@ -56,7 +61,7 @@ export function FileMenu({ isOpen, onClose, editor }: FileMenuProps) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'document.html';
+      a.download = `${documentName}.html`;
       a.click();
       URL.revokeObjectURL(url);
       console.log("Saving document...");

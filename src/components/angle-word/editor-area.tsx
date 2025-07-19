@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
@@ -19,10 +20,11 @@ interface EditorAreaProps {
   activeAITool: AITool;
   setActiveAITool: (tool: AITool) => void;
   setEditor: (editor: Editor | null) => void;
+  content: string;
+  onContentUpdate: (content: string) => void;
 }
 
-export function EditorArea({ activeAITool, setActiveAITool, setEditor }: EditorAreaProps) {
-  const [documentText, setDocumentText] = useState<string>("<p>Start writing your document here...</p>");
+export function EditorArea({ activeAITool, setActiveAITool, setEditor, content, onContentUpdate }: EditorAreaProps) {
   const { toast } = useToast();
 
   const [isLoadingImprove, setIsLoadingImprove] = useState(false);
@@ -129,8 +131,8 @@ export function EditorArea({ activeAITool, setActiveAITool, setEditor }: EditorA
       <div className="mx-auto w-full max-w-[8.5in] h-full flex flex-col">
         <div className="bg-background shadow-lg flex-grow overflow-auto rounded-sm">
           <DocumentEditor 
-            content={documentText} 
-            onUpdate={setDocumentText}
+            content={content} 
+            onUpdate={onContentUpdate}
             setEditor={setEditorInstance}
             className="h-full min-h-[11in] px-[1in] py-[1in]"
           />

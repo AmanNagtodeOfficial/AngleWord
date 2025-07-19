@@ -129,6 +129,8 @@ interface RibbonProps {
   onDetectTone: () => void;
   onSummarizeDocument: () => void;
   editor: Editor | null;
+  documentName: string;
+  setDocumentName: (name: string) => void;
 }
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -162,7 +164,7 @@ const BULLET_STYLES = [
   { name: 'square', icon: BulletSquareIcon, label: 'Solid Square' },
 ];
 
-export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument }: RibbonProps) {
+export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSummarizeDocument, documentName, setDocumentName }: RibbonProps) {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
 
@@ -305,7 +307,7 @@ export function AngleWordRibbon({ editor, onImproveWriting, onDetectTone, onSumm
 
   return (
     <>
-      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} />
+      <FileMenu isOpen={isFileMenuOpen} onClose={() => setIsFileMenuOpen(false)} editor={editor} documentName={documentName} setDocumentName={setDocumentName} />
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
         <Tabs defaultValue="home" className="w-full">
           <div className="flex">
