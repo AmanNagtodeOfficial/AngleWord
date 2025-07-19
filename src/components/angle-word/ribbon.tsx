@@ -99,6 +99,7 @@ import {
   Scaling,
   ScanText,
   Scissors,
+  Search,
   Shapes,
   Sigma,
   Sparkles,
