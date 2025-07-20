@@ -67,13 +67,17 @@ interface HomeTabProps {
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
 const FONT_FAMILIES = [
-  { name: 'PT Sans', value: 'PT Sans, sans-serif' },
-  { name: 'Arial', value: 'Arial, sans-serif' },
-  { name: 'Georgia', value: 'Georgia, serif' },
-  { name: 'Inter', value: 'Inter, sans-serif' },
-  { name: 'Tahoma', value: 'Tahoma, sans-serif' },
-  { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
-  { name: 'Verdana', value: 'Verdana, sans-serif' },
+  { name: "PT Sans", value: "PT Sans, sans-serif" },
+  { name: "Arial", value: "Arial, sans-serif" },
+  { name: 'Calibri', value: 'Calibri, sans-serif' },
+  { name: 'Cambria', value: 'Cambria, serif' },
+  { name: 'Candara', value: 'Candara, sans-serif' },
+  { name: 'Courier New', value: 'Courier New, monospace' },
+  { name: "Georgia", value: "Georgia, serif" },
+  { name: "Inter", value: "Inter, sans-serif" },
+  { name: "Tahoma", value: "Tahoma, sans-serif" },
+  { name: "Times New Roman", value: "Times New Roman, Times, serif" },
+  { name: "Verdana", value: "Verdana, sans-serif" },
 ];
 const FONT_COLORS = [
   '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
@@ -125,22 +129,6 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     return editor?.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
   }, [editor]);
   
-  const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
-
-  useEffect(() => {
-    const handleSelectionUpdate = () => {
-      if (editor) {
-        setFontSizeInput(currentFontSize());
-      }
-    };
-
-    editor?.on('selectionUpdate', handleSelectionUpdate);
-    return () => {
-      editor?.off('selectionUpdate', handleSelectionUpdate);
-    };
-  }, [editor, currentFontSize]);
-
-
   const currentFontFamily = useCallback(() => {
     if (!editor) return 'PT Sans';
     for (const family of FONT_FAMILIES) {
@@ -148,8 +136,28 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
         return family.name;
       }
     }
-    return 'PT Sans';
+    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'PT Sans';
   }, [editor]);
+
+  const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
+  const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamily());
+
+  useEffect(() => {
+    const handleSelectionUpdate = () => {
+      if (editor) {
+        setFontSizeInput(currentFontSize());
+        setFontFamilyInput(currentFontFamily());
+      }
+    };
+
+    editor?.on('selectionUpdate', handleSelectionUpdate);
+    editor?.on('transaction', handleSelectionUpdate);
+    return () => {
+      editor?.off('selectionUpdate', handleSelectionUpdate);
+      editor?.off('transaction', handleSelectionUpdate);
+    };
+  }, [editor, currentFontSize, currentFontFamily]);
+
 
   if (!editor) return null;
 
@@ -212,6 +220,11 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
       editor.chain().focus().setMark('textStyle', { fontSize: `${numSize}pt` }).run();
       setFontSizeInput(size);
     }
+  };
+
+  const setFontFamily = (family: string) => {
+    editor.chain().focus().setFontFamily(family).run();
+    setFontFamilyInput(family.split(',')[0].replace(/['"]/g, ''));
   };
 
   const handleIncreaseFontSize = () => {
@@ -315,25 +328,35 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
             <RibbonGroup title="Font">
               <div className="flex flex-col space-y-1">
                 <div className="flex items-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="p-1 text-xs h-8 w-32 justify-between">
-                        <span className="truncate">{currentFontFamily()}</span>
-                        <ChevronDown className="w-3 h-3 ml-1" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {FONT_FAMILIES.map(font => (
-                        <DropdownMenuItem
-                          key={font.value}
-                          onClick={() => editor.chain().focus().setFontFamily(font.value).run()}
-                          style={{fontFamily: font.value}}
-                        >
-                          {font.name}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                   <div className="flex items-center border rounded-md">
+                        <Input
+                            type="text"
+                            value={fontFamilyInput}
+                            onChange={(e) => setFontFamilyInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    setFontFamily(fontFamilyInput);
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                            onBlur={() => setFontFamily(fontFamilyInput)}
+                            className="p-1 text-xs h-8 w-32 border-0 focus-visible:ring-0"
+                        />
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="p-1 h-8 w-6 border-l rounded-l-none">
+                                    <ChevronDown className="w-3 h-3" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {FONT_FAMILIES.map(font => (
+                                    <DropdownMenuItem key={font.value} onSelect={() => setFontFamily(font.value)} style={{fontFamily: font.value}}>
+                                        {font.name}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
                    <div className="flex items-center ml-1 border rounded-md">
                         <Input

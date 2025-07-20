@@ -39,6 +39,9 @@ const FONT_FAMILIES = [
   { name: "Tahoma", value: "Tahoma, sans-serif" },
   { name: "Times New Roman", value: "Times New Roman, Times, serif" },
   { name: "Verdana", value: "Verdana, sans-serif" },
+  { name: 'Calibri', value: 'Calibri, sans-serif' },
+  { name: 'Cambria', value: 'Cambria, serif' },
+  { name: 'Courier New', value: 'Courier New, monospace' },
 ];
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -52,12 +55,12 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
         return family.name;
       }
     }
-    return 'Candara';
-  }, [editor.state.selection]);
+    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'Candara';
+  }, [editor]);
   
   const currentFontSize = useCallback(() => {
     return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '10';
-  }, [editor.state.selection]);
+  }, [editor]);
 
   const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
 
@@ -66,7 +69,11 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
       setFontSizeInput(currentFontSize());
     };
     editor.on('selectionUpdate', handleSelectionUpdate);
-    return () => editor.off('selectionUpdate', handleSelectionUpdate);
+    editor.on('transaction', handleSelectionUpdate);
+    return () => {
+        editor.off('selectionUpdate', handleSelectionUpdate);
+        editor.off('transaction', handleSelectionUpdate);
+    };
   }, [editor, currentFontSize]);
 
   const setFontSize = (size: string) => {
