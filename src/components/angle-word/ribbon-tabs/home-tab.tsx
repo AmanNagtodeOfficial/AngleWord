@@ -35,6 +35,7 @@ import {
   ListOrdered,
   Paintbrush,
   Pilcrow,
+  Pin,
   Pointer,
   Replace,
   Scissors,

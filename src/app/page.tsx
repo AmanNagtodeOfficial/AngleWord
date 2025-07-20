@@ -90,7 +90,8 @@ function AngleWordPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("print");
   const [zoomLevel, setZoomLevel] = useState(100);
   const [wordCount, setWordCount] = useState(0);
-  const [isRibbonCollapsed, setIsRibbonCollapsed] = useState(false);
+  const [isRibbonExpanded, setIsRibbonExpanded] = useState(true);
+  const [isRibbonPinned, setIsRibbonPinned] = useState(true);
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -244,8 +245,10 @@ function AngleWordPage() {
           isRulerVisible={isRulerVisible}
           toggleRuler={() => setIsRulerVisible(!isRulerVisible)}
           onNewDocument={handleAddDocument}
-          isRibbonCollapsed={isRibbonCollapsed}
-          toggleRibbonCollapse={() => setIsRibbonCollapsed(!isRibbonCollapsed)}
+          isRibbonExpanded={isRibbonExpanded}
+          setIsRibbonExpanded={setIsRibbonExpanded}
+          isRibbonPinned={isRibbonPinned}
+          setIsRibbonPinned={setIsRibbonPinned}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea

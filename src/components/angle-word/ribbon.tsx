@@ -3,9 +3,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, ChevronDown, Pin } from "lucide-react";
 import { Editor } from "@tiptap/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FileMenu } from "./file-menu";
 import type { Margins, Orientation, PageSize, Columns as ColumnsType } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
@@ -41,8 +41,10 @@ interface RibbonProps {
   isRulerVisible: boolean;
   toggleRuler: () => void;
   onNewDocument: () => void;
-  isRibbonCollapsed: boolean;
-  toggleRibbonCollapse: () => void;
+  isRibbonExpanded: boolean;
+  setIsRibbonExpanded: (isExpanded: boolean) => void;
+  isRibbonPinned: boolean;
+  setIsRibbonPinned: (isPinned: boolean) => void;
 }
 
 
@@ -64,19 +66,42 @@ export function AngleWordRibbon({
   isRulerVisible,
   toggleRuler,
   onNewDocument,
-  isRibbonCollapsed,
-  toggleRibbonCollapse,
+  isRibbonExpanded,
+  setIsRibbonExpanded,
+  isRibbonPinned,
+  setIsRibbonPinned,
 }: RibbonProps) {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [isCustomMarginsOpen, setIsCustomMarginsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
+  const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Clear any pending collapse timeout when the pin state changes
+    if (collapseTimeoutRef.current) {
+      clearTimeout(collapseTimeoutRef.current);
+    }
+  }, [isRibbonPinned]);
   
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    if (isRibbonCollapsed) {
-        toggleRibbonCollapse();
+    if (!isRibbonExpanded) {
+        setIsRibbonExpanded(true);
     }
   }
+
+  const handleRibbonInteraction = () => {
+    // When an item on the ribbon is clicked, collapse it if it's not pinned.
+    if (!isRibbonPinned) {
+      if (collapseTimeoutRef.current) {
+        clearTimeout(collapseTimeoutRef.current);
+      }
+      collapseTimeoutRef.current = setTimeout(() => {
+        setIsRibbonExpanded(false);
+      }, 200); // A small delay to allow the action to complete
+    }
+  };
+
 
   return (
     <>
@@ -126,7 +151,7 @@ export function AngleWordRibbon({
             </TabsList>
           </div>
           
-          <div className={cn(isRibbonCollapsed && "hidden")}>
+          <div className={cn(!isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
               <TabsContent value="home" className="bg-background p-2">
                 <HomeTab editor={editor} />
               </TabsContent>
@@ -186,10 +211,19 @@ export function AngleWordRibbon({
                  />
               </TabsContent>
 
-              <div className="absolute bottom-1 right-2">
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={toggleRibbonCollapse}>
-                      <ChevronUp className="h-4 w-4" />
-                      <span className="sr-only">Collapse Ribbon</span>
+              <div className="absolute bottom-1 right-2 flex items-center">
+                   <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => setIsRibbonPinned(!isRibbonPinned)}
+                      title={isRibbonPinned ? "Unpin the ribbon" : "Pin the ribbon"}
+                   >
+                      <Pin className={cn("h-4 w-4", !isRibbonPinned && "rotate-45 text-muted-foreground")} />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsRibbonExpanded(!isRibbonExpanded)}>
+                      {isRibbonExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      <span className="sr-only">{isRibbonExpanded ? "Collapse Ribbon" : "Expand Ribbon"}</span>
                   </Button>
               </div>
           </div>
