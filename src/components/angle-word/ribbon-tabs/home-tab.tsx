@@ -308,6 +308,8 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   const handleUnderline = (style?: string) => {
     const styleToApply = style || activeUnderlineStyle || 'solid';
   
+    // If the selection is already underlined with the style we want to apply, unset it.
+    // Otherwise, set/change the underline style.
     if (editor.isActive('underline') && activeUnderlineStyle === styleToApply) {
         editor.chain().focus().unsetUnderline().run();
     } else {
@@ -458,22 +460,22 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                     data-active={editor.isActive('italic')}
                   />
                   
-                  <div className="flex items-center border rounded-md" data-active={editor.isActive('underline')}>
+                  <div className="flex items-center border rounded-md h-[28px]" data-active={editor.isActive('underline')}>
                     <Button
                         variant="ghost"
-                        className="p-1 h-7 flex-col items-center justify-center data-[active=true]:bg-accent"
+                        className="p-1 h-full flex flex-col items-center justify-center data-[active=true]:bg-accent"
                         title="Underline"
                         onClick={() => handleUnderline()}
                         data-active={editor.isActive('underline')}
                     >
-                         <Underline className="w-5 h-5" />
-                         <div className="w-5 h-[3px] -mt-0.5">
+                         <Underline className="w-4 h-4" />
+                         <div className="w-4 h-[3px] -mt-0.5">
                             {editor.isActive('underline') && <UnderlineStylePreview />}
                          </div>
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="p-1 h-7 rounded-l-none border-l" title="Underline Styles">
+                            <Button variant="ghost" className="p-1 h-full rounded-l-none border-l" title="Underline Styles">
                                 <ChevronDown className="w-3 h-3" />
                             </Button>
                         </DropdownMenuTrigger>
