@@ -10,6 +10,10 @@ import { StatusBar } from "@/components/angle-word/status-bar";
 import { Editor, EditorEvents } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
+import type { Suggestion } from "@/ai/flows/improve-writing-quality";
+import { improveTextAction } from "@/app/actions";
+import { GrammarCheckSidebar } from "@/components/angle-word/grammar-check-sidebar";
+
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
 
@@ -123,6 +127,11 @@ function AngleWordPage() {
   const [_, setForceRender] = useState(0);
   const [language, setLanguage] = useState<Language>(LANGUAGES[0]);
 
+  const [grammarSuggestions, setGrammarSuggestions] = useState<Suggestion[]>([]);
+  const [isCheckingGrammar, setIsCheckingGrammar] = useState(false);
+  const [isGrammarSidebarOpen, setIsGrammarSidebarOpen] = useState(false);
+  const grammarCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -142,6 +151,26 @@ function AngleWordPage() {
       updateDocument(activeDocumentId, { saveStatus: "saved" });
     }, 1000);
   }, [activeDocumentId]);
+  
+  const runGrammarCheck = useCallback(async () => {
+    if (!editor) return;
+    const text = editor.getText();
+    if (text.trim().length < 10) { // Don't run on very short text
+        setGrammarSuggestions([]);
+        return;
+    }
+    
+    setIsCheckingGrammar(true);
+    try {
+        const result = await improveTextAction({ text });
+        setGrammarSuggestions(result.suggestions);
+    } catch (error) {
+        console.error("Grammar check failed:", error);
+        setGrammarSuggestions([]);
+    } finally {
+        setIsCheckingGrammar(false);
+    }
+  }, [editor]);
 
   const handleContentUpdate = (content: string) => {
     if (!activeDocumentId) return;
@@ -153,6 +182,14 @@ function AngleWordPage() {
     autoSaveTimeoutRef.current = setTimeout(() => {
       handleAutoSave();
     }, 2000); // Auto-save after 2 seconds of inactivity
+    
+    // Debounce grammar check
+    if (grammarCheckTimeoutRef.current) {
+      clearTimeout(grammarCheckTimeoutRef.current);
+    }
+    grammarCheckTimeoutRef.current = setTimeout(() => {
+        runGrammarCheck();
+    }, 2500); // Check grammar 2.5s after user stops typing
   };
 
   useEffect(() => {
@@ -173,17 +210,23 @@ function AngleWordPage() {
         editor.on('selectionUpdate', updateEditorContext);
         editor.on('transaction', updateEditorContext);
         
+        // Initial grammar check
+        runGrammarCheck();
+
         return () => {
             editor.off('selectionUpdate', updateEditorContext);
             editor.off('transaction', updateEditorContext);
         };
     }
-  }, [editor]);
+  }, [editor, runGrammarCheck]);
 
   useEffect(() => {
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
+      }
+      if (grammarCheckTimeoutRef.current) {
+        clearTimeout(grammarCheckTimeoutRef.current);
       }
     };
   }, []);
@@ -192,8 +235,11 @@ function AngleWordPage() {
   useEffect(() => {
     if (activeDocument && editor && editor.getHTML() !== activeDocument.content) {
       editor.commands.setContent(activeDocument.content, false);
+      // Run grammar check on new document
+      setGrammarSuggestions([]);
+      runGrammarCheck();
     }
-  }, [activeDocument, editor]);
+  }, [activeDocument, editor, runGrammarCheck]);
 
 
   // These functions are passed to the Ribbon to set the active AI tool,
@@ -253,6 +299,16 @@ function AngleWordPage() {
       updateDocument(activeDocumentId, { columns, saveStatus: "unsaved" });
     }
   };
+  
+  const handleProofingClick = () => {
+      if (grammarSuggestions.length > 0) {
+          setIsGrammarSidebarOpen(true);
+      } else {
+          runGrammarCheck().then(() => {
+              setIsGrammarSidebarOpen(true);
+          });
+      }
+  };
 
 
   if (!activeDocument) {
@@ -280,6 +336,7 @@ function AngleWordPage() {
           onImproveWriting={handleTriggerImproveWriting}
           onDetectTone={handleTriggerDetectTone}
           onSummarizeDocument={handleTriggerSummarizeDocument}
+          onGrammarCheck={handleProofingClick}
           documentName={activeDocument.name}
           setDocumentName={setDocumentName}
           margins={activeDocument.margins}
@@ -299,23 +356,38 @@ function AngleWordPage() {
           setIsRibbonPinned={setIsRibbonPinned}
           activeContext={activeContext}
         />
-        <main className="flex-grow overflow-auto">
-          <EditorArea
-            key={activeDocument.id} // Re-mounts editor area on tab change
-            activeAITool={activeAITool}
-            setActiveAITool={setActiveAITool}
-            setEditor={setEditor}
-            content={activeDocument.content}
-            onContentUpdate={handleContentUpdate}
-            margins={activeDocument.margins}
-            orientation={activeDocument.orientation}
-            pageSize={activeDocument.pageSize}
-            columns={activeDocument.columns}
-            isRulerVisible={isRulerVisible}
-            viewMode={viewMode}
-            zoomLevel={zoomLevel}
-          />
-        </main>
+        <div className="flex-grow flex overflow-hidden">
+            <main className="flex-grow overflow-auto">
+              <EditorArea
+                key={activeDocument.id} // Re-mounts editor area on tab change
+                activeAITool={activeAITool}
+                setActiveAITool={setActiveAITool}
+                setEditor={setEditor}
+                content={activeDocument.content}
+                onContentUpdate={handleContentUpdate}
+                margins={activeDocument.margins}
+                orientation={activeDocument.orientation}
+                pageSize={activeDocument.pageSize}
+                columns={activeDocument.columns}
+                isRulerVisible={isRulerVisible}
+                viewMode={viewMode}
+                zoomLevel={zoomLevel}
+              />
+            </main>
+            {isGrammarSidebarOpen && (
+                 <GrammarCheckSidebar 
+                    suggestions={grammarSuggestions}
+                    onClose={() => setIsGrammarSidebarOpen(false)}
+                    onAccept={(suggestion) => {
+                        // Implement logic to accept a suggestion
+                    }}
+                    onIgnore={(suggestion) => {
+                        // Implement logic to ignore a suggestion
+                        setGrammarSuggestions(prev => prev.filter(s => s !== suggestion));
+                    }}
+                 />
+            )}
+        </div>
         <StatusBar
           pageNumber={1}
           pageCount={1}
@@ -326,6 +398,9 @@ function AngleWordPage() {
           setZoomLevel={setZoomLevel}
           language={language}
           setLanguage={setLanguage}
+          grammarSuggestionsCount={grammarSuggestions.length}
+          isCheckingGrammar={isCheckingGrammar}
+          onProofingClick={handleProofingClick}
         />
       </div>
     </AuthWrapper>
@@ -333,3 +408,5 @@ function AngleWordPage() {
 }
 
 export default AngleWordPage;
+
+    

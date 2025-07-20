@@ -18,6 +18,7 @@ interface RibbonProps {
   onImproveWriting: () => void;
   onDetectTone: () => void;
   onSummarizeDocument: () => void;
+  onGrammarCheck: () => void;
   editor: Editor | null;
   documentName: string;
   setDocumentName: (name: string) => void;
@@ -45,6 +46,7 @@ export function AngleWordRibbon({
   onImproveWriting,
   onDetectTone,
   onSummarizeDocument,
+  onGrammarCheck,
   documentName,
   setDocumentName,
   margins,
@@ -190,7 +192,7 @@ export function AngleWordRibbon({
               <MailingsTab editor={editor} />
             </TabsContent>
             <TabsContent value="review" className="w-full p-0 m-0">
-              <ReviewTab editor={editor} />
+              <ReviewTab editor={editor} onGrammarCheck={onGrammarCheck} />
             </TabsContent>
             <TabsContent value="view" className="w-full p-0 m-0">
                 <ViewTab 
@@ -234,3 +236,5 @@ export function AngleWordRibbon({
     </>
   );
 }
+
+    

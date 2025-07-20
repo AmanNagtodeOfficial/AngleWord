@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { BookOpen, Crosshair, Globe, Languages, Minus, Monitor, Plus, SpellCheck, CheckCircle, ChevronDown } from "lucide-react";
+import { BookOpen, Crosshair, Globe, Languages, Minus, Monitor, Plus, CheckCircle, ChevronDown, AlertCircle, Loader2 } from "lucide-react";
 import type { ViewMode, Language } from "@/app/page";
 import { LANGUAGES } from "@/app/page";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,9 @@ interface StatusBarProps {
   setZoomLevel: (level: number) => void;
   language: Language;
   setLanguage: (language: Language) => void;
+  grammarSuggestionsCount: number;
+  isCheckingGrammar: boolean;
+  onProofingClick: () => void;
 }
 
 export function StatusBar({
@@ -38,6 +41,9 @@ export function StatusBar({
   setZoomLevel,
   language,
   setLanguage,
+  grammarSuggestionsCount,
+  isCheckingGrammar,
+  onProofingClick,
 }: StatusBarProps) {
 
   const handleZoomChange = (value: number[]) => {
@@ -51,6 +57,31 @@ export function StatusBar({
   const zoomOut = () => {
     setZoomLevel(Math.max(zoomLevel - 10, 10));
   }
+  
+  const getProofingStatus = () => {
+      if (isCheckingGrammar) {
+          return (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Checking...
+              </>
+          );
+      }
+      if (grammarSuggestionsCount > 0) {
+          return (
+              <>
+                <AlertCircle className="h-4 w-4 text-destructive" />
+                {grammarSuggestionsCount} suggestion{grammarSuggestionsCount > 1 ? 's' : ''} found
+              </>
+          )
+      }
+      return (
+          <>
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            No issues
+          </>
+      )
+  }
 
   return (
     <footer className="bg-card border-t px-4 py-1 flex items-center justify-between text-sm text-muted-foreground">
@@ -61,9 +92,8 @@ export function StatusBar({
         <Separator orientation="vertical" className="h-4" />
         <span>{wordCount} words</span>
         <Separator orientation="vertical" className="h-4" />
-         <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5">
-           <CheckCircle className="h-4 w-4 text-green-500" />
-           No grammar issues
+         <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5" onClick={onProofingClick}>
+           {getProofingStatus()}
         </Button>
         <Separator orientation="vertical" className="h-4" />
         <DropdownMenu>
@@ -141,3 +171,5 @@ export function StatusBar({
     </footer>
   );
 }
+
+    

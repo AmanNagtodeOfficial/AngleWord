@@ -31,16 +31,17 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface ReviewTabProps {
   editor: Editor | null;
+  onGrammarCheck: () => void;
 }
 
-export const ReviewTab: FC<ReviewTabProps> = ({ editor }) => {
+export const ReviewTab: FC<ReviewTabProps> = ({ editor, onGrammarCheck }) => {
   if (!editor) return null;
 
   return (
     <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex items-start p-2">
             <RibbonGroup title="Proofing">
-                <RibbonButton icon={SpellingAndGrammarIcon}>
+                <RibbonButton icon={SpellingAndGrammarIcon} onClick={onGrammarCheck}>
                     Spelling &<br/>Grammar
                 </RibbonButton>
                 <RibbonButton icon={ThesaurusIcon}>
@@ -163,3 +164,5 @@ export const ReviewTab: FC<ReviewTabProps> = ({ editor }) => {
     </ScrollArea>
   );
 };
+
+    
