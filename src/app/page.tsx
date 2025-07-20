@@ -45,6 +45,27 @@ export interface Document {
   columns: Columns;
 }
 
+export interface Language {
+    code: string;
+    name: string;
+}
+
+export const LANGUAGES: Language[] = [
+    { code: 'en-US', name: 'English (United States)' },
+    { code: 'en-GB', name: 'English (United Kingdom)' },
+    { code: 'es-ES', name: 'Español (España)' },
+    { code: 'fr-FR', name: 'Français (France)' },
+    { code: 'de-DE', name: 'Deutsch (Deutschland)' },
+    { code: 'it-IT', name: 'Italiano (Italia)' },
+    { code: 'pt-BR', name: 'Português (Brasil)' },
+    { code: 'ru-RU', name: 'Русский (Россия)' },
+    { code: 'zh-CN', name: '中文 (简体)' },
+    { code: 'ja-JP', name: '日本語 (日本)' },
+    { code: 'ko-KR', name: '한국어 (대한민국)' },
+    { code: 'ar-SA', name: 'العربية (المملكة العربية السعودية)' },
+];
+
+
 const defaultMargins: Margins = {
     top: '1in',
     bottom: '1in',
@@ -97,6 +118,7 @@ function AngleWordPage() {
   const [isRibbonPinned, setIsRibbonPinned] = useState(true);
   const [activeContext, setActiveContext] = useState<EditorContext>(null);
   const [_, setForceRender] = useState(0);
+  const [language, setLanguage] = useState<Language>(LANGUAGES[0]);
 
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -299,6 +321,8 @@ function AngleWordPage() {
           setViewMode={setViewMode}
           zoomLevel={zoomLevel}
           setZoomLevel={setZoomLevel}
+          language={language}
+          setLanguage={setLanguage}
         />
       </div>
     </AuthWrapper>
@@ -306,5 +330,3 @@ function AngleWordPage() {
 }
 
 export default AngleWordPage;
-
-    

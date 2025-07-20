@@ -4,9 +4,17 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { BookOpen, Crosshair, Globe, Languages, Minus, Monitor, Plus, SpellCheck, CheckCircle } from "lucide-react";
-import type { ViewMode } from "@/app/page";
+import { BookOpen, Crosshair, Globe, Languages, Minus, Monitor, Plus, SpellCheck, CheckCircle, ChevronDown } from "lucide-react";
+import type { ViewMode, Language } from "@/app/page";
+import { LANGUAGES } from "@/app/page";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 interface StatusBarProps {
   pageNumber: number;
@@ -16,6 +24,8 @@ interface StatusBarProps {
   setViewMode: (mode: ViewMode) => void;
   zoomLevel: number;
   setZoomLevel: (level: number) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
 }
 
 export function StatusBar({
@@ -26,6 +36,8 @@ export function StatusBar({
   setViewMode,
   zoomLevel,
   setZoomLevel,
+  language,
+  setLanguage,
 }: StatusBarProps) {
 
   const handleZoomChange = (value: number[]) => {
@@ -54,10 +66,22 @@ export function StatusBar({
            No grammar issues
         </Button>
         <Separator orientation="vertical" className="h-4" />
-        <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5">
-            <Languages className="h-4 w-4" />
-            English (United States)
-        </Button>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-7 text-xs px-2 gap-1.5">
+                    <Languages className="h-4 w-4" />
+                    {language.name}
+                    <ChevronDown className="h-3 w-3" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+                {LANGUAGES.map(lang => (
+                    <DropdownMenuItem key={lang.code} onSelect={() => setLanguage(lang)}>
+                        {lang.name}
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -117,4 +141,3 @@ export function StatusBar({
     </footer>
   );
 }
-
