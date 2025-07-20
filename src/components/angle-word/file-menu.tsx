@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine } from "lucide-react";
 import { useState, FC, useMemo } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -369,6 +369,11 @@ interface PrintScreenProps {
   setPageSize: (pageSize: PageSize) => void;
 }
 
+type PrintRange = 'all' | 'selection' | 'current' | 'custom';
+type PrintSided = 'one-sided' | 'two-sided';
+type PrintCollation = 'collated' | 'uncollated';
+type PagesPerSheet = '1' | '2' | '4' | '6';
+
 const PrintScreen: FC<PrintScreenProps> = ({ 
     editor, 
     onPrint, 
@@ -387,6 +392,11 @@ const PrintScreen: FC<PrintScreenProps> = ({
     // A mock editor instance for preview purposes when the real one isn't available.
     const [mockEditor, setMockEditor] = useState<Editor | null>(null);
 
+    const [printRange, setPrintRange] = useState<PrintRange>('all');
+    const [printSided, setPrintSided] = useState<PrintSided>('one-sided');
+    const [printCollation, setPrintCollation] = useState<PrintCollation>('collated');
+    const [pagesPerSheet, setPagesPerSheet] = useState<PagesPerSheet>('1');
+
     const handleCopiesChange = (newCopies: number) => {
         setCopies(Math.max(1, newCopies));
     };
@@ -396,6 +406,30 @@ const PrintScreen: FC<PrintScreenProps> = ({
         const preset = Object.values(MARGIN_PRESETS).find(p => JSON.stringify(p.values) === marginString);
         return preset ? preset.name : 'Custom Margins';
     }, [margins]);
+
+    const printRangeOptions: { [key in PrintRange]: { title: string, description: string } } = {
+        'all': { title: 'Print All Pages', description: 'The whole thing' },
+        'selection': { title: 'Print Selection', description: 'Only the selected content' },
+        'current': { title: 'Print Current Page', description: 'The page currently in view' },
+        'custom': { title: 'Custom Print', description: 'Print specific pages' },
+    };
+    
+    const printSidedOptions: { [key in PrintSided]: { title: string, description: string } } = {
+        'one-sided': { title: 'Print One Sided', description: 'Only print on one side' },
+        'two-sided': { title: 'Manually Print on Both Sides', description: 'Flip paper over to print the second side' },
+    };
+
+    const printCollationOptions: { [key in PrintCollation]: { title: string, description: string } } = {
+        'collated': { title: 'Collated', description: '1,2,3  1,2,3  1,2,3' },
+        'uncollated': { title: 'Uncollated', description: '1,1,1  2,2,2  3,3,3' },
+    };
+
+    const pagesPerSheetOptions: { [key in PagesPerSheet]: { title: string, description: string } } = {
+        '1': { title: '1 Page Per Sheet', description: '' },
+        '2': { title: '2 Pages Per Sheet', description: '' },
+        '4': { title: '4 Pages Per Sheet', description: '' },
+        '6': { title: '6 Pages Per Sheet', description: '' },
+    };
     
 
     return (
@@ -464,23 +498,23 @@ const PrintScreen: FC<PrintScreenProps> = ({
                         <div>
                             <h2 className="text-lg font-semibold mb-2">Settings</h2>
                             <div className="space-y-2">
-                                 <PrintSettingDropdown icon={File} title="Print All Pages" description="The whole thing">
-                                     <DropdownMenuItem>Print All Pages</DropdownMenuItem>
-                                     <DropdownMenuItem>Print Selection</DropdownMenuItem>
-                                     <DropdownMenuItem>Print Current Page</DropdownMenuItem>
-                                     <DropdownMenuItem>Custom Print...</DropdownMenuItem>
+                                 <PrintSettingDropdown icon={File} title={printRangeOptions[printRange].title} description={printRangeOptions[printRange].description}>
+                                     <DropdownMenuItem onSelect={() => setPrintRange('all')}>Print All Pages</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPrintRange('selection')}>Print Selection</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPrintRange('current')}>Print Current Page</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPrintRange('custom')}>Custom Print...</DropdownMenuItem>
                                  </PrintSettingDropdown>
                                  <div className="flex items-center gap-2">
                                     <Input placeholder="Pages:" className="flex-grow"/>
                                     <Info className="w-4 h-4 text-muted-foreground" />
                                  </div>
-                                 <PrintSettingDropdown icon={File} title="Print One Sided" description="Only print on one side of th...">
-                                     <DropdownMenuItem>Print One Sided</DropdownMenuItem>
-                                     <DropdownMenuItem>Manually Print on Both Sides</DropdownMenuItem>
+                                 <PrintSettingDropdown icon={File} title={printSidedOptions[printSided].title} description={printSidedOptions[printSided].description}>
+                                     <DropdownMenuItem onSelect={() => setPrintSided('one-sided')}>Print One Sided</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPrintSided('two-sided')}>Manually Print on Both Sides</DropdownMenuItem>
                                  </PrintSettingDropdown>
-                                 <PrintSettingDropdown icon={File} title="Collated" description="1,2,3  1,2,3  1,2,3">
-                                     <DropdownMenuItem>Collated</DropdownMenuItem>
-                                     <DropdownMenuItem>Uncollated</DropdownMenuItem>
+                                 <PrintSettingDropdown icon={Combine} title={printCollationOptions[printCollation].title} description={printCollationOptions[printCollation].description}>
+                                     <DropdownMenuItem onSelect={() => setPrintCollation('collated')}>Collated</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPrintCollation('uncollated')}>Uncollated</DropdownMenuItem>
                                  </PrintSettingDropdown>
                                  <PrintSettingDropdown icon={BookCopy} title={`${orientation.charAt(0).toUpperCase() + orientation.slice(1)} Orientation`} description="">
                                       <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait Orientation</DropdownMenuItem>
@@ -504,11 +538,11 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                      <DropdownMenuSeparator />
                                      <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>Custom Margins...</DropdownMenuItem>
                                  </PrintSettingDropdown>
-                                 <PrintSettingDropdown icon={File} title="1 Page Per Sheet" description="">
-                                     <DropdownMenuItem>1 Page Per Sheet</DropdownMenuItem>
-                                     <DropdownMenuItem>2 Pages Per Sheet</DropdownMenuItem>
-                                     <DropdownMenuItem>4 Pages Per Sheet</DropdownMenuItem>
-                                     <DropdownMenuItem>6 Pages Per Sheet</DropdownMenuItem>
+                                 <PrintSettingDropdown icon={File} title={pagesPerSheetOptions[pagesPerSheet].title} description={pagesPerSheetOptions[pagesPerSheet].description}>
+                                     <DropdownMenuItem onSelect={() => setPagesPerSheet('1')}>1 Page Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPagesPerSheet('2')}>2 Pages Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPagesPerSheet('4')}>4 Pages Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem onSelect={() => setPagesPerSheet('6')}>6 Pages Per Sheet</DropdownMenuItem>
                                  </PrintSettingDropdown>
                             </div>
                             <Button variant="link" className="p-0 h-auto mt-2 text-primary">Page Setup</Button>
