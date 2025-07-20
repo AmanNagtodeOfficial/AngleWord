@@ -37,14 +37,7 @@ const templates = [
     { name: 'Poetry booklet', image: 'https://placehold.co/150x200', hint: 'book poetry' },
 ];
 
-const recentFiles = [
-    { name: "Aman Nagtode Resume", path: "Aman Nagtode's OneDrive » Documents", date: "17 April" },
-    { name: "Meher Katwe Resume", path: "Aman Nagtode's OneDrive » Documents", date: "14 April" },
-    { name: "Document 9", path: "Aman Nagtode's OneDrive » Documents", date: "13 April" },
-    { name: "Meher Katwe Resume", path: "Downloads", date: "28 January" },
-    { name: "ATS_Friendly_Resume", path: "Downloads", date: "28 January" },
-    { name: "Warmer Technical specifications", path: "Aman Nagtode's OneDrive » Documents", date: "26-08-2024" },
-];
+const recentFiles: {name: string, path: string, date: string}[] = [];
 
 
 export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentName, onNewDocument }: FileMenuProps) {
@@ -277,29 +270,33 @@ function HomeScreen({ onNewDocument, onTemplateClick }: { onNewDocument: () => v
                     <TabsTrigger value="shared">Shared with Me</TabsTrigger>
                 </TabsList>
                 <TabsContent value="recent">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-12"></TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead className="text-right">Date modified</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {recentFiles.map((file, index) => (
-                                <TableRow key={index} className="cursor-pointer">
-                                    <TableCell>
-                                        <File className="w-6 h-6 text-primary" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="font-medium">{file.name}</div>
-                                        <div className="text-xs text-muted-foreground">{file.path}</div>
-                                    </TableCell>
-                                    <TableCell className="text-right">{file.date}</TableCell>
+                    {recentFiles.length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-12"></TableHead>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead className="text-right">Date modified</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {recentFiles.map((file, index) => (
+                                    <TableRow key={index} className="cursor-pointer">
+                                        <TableCell>
+                                            <File className="w-6 h-6 text-primary" />
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="font-medium">{file.name}</div>
+                                            <div className="text-xs text-muted-foreground">{file.path}</div>
+                                        </TableCell>
+                                        <TableCell className="text-right">{file.date}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                       <p className="p-4 text-center text-muted-foreground">No recent documents.</p>
+                    )}
                 </TabsContent>
                 <TabsContent value="favourites">
                     <p className="p-4 text-center text-muted-foreground">No favourite documents yet.</p>
