@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DocumentEditor } from "./document-editor";
 import { Separator } from "../ui/separator";
 import { Slider } from "../ui/slider";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Margins, Orientation, PageSize } from "@/app/page";
 import { PAGE_SIZES, MARGIN_PRESETS } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
