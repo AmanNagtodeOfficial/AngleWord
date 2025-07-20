@@ -9,3 +9,5 @@ export * from './mailings-tab';
 export * from './review-tab';
 export * from './view-tab';
 export * from './ai-tools-tab';
+export * from './table-design-tab';
+export * from './table-layout-tab';

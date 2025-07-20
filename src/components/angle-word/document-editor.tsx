@@ -18,6 +18,10 @@ import { BulletList as TiptapBulletList } from '@tiptap/extension-bullet-list';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { CharacterCount } from "@tiptap/extension-character-count";
 import BubbleMenu from "@tiptap/extension-bubble-menu";
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 
 // Extend the BulletList to support custom list styles
 export const BulletList = TiptapBulletList.extend({
@@ -110,6 +114,12 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
         // You can configure plugin options here.
         // For example, the tippy options.
        }),
+       Table.configure({
+        resizable: true,
+       }),
+       TableRow,
+       TableHeader,
+       TableCell,
     ],
     content: content,
     onUpdate: ({ editor }) => {

@@ -32,6 +32,8 @@ export type Columns = 1 | 2 | 3;
 
 export type ViewMode = "print" | "web";
 
+export type EditorContext = 'table' | null;
+
 export interface Document {
   id: string;
   name: string;
@@ -93,6 +95,8 @@ function AngleWordPage() {
   const [wordCount, setWordCount] = useState(0);
   const [isRibbonExpanded, setIsRibbonExpanded] = useState(true);
   const [isRibbonPinned, setIsRibbonPinned] = useState(true);
+  const [activeContext, setActiveContext] = useState<EditorContext>(null);
+
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -127,9 +131,22 @@ function AngleWordPage() {
 
   useEffect(() => {
     if (editor) {
+        const updateEditorContext = () => {
+            const isTable = editor.isActive('table');
+            setActiveContext(isTable ? 'table' : null);
+        };
+        
+        editor.on('selectionUpdate', updateEditorContext);
+        editor.on('transaction', updateEditorContext);
+        
         const text = editor.getText();
         const count = text.trim().split(/\s+/).filter(Boolean).length;
         setWordCount(count);
+        
+        return () => {
+            editor.off('selectionUpdate', updateEditorContext);
+            editor.off('transaction', updateEditorContext);
+        };
     }
   }, [editor, activeDocument?.content]);
 
@@ -250,6 +267,7 @@ function AngleWordPage() {
           setIsRibbonExpanded={setIsRibbonExpanded}
           isRibbonPinned={isRibbonPinned}
           setIsRibbonPinned={setIsRibbonPinned}
+          activeContext={activeContext}
         />
         <main className="flex-grow overflow-auto">
           <EditorArea

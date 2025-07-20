@@ -7,19 +7,10 @@ import { ChevronUp, ChevronDown, Pin } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { useState, useRef, useEffect } from "react";
 import { FileMenu } from "./file-menu";
-import type { Margins, Orientation, PageSize, Columns as ColumnsType } from "@/app/page";
+import type { Margins, Orientation, PageSize, Columns as ColumnsType, EditorContext } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
 
-import { HomeTab } from "./ribbon-tabs/home-tab";
-import { InsertTab } from "./ribbon-tabs/insert-tab";
-import { DrawTab } from "./ribbon-tabs/draw-tab";
-import { DesignTab } from "./ribbon-tabs/design-tab";
-import { LayoutTab } from "./ribbon-tabs/layout-tab";
-import { ReferencesTab } from "./ribbon-tabs/references-tab";
-import { MailingsTab } from "./ribbon-tabs/mailings-tab";
-import { ReviewTab } from "./ribbon-tabs/review-tab";
-import { ViewTab } from "./ribbon-tabs/view-tab";
-import { AIToolsTab } from "./ribbon-tabs/ai-tools-tab";
+import { HomeTab, InsertTab, DrawTab, DesignTab, LayoutTab, ReferencesTab, MailingsTab, ReviewTab, ViewTab, AIToolsTab, TableDesignTab, TableLayoutTab } from "./ribbon-tabs";
 import { cn } from "@/lib/utils";
 
 
@@ -45,6 +36,7 @@ interface RibbonProps {
   setIsRibbonExpanded: (isExpanded: boolean) => void;
   isRibbonPinned: boolean;
   setIsRibbonPinned: (isPinned: boolean) => void;
+  activeContext: EditorContext;
 }
 
 
@@ -70,6 +62,7 @@ export function AngleWordRibbon({
   setIsRibbonExpanded,
   isRibbonPinned,
   setIsRibbonPinned,
+  activeContext,
 }: RibbonProps) {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [isCustomMarginsOpen, setIsCustomMarginsOpen] = useState(false);
@@ -130,45 +123,58 @@ export function AngleWordRibbon({
       />
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full relative">
-          <div className="flex">
-            <Button
-              onClick={() => setIsFileMenuOpen(true)}
-              className="text-sm px-4 py-1.5 rounded-b-none rounded-t-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              File
-            </Button>
-            <TabsList className="bg-transparent p-0 h-auto justify-start">
-              <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
-              <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
-              <TabsTrigger value="draw" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Draw</TabsTrigger>
-              <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
-              <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
-              <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
-              <TabsTrigger value="mailings" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Mailings</TabsTrigger>
-              <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
-              <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
-              <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
-            </TabsList>
+          <div className="flex justify-between items-end">
+             <div className="flex">
+                <Button
+                  onClick={() => setIsFileMenuOpen(true)}
+                  className="text-sm px-4 py-1.5 rounded-b-none rounded-t-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  File
+                </Button>
+                {activeContext !== 'table' && (
+                  <TabsList className="bg-transparent p-0 h-auto justify-start">
+                    <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
+                    <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
+                    <TabsTrigger value="draw" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Draw</TabsTrigger>
+                    <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
+                    <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
+                    <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
+                    <TabsTrigger value="mailings" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Mailings</TabsTrigger>
+                    <TabsTrigger value="review" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Review</TabsTrigger>
+                    <TabsTrigger value="view" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">View</TabsTrigger>
+                    <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
+                  </TabsList>
+                )}
+              </div>
+              {activeContext === 'table' && (
+                <div className="flex flex-col items-center">
+                   <div className="text-sm text-primary font-semibold">Table Tools</div>
+                   <TabsList className="bg-transparent p-0 h-auto justify-start">
+                     <TabsTrigger value="table-design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none bg-blue-100">Table Design</TabsTrigger>
+                     <TabsTrigger value="table-layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none bg-blue-100">Table Layout</TabsTrigger>
+                   </TabsList>
+                </div>
+              )}
           </div>
           
-          <div className={cn(!isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
-              <TabsContent value="home" className="bg-background p-2 min-h-[120px] flex items-start">
+          <div className={cn("bg-background min-h-[120px] flex items-start", !isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
+              <TabsContent value="home" className="w-full p-2">
                 <HomeTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="insert" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="insert" className="w-full p-2">
                 <InsertTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="draw" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="draw" className="w-full p-2">
                 <DrawTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="design" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="design" className="w-full p-2">
                 <DesignTab editor={editor} />
               </TabsContent>
               
-              <TabsContent value="layout" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="layout" className="w-full p-2">
                 <LayoutTab 
                   editor={editor}
                   margins={margins}
@@ -183,19 +189,19 @@ export function AngleWordRibbon({
                 />
               </TabsContent>
 
-              <TabsContent value="references" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="references" className="w-full p-2">
                 <ReferencesTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="mailings" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="mailings" className="w-full p-2">
                 <MailingsTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="review" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="review" className="w-full p-2">
                 <ReviewTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="view" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="view" className="w-full p-2">
                  <ViewTab 
                     editor={editor} 
                     isRulerVisible={isRulerVisible} 
@@ -203,12 +209,20 @@ export function AngleWordRibbon({
                  />
               </TabsContent>
 
-              <TabsContent value="ai-tools" className="bg-background p-2 min-h-[120px] flex items-start">
+              <TabsContent value="ai-tools" className="w-full p-2">
                  <AIToolsTab 
                     onImproveWriting={onImproveWriting} 
                     onDetectTone={onDetectTone} 
                     onSummarizeDocument={onSummarizeDocument} 
                  />
+              </TabsContent>
+
+               <TabsContent value="table-design" className="w-full p-2">
+                 <TableDesignTab editor={editor} />
+              </TabsContent>
+
+               <TabsContent value="table-layout" className="w-full p-2">
+                 <TableLayoutTab editor={editor} />
               </TabsContent>
 
               <div className="absolute bottom-1 right-2 flex items-center">
