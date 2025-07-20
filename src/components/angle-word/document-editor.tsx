@@ -17,6 +17,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import { BulletList as TiptapBulletList } from '@tiptap/extension-bullet-list';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { CharacterCount } from "@tiptap/extension-character-count";
+import BubbleMenu from "@tiptap/extension-bubble-menu";
 
 // Extend the BulletList to support custom list styles
 export const BulletList = TiptapBulletList.extend({
@@ -86,6 +87,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
         bulletList: false, // Disable default to use our custom one
         paragraph: false, // Disable default to use our custom one
         underline: false,
+        bubbleMenu: false, // We'll manage it ourselves
       }),
       CharacterCount,
       IndentableParagraph,
@@ -104,6 +106,10 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
       TaskItem.configure({
         nested: true,
       }),
+       BubbleMenu.configure({
+        // You can configure plugin options here.
+        // For example, the tippy options.
+       }),
     ],
     content: content,
     onUpdate: ({ editor }) => {

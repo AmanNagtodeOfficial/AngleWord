@@ -16,6 +16,7 @@ import { Editor } from "@tiptap/react";
 import type { Margins, Orientation, PageSize, Columns, ViewMode } from "@/app/page";
 import { cn } from "@/lib/utils";
 import { HorizontalRuler, VerticalRuler } from "./ruler";
+import { FloatingMenu } from "./floating-menu";
 
 
 export type AITool = "improve" | "tone" | "summarize" | null;
@@ -225,6 +226,7 @@ export function EditorArea({
                 )}
                 style={pageStyle}
             >
+                {editorInstance && <FloatingMenu editor={editorInstance} />}
                 <DocumentEditor 
                     content={content} 
                     onUpdate={onContentUpdate}

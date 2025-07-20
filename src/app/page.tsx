@@ -9,6 +9,7 @@ import { DocumentTabs } from "@/components/angle-word/document-tabs";
 import { StatusBar } from "@/components/angle-word/status-bar";
 import { Editor } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
+import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
 
