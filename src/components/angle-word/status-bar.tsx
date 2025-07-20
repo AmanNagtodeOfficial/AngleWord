@@ -74,7 +74,7 @@ export function StatusBar({
                     <ChevronDown className="h-3 w-3" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent align="start" className="max-h-60 overflow-y-auto">
                 {LANGUAGES.map(lang => (
                     <DropdownMenuItem key={lang.code} onSelect={() => setLanguage(lang)}>
                         {lang.name}
