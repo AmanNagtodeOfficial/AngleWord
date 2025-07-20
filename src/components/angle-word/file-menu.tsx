@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, ShieldCheck } from "lucide-react";
 import { useState, FC, useMemo } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import type { Margins, Orientation, PageSize } from "@/app/page";
 import { PAGE_SIZES, MARGIN_PRESETS } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface FileMenuProps {
   isOpen: boolean;
@@ -130,7 +131,7 @@ export function FileMenu({
       case 'home':
         return <HomeScreen onNewDocument={handleNewDocument} onTemplateClick={() => { /* Placeholder */ }} />;
       case 'info':
-        return <div>Info Screen Content</div>;
+        return <InfoScreen documentName={documentName} wordCount={editor?.storage.characterCount.words() || 0} />;
       case 'new':
         return <div>New Screen Content</div>;
       case 'open':
@@ -190,7 +191,7 @@ export function FileMenu({
     { name: 'home', label: 'Home', icon: Home, action: () => setActiveScreen('home') },
     { name: 'new', label: 'New', icon: FilePlus, action: handleNewDocument },
     { name: 'open', label: 'Open', icon: FolderOpen, action: () => setActiveScreen('open') },
-    { name: 'info', label: 'Info', icon: Info, disabled: true, action: () => setActiveScreen('info') },
+    { name: 'info', label: 'Info', icon: Info, action: () => setActiveScreen('info') },
     { name: 'save', label: 'Save', icon: Save, action: () => handleSave(false) },
     { name: 'save-as', label: 'Save As', icon: FileEdit, action: () => setActiveScreen('save-as') },
     { name: 'history', label: 'History', icon: History, disabled: true, action: () => setActiveScreen('history') },
@@ -638,3 +639,123 @@ const PrintScreen: FC<PrintScreenProps> = ({
         </>
     );
 };
+
+const InfoSection: FC<{
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  buttonText: string;
+  children?: React.ReactNode;
+}> = ({ icon: Icon, title, description, buttonText, children }) => (
+  <div className="flex items-start gap-6 border-b py-6">
+    <Icon className="w-12 h-12 text-primary/80 mt-2" />
+    <div className="flex-grow">
+      <h3 className="text-xl font-semibold mb-1">{title}</h3>
+      <p className="text-muted-foreground text-sm mb-3">{description}</p>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="min-w-[200px] justify-between">
+            {buttonText}
+            <ChevronDown className="ml-2 w-4 h-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {/* Add Dropdown Menu Items here */}
+          <DropdownMenuItem>Option 1</DropdownMenuItem>
+          <DropdownMenuItem>Option 2</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {children && <div className="mt-3 text-sm text-muted-foreground">{children}</div>}
+    </div>
+  </div>
+);
+
+const PropertyItem: FC<{ label: string; value: string | number; isEditable?: boolean }> = ({ label, value, isEditable }) => (
+  <div className="flex justify-between py-1.5">
+    <dt className="text-sm text-muted-foreground">{label}</dt>
+    <dd className={cn("text-sm font-medium", isEditable && "text-primary hover:underline cursor-pointer")}>
+      {value}
+    </dd>
+  </div>
+);
+
+const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentName, wordCount }) => {
+  return (
+    <div className="p-8 h-full">
+      <h1 className="text-4xl font-light mb-6">Info</h1>
+      <div className="flex gap-16 h-full">
+        {/* Left Column */}
+        <div className="w-2/3">
+          <div className="relative h-[250px] bg-muted rounded-md mb-6 flex items-center justify-center">
+            <h2 className="text-2xl text-muted-foreground font-semibold">{documentName}</h2>
+             <Button variant="outline" className="absolute bottom-4 right-4">Open File Location</Button>
+          </div>
+          <InfoSection
+            icon={ShieldCheck}
+            title="Protect Document"
+            description="Control what types of changes people can make to this document."
+            buttonText="Protect Document"
+          />
+          <InfoSection
+            icon={FileCheck}
+            title="Inspect Document"
+            description="Before publishing this file, be aware that it contains:"
+            buttonText="Check for Issues"
+          >
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>Document properties, author's name, and related dates.</li>
+                <li>Hidden metadata or personal information.</li>
+            </ul>
+          </InfoSection>
+          <InfoSection
+            icon={FolderSync}
+            title="Manage Document"
+            description="There are no unsaved changes."
+            buttonText="Manage Document"
+          />
+        </div>
+
+        {/* Right Column */}
+        <div className="w-1/3">
+          <h2 className="text-lg font-semibold mb-2">Properties <ChevronDown className="inline w-4 h-4 text-muted-foreground" /></h2>
+          <dl className="divide-y">
+            <PropertyItem label="Size" value="Not saved yet" />
+            <PropertyItem label="Pages" value="1" />
+            <PropertyItem label="Words" value={wordCount} />
+            <PropertyItem label="Total Editing Time" value="14 Minutes" />
+            <PropertyItem label="Title" value="Add a title" isEditable />
+            <PropertyItem label="Tags" value="Add a tag" isEditable />
+            <PropertyItem label="Comments" value="Add comments" isEditable />
+          </dl>
+          
+          <Separator className="my-4" />
+          
+          <h2 className="text-lg font-semibold mb-2">Related Dates</h2>
+           <dl className="divide-y">
+                <PropertyItem label="Last Modified" value="Not saved yet" />
+                <PropertyItem label="Created" value={new Date().toLocaleString()} />
+                <PropertyItem label="Last Printed" value="Never" />
+           </dl>
+
+           <Separator className="my-4" />
+
+           <h2 className="text-lg font-semibold mb-2">Related People</h2>
+            <dl className="divide-y">
+                <div className="flex justify-between py-1.5 items-center">
+                    <dt className="text-sm text-muted-foreground">Author</dt>
+                    <dd className="text-sm font-medium flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                            <AvatarFallback>AN</AvatarFallback>
+                        </Avatar>
+                        Aman Nagtode
+                    </dd>
+                </div>
+                 <PropertyItem label="Last Modified By" value="Aman Nagtode" />
+            </dl>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+    
