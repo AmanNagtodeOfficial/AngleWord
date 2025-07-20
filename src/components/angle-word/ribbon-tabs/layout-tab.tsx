@@ -157,8 +157,6 @@ export const LayoutTab: FC<LayoutTabProps> = ({
                   <div className="flex gap-1">
                       <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
                       <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
-                  </div>
-                  <div className="flex gap-1">
                       <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
                       <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
                   </div>
