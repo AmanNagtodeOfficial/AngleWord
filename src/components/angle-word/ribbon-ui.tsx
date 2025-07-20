@@ -152,6 +152,40 @@ export const RotateIcon = () => (
     </svg>
 );
 
+export const EditRecipientListIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v12H4z" fill="#E0E7FF" />
+        <path d="M4 4h16v4H4z" fill="#C7D2FE" />
+        <path d="M7 6h4v1H7z" fill="currentColor" />
+        <path d="M11 11.5L9.5 13l-1-1-2 2h6l-1.5-2z" fill="#6366F1"/>
+        <path d="M17.5 14l-2.5 2.5-1-1-2 2h7l-1.5-3.5z" fill="#6366F1"/>
+        <path d="M18 9l-1 2h3z" fill="#A5B4FC" />
+        <path d="M21 12l-3 4h5z" fill="#A5B4FC" />
+        <path d="M19 20l-4-4h8z" fill="#A5B4FC" />
+    </svg>
+);
+
+export const PreviewResultsIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="6" y="16" fontFamily="serif" fontSize="10" fill="currentColor" font-weight="bold">AB</text>
+        <circle cx="15" cy="9" r="5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M18 12l-4 4" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+);
+
+export const FinishAndMergeIcon = () => (
+     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h12v10H4z" fill="#E0E7FF" />
+        <path d="M5 6h8v1H5z" fill="currentColor" />
+        <path d="M5 8h6v1H5z" fill="currentColor" />
+        <path d="M17 10h5v2h-5z" fill="#3B82F6" />
+        <path d="M19.5 8l2.5 4l-2.5 4h-2l2.5-4l-2.5-4z" fill="#3B82F6" />
+        <path d="M4 16h16v4H4z" fill="#E0E7FF" />
+        <path d="M5 18h14v1H5z" fill="currentColor" />
+    </svg>
+);
+
+
 export const NumberInputWithSteppers: FC<{ label: string, value: string, unit: string }> = ({ label, value, unit }) => (
     <div className="flex items-center gap-1">
         <Label className="text-xs text-muted-foreground w-12">{label}</Label>
