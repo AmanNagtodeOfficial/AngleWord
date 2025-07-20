@@ -63,6 +63,9 @@ export const LANGUAGES: Language[] = [
     { code: 'ja-JP', name: '日本語 (日本)' },
     { code: 'ko-KR', name: '한국어 (대한민국)' },
     { code: 'ar-SA', name: 'العربية (المملكة العربية السعودية)' },
+    { code: 'hi-IN', name: 'हिन्दी (भारत)' },
+    { code: 'mr-IN', name: 'मराठी (भारत)' },
+    { code: 'gu-IN', name: 'ગુજરાતી (ભારત)' },
 ];
 
 
