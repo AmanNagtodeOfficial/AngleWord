@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react";
 import { FileMenu } from "./file-menu";
 import type { Margins, Orientation, PageSize, Columns as ColumnsType, EditorContext } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { HomeTab, InsertTab, DrawTab, DesignTab, LayoutTab, ReferencesTab, MailingsTab, ReviewTab, ViewTab, AIToolsTab, TableDesignTab, TableLayoutTab } from "./ribbon-tabs";
 import { cn } from "@/lib/utils";
@@ -157,73 +158,77 @@ export function AngleWordRibbon({
           </div>
           
           <div className={cn("bg-background min-h-[120px] flex items-start", !isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
-              <TabsContent value="home" className="w-full p-2">
-                <HomeTab editor={editor} />
-              </TabsContent>
+            <ScrollArea className="w-full whitespace-nowrap">
+                <div className="p-2 inline-block">
+                      <TabsContent value="home" className="w-full p-0 m-0">
+                        <HomeTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="insert" className="w-full p-2">
-                <InsertTab editor={editor} />
-              </TabsContent>
+                      <TabsContent value="insert" className="w-full p-0 m-0">
+                        <InsertTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="draw" className="w-full p-2">
-                <DrawTab editor={editor} />
-              </TabsContent>
+                      <TabsContent value="draw" className="w-full p-0 m-0">
+                        <DrawTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="design" className="w-full p-2">
-                <DesignTab editor={editor} />
-              </TabsContent>
-              
-              <TabsContent value="layout" className="w-full p-2">
-                <LayoutTab 
-                  editor={editor}
-                  margins={margins}
-                  setMargins={setMargins}
-                  orientation={orientation}
-                  setOrientation={setOrientation}
-                  pageSize={pageSize}
-                  setPageSize={setPageSize}
-                  columns={columns}
-                  setColumns={setColumns}
-                  onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
-                />
-              </TabsContent>
+                      <TabsContent value="design" className="w-full p-0 m-0">
+                        <DesignTab editor={editor} />
+                      </TabsContent>
+                      
+                      <TabsContent value="layout" className="w-full p-0 m-0">
+                        <LayoutTab 
+                          editor={editor}
+                          margins={margins}
+                          setMargins={setMargins}
+                          orientation={orientation}
+                          setOrientation={setOrientation}
+                          pageSize={pageSize}
+                          setPageSize={setPageSize}
+                          columns={columns}
+                          setColumns={setColumns}
+                          onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
+                        />
+                      </TabsContent>
 
-              <TabsContent value="references" className="w-full p-2">
-                <ReferencesTab editor={editor} />
-              </TabsContent>
+                      <TabsContent value="references" className="w-full p-0 m-0">
+                        <ReferencesTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="mailings" className="w-full p-2">
-                <MailingsTab editor={editor} />
-              </TabsContent>
+                      <TabsContent value="mailings" className="w-full p-0 m-0">
+                        <MailingsTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="review" className="w-full p-2">
-                <ReviewTab editor={editor} />
-              </TabsContent>
+                      <TabsContent value="review" className="w-full p-0 m-0">
+                        <ReviewTab editor={editor} />
+                      </TabsContent>
 
-              <TabsContent value="view" className="w-full p-2">
-                 <ViewTab 
-                    editor={editor} 
-                    isRulerVisible={isRulerVisible} 
-                    toggleRuler={toggleRuler} 
-                 />
-              </TabsContent>
+                      <TabsContent value="view" className="w-full p-0 m-0">
+                         <ViewTab 
+                            editor={editor} 
+                            isRulerVisible={isRulerVisible} 
+                            toggleRuler={toggleRuler} 
+                         />
+                      </TabsContent>
 
-              <TabsContent value="ai-tools" className="w-full p-2">
-                 <AIToolsTab 
-                    onImproveWriting={onImproveWriting} 
-                    onDetectTone={onDetectTone} 
-                    onSummarizeDocument={onSummarizeDocument} 
-                 />
-              </TabsContent>
+                      <TabsContent value="ai-tools" className="w-full p-0 m-0">
+                         <AIToolsTab 
+                            onImproveWriting={onImproveWriting} 
+                            onDetectTone={onDetectTone} 
+                            onSummarizeDocument={onSummarizeDocument} 
+                         />
+                      </TabsContent>
 
-               <TabsContent value="table-design" className="w-full p-2">
-                 <TableDesignTab editor={editor} />
-              </TabsContent>
+                       <TabsContent value="table-design" className="w-full p-0 m-0">
+                         <TableDesignTab editor={editor} />
+                      </TabsContent>
 
-               <TabsContent value="table-layout" className="w-full p-2">
-                 <TableLayoutTab editor={editor} />
-              </TabsContent>
-
+                       <TabsContent value="table-layout" className="w-full p-0 m-0">
+                         <TableLayoutTab editor={editor} />
+                      </TabsContent>
+                </div>
+                 <ScrollBar orientation="horizontal" />
+            </ScrollArea>
               <div className="absolute bottom-1 right-2 flex items-center">
                    <Button 
                       variant="ghost" 
