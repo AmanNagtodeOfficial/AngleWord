@@ -23,7 +23,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 
 interface FloatingMenuProps {
   editor: Editor;
@@ -58,21 +59,52 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
     return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '10';
   }, [editor.state.selection]);
 
+  const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
+
+  useEffect(() => {
+    const handleSelectionUpdate = () => {
+      setFontSizeInput(currentFontSize());
+    };
+    editor.on('selectionUpdate', handleSelectionUpdate);
+    return () => editor.off('selectionUpdate', handleSelectionUpdate);
+  }, [editor, currentFontSize]);
+
+  const setFontSize = (size: string) => {
+    const numSize = parseInt(size, 10);
+    if (!isNaN(numSize) && numSize > 0) {
+      editor.chain().focus().setMark('textStyle', { fontSize: `${numSize}pt` }).run();
+      setFontSizeInput(size);
+    }
+  };
+
   const handleIncreaseFontSize = () => {
-    const currentSize = currentFontSize();
-    const currentIndex = FONT_SIZES.indexOf(currentSize);
+    const currentSize = parseInt(currentFontSize(), 10);
+    const currentIndex = FONT_SIZES.map(s => parseInt(s, 10)).findIndex(s => s >= currentSize);
+    
     if (currentIndex > -1 && currentIndex < FONT_SIZES.length - 1) {
       const newSize = FONT_SIZES[currentIndex + 1];
-      editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+      setFontSize(newSize);
+    } else if (currentSize < 72) {
+      setFontSize(String(currentSize + 1));
     }
   };
 
   const handleDecreaseFontSize = () => {
-    const currentSize = currentFontSize();
-    const currentIndex = FONT_SIZES.indexOf(currentSize);
-    if (currentIndex > 0) {
-      const newSize = FONT_SIZES[currentIndex - 1];
-      editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+    const currentSize = parseInt(currentFontSize(), 10);
+    const fontSizesNum = FONT_SIZES.map(s => parseInt(s, 10));
+    let newIndex = -1;
+    for(let i = fontSizesNum.length - 1; i >= 0; i--) {
+        if(fontSizesNum[i] < currentSize) {
+            newIndex = i;
+            break;
+        }
+    }
+    
+    if (newIndex > -1) {
+      const newSize = FONT_SIZES[newIndex];
+      setFontSize(newSize);
+    } else if (currentSize > 1) {
+      setFontSize(String(currentSize - 1));
     }
   };
 
@@ -105,21 +137,36 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="p-1 text-xs h-7 w-12 justify-between">
-              {currentFontSize()}
-              <ChevronDown className="w-3 h-3 ml-1" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {FONT_SIZES.map(size => (
-              <DropdownMenuItem key={size} onClick={() => editor.chain().focus().setMark('textStyle', { fontSize: `${size}pt` }).run()}>
-                {size}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center border rounded-md h-7">
+            <Input
+                type="text"
+                value={fontSizeInput}
+                onChange={(e) => setFontSizeInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        setFontSize(fontSizeInput);
+                        e.currentTarget.blur();
+                    }
+                }}
+                onBlur={() => setFontSize(fontSizeInput)}
+                className="p-1 text-xs h-full w-8 border-0 focus-visible:ring-0"
+            />
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 h-full w-5 border-l rounded-l-none">
+                        <ChevronDown className="w-3 h-3" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {FONT_SIZES.map(size => (
+                        <DropdownMenuItem key={size} onSelect={() => setFontSize(size)}>
+                            {size}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+
 
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleIncreaseFontSize}><ALargeSmall className="w-4 h-4" /></Button>
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleDecreaseFontSize}><CaseLower className="w-4 h-4" /></Button>
@@ -172,5 +219,3 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
     </BubbleMenu>
   );
 }
-
-    
