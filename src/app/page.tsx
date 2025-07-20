@@ -55,6 +55,16 @@ export const PAGE_SIZES: { [key: string]: PageSize } = {
   legal: { name: 'Legal', width: '8.5in', height: '14in' },
 };
 
+export const MARGIN_PRESETS: { [key: string]: { name: string; values: Margins, details: string[] } } = {
+    normal: { name: 'Normal', values: { top: '2.54cm', bottom: '2.54cm', left: '2.54cm', right: '2.54cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 2.54 cm', 'Right: 2.54 cm'] },
+    narrow: { name: 'Narrow', values: { top: '1.27cm', bottom: '1.27cm', left: '1.27cm', right: '1.27cm' }, details: ['Top: 1.27 cm', 'Bottom: 1.27 cm', 'Left: 1.27 cm', 'Right: 1.27 cm'] },
+    moderate: { name: 'Moderate', values: { top: '2.54cm', bottom: '2.54cm', left: '1.91cm', right: '1.91cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 1.91 cm', 'Right: 1.91 cm'] },
+    wide: { name: 'Wide', values: { top: '2.54cm', bottom: '2.54cm', left: '5.08cm', right: '5.08cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 5.08 cm', 'Right: 5.08 cm'] },
+    mirrored: { name: 'Mirrored', values: { top: '2.54cm', bottom: '2.54cm', left: '3.18cm', right: '2.54cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Inside: 3.18 cm', 'Outside: 2.54 cm'] },
+    office2003: { name: 'Office 2003 Default', values: { top: '2.54cm', bottom: '2.54cm', left: '3.18cm', right: '3.18cm' }, details: ['Top: 2.54 cm', 'Bottom: 2.54 cm', 'Left: 3.18 cm', 'Right: 3.18 cm'] },
+};
+
+
 
 const createNewDocument = (name: string): Document => ({
   id: Date.now().toString(),
@@ -98,7 +108,7 @@ function AngleWordPage() {
     setTimeout(() => {
       updateDocument(activeDocumentId, { saveStatus: "saved" });
     }, 1000);
-  }, [activeDocumentId, updateDocument]);
+  }, [activeDocumentId]);
 
   const handleContentUpdate = (content: string) => {
     if (!activeDocumentId) return;

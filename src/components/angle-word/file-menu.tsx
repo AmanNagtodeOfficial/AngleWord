@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling } from "lucide-react";
 import { useState, FC, useMemo } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DocumentEditor } from "./document-editor";
 import { Separator } from "../ui/separator";
 import { Slider } from "../ui/slider";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { Margins, Orientation, PageSize } from "@/app/page";
+import { PAGE_SIZES, MARGIN_PRESETS } from "@/app/page";
+import { CustomMarginsDialog } from "./custom-margins-dialog";
 
 interface FileMenuProps {
   isOpen: boolean;
@@ -25,6 +28,12 @@ interface FileMenuProps {
   documentName: string;
   setDocumentName: (name: string) => void;
   onNewDocument: () => void;
+  margins: Margins;
+  setMargins: (margins: Margins) => void;
+  orientation: Orientation;
+  setOrientation: (orientation: Orientation) => void;
+  pageSize: PageSize;
+  setPageSize: (pageSize: PageSize) => void;
 }
 
 type MenuScreen = 'home' | 'new' | 'open' | 'info' | 'save' | 'save-as' | 'history' | 'print' | 'share' | 'export' | 'transform' | 'close' | 'account' | 'options';
@@ -43,7 +52,20 @@ const templates = [
 const recentFiles: {name: string, path: string, date: string}[] = [];
 
 
-export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentName, onNewDocument }: FileMenuProps) {
+export function FileMenu({
+  isOpen,
+  onClose,
+  editor,
+  documentName,
+  setDocumentName,
+  onNewDocument,
+  margins,
+  setMargins,
+  orientation,
+  setOrientation,
+  pageSize,
+  setPageSize,
+}: FileMenuProps) {
   const [activeScreen, setActiveScreen] = useState<MenuScreen>('home');
   const [fileName, setFileName] = useState(documentName);
   const [saveFormat, setSaveFormat] = useState<SaveFormat>('html');
@@ -114,7 +136,19 @@ export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentNam
       case 'open':
         return <div>Open Screen Content</div>;
       case 'print':
-        return <PrintScreen editor={editor} onPrint={handlePrint} documentName={documentName} />;
+        return (
+          <PrintScreen 
+            editor={editor}
+            onPrint={handlePrint}
+            documentName={documentName}
+            margins={margins}
+            setMargins={setMargins}
+            orientation={orientation}
+            setOrientation={setOrientation}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+          />
+        );
       case 'save-as':
         return (
           <div className="p-8">
@@ -262,7 +296,7 @@ function HomeScreen({ onNewDocument, onTemplateClick }: { onNewDocument: () => v
                            <div className="text-sm text-primary">Take a tour</div>
                            <div className="text-xs text-muted-foreground mb-2">Welcome to Word</div>
                            <Button variant="ghost" size="icon" className="rounded-full bg-primary/10 text-primary hover:bg-primary/20">
-                                <ArrowLeft className="transform rotate-180" />
+                                <ArrowLeft className="inline-block transform rotate-180" />
                            </Button>
                         </div>
                         <span className="text-sm">Welcome to Word</span>
@@ -304,20 +338,51 @@ function HomeScreen({ onNewDocument, onTemplateClick }: { onNewDocument: () => v
     );
 }
 
-const PrintSettingButton: FC<{icon: React.ElementType, title: string, description: string, onClick?: () => void}> = ({ icon: Icon, title, description, onClick }) => (
-    <Button variant="outline" className="h-auto w-full justify-start p-2 text-left" onClick={onClick}>
-        <Icon className="w-8 h-8 mr-3 text-primary/80" />
-        <div className="flex flex-col">
-            <span className="font-semibold">{title}</span>
-            <span className="text-xs text-muted-foreground">{description}</span>
-        </div>
-        <ChevronDown className="w-4 h-4 ml-auto" />
-    </Button>
+const PrintSettingDropdown: FC<{icon: React.ElementType, title: string, description: string, children: React.ReactNode}> = ({ icon: Icon, title, description, children }) => (
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="h-auto w-full justify-start p-2 text-left">
+                <Icon className="w-8 h-8 mr-3 text-primary/80" />
+                <div className="flex flex-col">
+                    <span className="font-semibold">{title}</span>
+                    <span className="text-xs text-muted-foreground">{description}</span>
+                </div>
+                <ChevronDown className="w-4 h-4 ml-auto" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+            {children}
+        </DropdownMenuContent>
+    </DropdownMenu>
 );
 
-const PrintScreen: FC<{ editor: Editor | null; onPrint: () => void; documentName: string; }> = ({ editor, onPrint, documentName }) => {
+
+interface PrintScreenProps {
+  editor: Editor | null;
+  onPrint: () => void;
+  documentName: string;
+  margins: Margins;
+  setMargins: (margins: Margins) => void;
+  orientation: Orientation;
+  setOrientation: (orientation: Orientation) => void;
+  pageSize: PageSize;
+  setPageSize: (pageSize: PageSize) => void;
+}
+
+const PrintScreen: FC<PrintScreenProps> = ({ 
+    editor, 
+    onPrint, 
+    documentName,
+    margins,
+    setMargins,
+    orientation,
+    setOrientation,
+    pageSize,
+    setPageSize,
+}) => {
     const [copies, setCopies] = useState(1);
     const [zoomLevel, setZoomLevel] = useState(56);
+    const [isCustomMarginsOpen, setIsCustomMarginsOpen] = useState(false);
     
     // A mock editor instance for preview purposes when the real one isn't available.
     const [mockEditor, setMockEditor] = useState<Editor | null>(null);
@@ -326,118 +391,171 @@ const PrintScreen: FC<{ editor: Editor | null; onPrint: () => void; documentName
         setCopies(Math.max(1, newCopies));
     };
 
+    const currentMarginPreset = useMemo(() => {
+        const marginString = JSON.stringify(margins);
+        const preset = Object.values(MARGIN_PRESETS).find(p => JSON.stringify(p.values) === marginString);
+        return preset ? preset.name : 'Custom Margins';
+    }, [margins]);
+    
+
     return (
-        <div className="flex h-full bg-muted/20">
-            {/* Left Panel: Settings */}
-            <ScrollArea className="w-[400px] flex-shrink-0 bg-card p-4">
-                <h1 className="text-4xl font-light mb-6">Print</h1>
-                <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                        <Button size="lg" className="h-auto py-3 px-4" onClick={onPrint}>
-                            <Printer className="w-8 h-8 mr-3" />
-                            <span className="text-lg">Print</span>
-                        </Button>
-                        <div className="flex items-center gap-2">
-                            <Label htmlFor="copies" className="text-sm">Copies:</Label>
-                            <div className="relative w-20">
-                                <Input 
-                                    id="copies" 
-                                    type="number" 
-                                    value={copies} 
-                                    onChange={(e) => handleCopiesChange(parseInt(e.target.value))} 
-                                    className="pr-6"
-                                />
-                                <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center">
-                                    <button onClick={() => handleCopiesChange(copies + 1)} className="h-1/2 px-1 text-muted-foreground hover:text-foreground"><ChevronUp className="w-3 h-3"/></button>
-                                    <button onClick={() => handleCopiesChange(copies - 1)} className="h-1/2 px-1 text-muted-foreground hover:text-foreground"><ChevronDown className="w-3 h-3"/></button>
+        <>
+            <CustomMarginsDialog 
+                isOpen={isCustomMarginsOpen}
+                onClose={() => setIsCustomMarginsOpen(false)}
+                currentMargins={margins}
+                onApply={(newMargins) => {
+                    setMargins(newMargins);
+                    setIsCustomMarginsOpen(false);
+                }}
+            />
+            <div className="flex h-full bg-muted/20">
+                {/* Left Panel: Settings */}
+                <ScrollArea className="w-[400px] flex-shrink-0 bg-card p-4">
+                    <h1 className="text-4xl font-light mb-6">Print</h1>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                            <Button size="lg" className="h-auto py-3 px-4" onClick={onPrint}>
+                                <Printer className="w-8 h-8 mr-3" />
+                                <span className="text-lg">Print</span>
+                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor="copies" className="text-sm">Copies:</Label>
+                                <div className="relative w-20">
+                                    <Input 
+                                        id="copies" 
+                                        type="number" 
+                                        value={copies} 
+                                        onChange={(e) => handleCopiesChange(parseInt(e.target.value))} 
+                                        className="pr-6"
+                                    />
+                                    <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center">
+                                        <button onClick={() => handleCopiesChange(copies + 1)} className="h-1/2 px-1 text-muted-foreground hover:text-foreground"><ChevronUp className="w-3 h-3"/></button>
+                                        <button onClick={() => handleCopiesChange(copies - 1)} className="h-1/2 px-1 text-muted-foreground hover:text-foreground"><ChevronDown className="w-3 h-3"/></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <Separator />
-                    <div>
-                        <h2 className="text-lg font-semibold mb-2">Printer</h2>
-                        <Select defaultValue="pdf">
-                            <SelectTrigger className="h-auto p-2">
-                                <div className="flex items-center">
-                                    <Printer className="w-8 h-8 mr-3 text-primary/80" />
-                                    <div>
-                                        <SelectValue />
-                                        <span className="text-xs text-green-600 flex items-center gap-1">
-                                            <CheckCircle className="w-3 h-3" />
-                                            Ready
-                                        </span>
+                        <Separator />
+                        <div>
+                            <h2 className="text-lg font-semibold mb-2">Printer</h2>
+                            <Select defaultValue="pdf">
+                                <SelectTrigger className="h-auto p-2">
+                                    <div className="flex items-center">
+                                        <Printer className="w-8 h-8 mr-3 text-primary/80" />
+                                        <div>
+                                            <SelectValue />
+                                            <span className="text-xs text-green-600 flex items-center gap-1">
+                                                <CheckCircle className="w-3 h-3" />
+                                                Ready
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="pdf">Microsoft Print to PDF</SelectItem>
-                                <SelectItem value="xps">Microsoft XPS Document Writer</SelectItem>
-                                <SelectItem value="one" disabled>OneNote</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Button variant="link" className="p-0 h-auto mt-1 text-primary">Printer Properties</Button>
-                    </div>
-                     <Separator />
-                    <div>
-                        <h2 className="text-lg font-semibold mb-2">Settings</h2>
-                        <div className="space-y-2">
-                             <PrintSettingButton icon={File} title="Print All Pages" description="The whole thing" />
-                             <div className="flex items-center gap-2">
-                                <Input placeholder="Pages:" className="flex-grow"/>
-                                <Info className="w-4 h-4 text-muted-foreground" />
-                             </div>
-                             <PrintSettingButton icon={File} title="Print One Sided" description="Only print on one side of th..." />
-                             <PrintSettingButton icon={File} title="Collated" description="1,2,3  1,2,3  1,2,3" />
-                             <PrintSettingButton icon={File} title="Portrait Orientation" description="" />
-                             <PrintSettingButton icon={File} title="A4" description="21 cm x 29.7 cm" />
-                             <PrintSettingButton icon={File} title="Normal Margins" description="Top: 2.54 cm Bottom: 2.54 c..." />
-                             <PrintSettingButton icon={File} title="1 Page Per Sheet" description="" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pdf">Microsoft Print to PDF</SelectItem>
+                                    <SelectItem value="xps">Microsoft XPS Document Writer</SelectItem>
+                                    <SelectItem value="one" disabled>OneNote</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button variant="link" className="p-0 h-auto mt-1 text-primary">Printer Properties</Button>
                         </div>
-                        <Button variant="link" className="p-0 h-auto mt-2 text-primary">Page Setup</Button>
+                         <Separator />
+                        <div>
+                            <h2 className="text-lg font-semibold mb-2">Settings</h2>
+                            <div className="space-y-2">
+                                 <PrintSettingDropdown icon={File} title="Print All Pages" description="The whole thing">
+                                     <DropdownMenuItem>Print All Pages</DropdownMenuItem>
+                                     <DropdownMenuItem>Print Selection</DropdownMenuItem>
+                                     <DropdownMenuItem>Print Current Page</DropdownMenuItem>
+                                     <DropdownMenuItem>Custom Print...</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <div className="flex items-center gap-2">
+                                    <Input placeholder="Pages:" className="flex-grow"/>
+                                    <Info className="w-4 h-4 text-muted-foreground" />
+                                 </div>
+                                 <PrintSettingDropdown icon={File} title="Print One Sided" description="Only print on one side of th...">
+                                     <DropdownMenuItem>Print One Sided</DropdownMenuItem>
+                                     <DropdownMenuItem>Manually Print on Both Sides</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <PrintSettingDropdown icon={File} title="Collated" description="1,2,3  1,2,3  1,2,3">
+                                     <DropdownMenuItem>Collated</DropdownMenuItem>
+                                     <DropdownMenuItem>Uncollated</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <PrintSettingDropdown icon={BookCopy} title={`${orientation.charAt(0).toUpperCase() + orientation.slice(1)} Orientation`} description="">
+                                      <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait Orientation</DropdownMenuItem>
+                                      <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape Orientation</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <PrintSettingDropdown icon={Scaling} title={pageSize.name} description={`${pageSize.width} x ${pageSize.height}`}>
+                                    {Object.values(PAGE_SIZES).map(size => (
+                                        <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
+                                            {size.name} <span className="text-muted-foreground ml-2">{size.width} x {size.height}</span>
+                                        </DropdownMenuItem>
+                                    ))}
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>More Paper Sizes...</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <PrintSettingDropdown icon={File} title={currentMarginPreset} description={Object.values(margins).join(' ')}>
+                                     {Object.values(MARGIN_PRESETS).map(preset => (
+                                        <DropdownMenuItem key={preset.name} onSelect={() => setMargins(preset.values)}>
+                                            {preset.name}
+                                        </DropdownMenuItem>
+                                     ))}
+                                     <DropdownMenuSeparator />
+                                     <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>Custom Margins...</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                                 <PrintSettingDropdown icon={File} title="1 Page Per Sheet" description="">
+                                     <DropdownMenuItem>1 Page Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem>2 Pages Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem>4 Pages Per Sheet</DropdownMenuItem>
+                                     <DropdownMenuItem>6 Pages Per Sheet</DropdownMenuItem>
+                                 </PrintSettingDropdown>
+                            </div>
+                            <Button variant="link" className="p-0 h-auto mt-2 text-primary">Page Setup</Button>
+                        </div>
                     </div>
-                </div>
-            </ScrollArea>
-            
-            {/* Right Panel: Preview */}
-            <div className="flex-grow flex flex-col p-4 overflow-hidden">
-                <div className="text-sm text-center text-muted-foreground p-2">{documentName} - Word</div>
-                <div className="flex-grow flex items-center justify-center overflow-auto p-4">
-                     <div className="bg-background shadow-lg w-[8.5in] h-[11in] overflow-hidden" style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center' }}>
-                         <DocumentEditor 
-                             content={editor?.getHTML() || ''}
-                             onUpdate={() => {}}
-                             setEditor={setMockEditor} // Use mock editor for preview
-                             className="p-8"
-                         />
+                </ScrollArea>
+                
+                {/* Right Panel: Preview */}
+                <div className="flex-grow flex flex-col p-4 overflow-hidden">
+                    <div className="text-sm text-center text-muted-foreground p-2">{documentName} - Word</div>
+                    <div className="flex-grow flex items-center justify-center overflow-auto p-4">
+                         <div className="bg-background shadow-lg w-[8.5in] h-[11in] overflow-hidden" style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center' }}>
+                             <DocumentEditor 
+                                 content={editor?.getHTML() || ''}
+                                 onUpdate={() => {}}
+                                 setEditor={setMockEditor} // Use mock editor for preview
+                                 className="p-8"
+                             />
+                         </div>
+                    </div>
+                     <div className="flex-shrink-0 flex items-center justify-between p-2 border-t">
+                         <div className="flex items-center gap-2">
+                            <Button variant="outline" size="icon" className="h-6 w-6"><ChevronLeft className="w-4 h-4" /></Button>
+                             <Input value="1" className="h-6 w-10 text-center" readOnly/>
+                             <span>of 1</span>
+                            <Button variant="outline" size="icon" className="h-6 w-6"><ChevronRight className="w-4 h-4" /></Button>
+                         </div>
+                         <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.max(10, prev - 10))}>
+                                <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-16 text-center text-sm">{zoomLevel}%</span>
+                            <Slider
+                                value={[zoomLevel]}
+                                onValueChange={(val) => setZoomLevel(val[0])}
+                                max={200}
+                                min={10}
+                                step={1}
+                                className="w-32"
+                            />
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.min(200, prev + 10))}>
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
                      </div>
                 </div>
-                 <div className="flex-shrink-0 flex items-center justify-between p-2 border-t">
-                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" className="h-6 w-6"><ChevronLeft className="w-4 h-4" /></Button>
-                         <Input value="1" className="h-6 w-10 text-center" readOnly/>
-                         <span>of 1</span>
-                        <Button variant="outline" size="icon" className="h-6 w-6"><ChevronRight className="w-4 h-4" /></Button>
-                     </div>
-                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.max(10, prev - 10))}>
-                            <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="w-16 text-center text-sm">{zoomLevel}%</span>
-                        <Slider
-                            value={[zoomLevel]}
-                            onValueChange={(val) => setZoomLevel(val[0])}
-                            max={200}
-                            min={10}
-                            step={1}
-                            className="w-32"
-                        />
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.min(200, prev + 10))}>
-                            <Plus className="h-4 w-4" />
-                        </Button>
-                    </div>
-                 </div>
             </div>
-        </div>
+        </>
     );
 };
