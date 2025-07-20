@@ -17,6 +17,7 @@ import {
 import { FC } from "react";
 import { RibbonGroup, RibbonButton } from "../ribbon-ui";
 import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface DrawTabProps {
   editor: Editor | null;
@@ -46,41 +47,44 @@ export const DrawTab: FC<DrawTabProps> = ({ editor }) => {
   if (!editor) return null;
 
   return (
-    <div className="flex items-start">
-      <RibbonGroup title="Tools">
-        <RibbonButton icon={Eraser}>Eraser</RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Pens">
-        <RibbonButton icon={Pen}>Black Pen</RibbonButton>
-        <RibbonButton icon={Pen} className="text-red-500">Red Pen</RibbonButton>
-        <RibbonButton icon={PencilIcon} className="text-gray-500">Pencil</RibbonButton>
-        <RibbonButton icon={Highlighter} className="text-yellow-400">Highlighter</RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Stencils">
-        <RibbonButton icon={Plus}>
-            Add
-            <ChevronDown className="inline w-3 h-3 ml-0.5" />
-        </RibbonButton>
-        <RibbonButton icon={Ruler}>Ruler</RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Edit">
-        <RibbonButton icon={FormatBackgroundIcon}>
-            Format
-            <br />
-            Background
-            <ChevronDown className="inline w-3 h-3 ml-0.5" />
-        </RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Convert">
-        <RibbonButton icon={Shapes}>Ink to Shape</RibbonButton>
-        <RibbonButton icon={InkToMathIcon}>Ink to Maths</RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Insert">
-        <RibbonButton icon={DrawingCanvasIcon}>Drawing Canvas</RibbonButton>
-      </RibbonGroup>
-      <RibbonGroup title="Help">
-        <RibbonButton icon={HelpCircle}>Ink Help</RibbonButton>
-      </RibbonGroup>
-    </div>
+    <ScrollArea className="w-full whitespace-nowrap">
+        <div className="flex items-start p-2">
+            <RibbonGroup title="Tools">
+                <RibbonButton icon={Eraser}>Eraser</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Pens">
+                <RibbonButton icon={Pen}>Black Pen</RibbonButton>
+                <RibbonButton icon={Pen} className="text-red-500">Red Pen</RibbonButton>
+                <RibbonButton icon={PencilIcon} className="text-gray-500">Pencil</RibbonButton>
+                <RibbonButton icon={Highlighter} className="text-yellow-400">Highlighter</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Stencils">
+                <RibbonButton icon={Plus}>
+                    Add
+                    <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                </RibbonButton>
+                <RibbonButton icon={Ruler}>Ruler</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Edit">
+                <RibbonButton icon={FormatBackgroundIcon}>
+                    Format
+                    <br />
+                    Background
+                    <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                </RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Convert">
+                <RibbonButton icon={Shapes}>Ink to Shape</RibbonButton>
+                <RibbonButton icon={InkToMathIcon}>Ink to Maths</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Insert">
+                <RibbonButton icon={DrawingCanvasIcon}>Drawing Canvas</RibbonButton>
+            </RibbonGroup>
+            <RibbonGroup title="Help">
+                <RibbonButton icon={HelpCircle}>Ink Help</RibbonButton>
+            </RibbonGroup>
+        </div>
+        <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };

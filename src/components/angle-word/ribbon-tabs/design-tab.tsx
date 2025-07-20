@@ -41,77 +41,80 @@ export const DesignTab: FC<DesignTabProps> = ({ editor }) => {
   if (!editor) return null;
 
   return (
-    <div className="flex items-start">
-      <RibbonGroup title="Document Formatting">
-        <div className="flex items-start gap-2">
-            <RibbonButton icon={Palette}>
-                Themes
-                <ChevronDown className="inline w-3 h-3 ml-0.5" />
-            </RibbonButton>
+    <ScrollArea className="w-full whitespace-nowrap">
+        <div className="flex items-start p-2">
+            <RibbonGroup title="Document Formatting">
+                <div className="flex items-start gap-2">
+                    <RibbonButton icon={Palette}>
+                        Themes
+                        <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                    </RibbonButton>
 
-            <ScrollArea className="w-[400px] whitespace-nowrap rounded-md border">
-              <div className="flex w-max space-x-2 p-2">
-                {documentStyles.map((style, index) => (
-                    <div key={index} className="flex-shrink-0 cursor-pointer group">
-                        <div className="w-16 h-20 p-1 border-2 border-transparent group-hover:border-primary bg-background">
-                            <Image
-                                src={style.image}
-                                alt={style.name}
-                                width={60}
-                                height={76}
-                                className="object-contain w-full h-full"
-                                data-ai-hint={style.hint}
-                            />
+                    <ScrollArea className="w-[400px] whitespace-nowrap rounded-md border">
+                    <div className="flex w-max space-x-2 p-2">
+                        {documentStyles.map((style, index) => (
+                            <div key={index} className="flex-shrink-0 cursor-pointer group">
+                                <div className="w-16 h-20 p-1 border-2 border-transparent group-hover:border-primary bg-background">
+                                    <Image
+                                        src={style.image}
+                                        alt={style.name}
+                                        width={60}
+                                        height={76}
+                                        className="object-contain w-full h-full"
+                                        data-ai-hint={style.hint}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                    
+                    <div className="flex items-start space-x-1 pl-2 border-l">
+                        <div className="flex flex-col space-y-1">
+                            <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                                <Droplet className="w-4 h-4 mr-2" /> Colours <ChevronDown className="w-3 h-3 ml-auto" />
+                            </Button>
+                            <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                                <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
+                            </Button>
+                        </div>
+                        <div className="flex flex-col space-y-1">
+                            <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                                <SlidersHorizontal className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
+                            </Button>
+                            <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                                <Wand2 className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
+                            </Button>
+                            <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                                <Check className="w-4 h-4 mr-2" /> Set as Default
+                            </Button>
                         </div>
                     </div>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-            
-            <div className="flex items-start space-x-1 pl-2 border-l">
-                <div className="flex flex-col space-y-1">
-                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                        <Droplet className="w-4 h-4 mr-2" /> Colours <ChevronDown className="w-3 h-3 ml-auto" />
-                    </Button>
-                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                        <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
-                    </Button>
                 </div>
-                <div className="flex flex-col space-y-1">
-                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                        <SlidersHorizontal className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
-                    </Button>
-                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                        <Wand2 className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
-                    </Button>
-                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                        <Check className="w-4 h-4 mr-2" /> Set as Default
-                    </Button>
-                </div>
-            </div>
-        </div>
-      </RibbonGroup>
+            </RibbonGroup>
 
-      <RibbonGroup title="Page Background">
-        <div className="flex flex-col space-y-1">
-            <RibbonButton icon={FileImage}>
-                Watermark
-                <ChevronDown className="inline w-3 h-3 ml-0.5" />
-            </RibbonButton>
+            <RibbonGroup title="Page Background">
+                <div className="flex flex-col space-y-1">
+                    <RibbonButton icon={FileImage}>
+                        Watermark
+                        <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                    </RibbonButton>
+                </div>
+                <div className="flex flex-col space-y-1">
+                    <RibbonButton icon={Paintbrush}>
+                        Page Colour
+                        <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                    </RibbonButton>
+                </div>
+                <div className="flex flex-col space-y-1">
+                    <RibbonButton icon={Square}>
+                        Page Borders
+                    </RibbonButton>
+                </div>
+            </RibbonGroup>
         </div>
-        <div className="flex flex-col space-y-1">
-            <RibbonButton icon={Paintbrush}>
-                Page Colour
-                <ChevronDown className="inline w-3 h-3 ml-0.5" />
-            </RibbonButton>
-        </div>
-        <div className="flex flex-col space-y-1">
-            <RibbonButton icon={Square}>
-                Page Borders
-            </RibbonButton>
-        </div>
-      </RibbonGroup>
-    </div>
+        <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };

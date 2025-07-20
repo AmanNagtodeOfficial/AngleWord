@@ -26,6 +26,7 @@ import {
   SendToBack,
   TextSelect,
 } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface LayoutTabProps {
   editor: Editor | null;
@@ -55,120 +56,123 @@ export const LayoutTab: FC<LayoutTabProps> = ({
   if (!editor) return null;
 
   return (
-    <div className="flex items-start">
-      <RibbonGroup title="Page Setup">
-          <div className="flex">
-              <div className="flex flex-col">
-                  <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <RibbonButton icon={FileText}>Margins</RibbonButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-64">
-                          <MarginMenuItem 
-                            title="Last Custom Setting" 
-                            details={['Top: 0 cm', 'Bottom: 0 cm', 'Left: 0 cm', 'Right: 0 cm']} 
-                            onSelect={() => setMargins({ top: '0', bottom: '0', left: '0', right: '0' })} 
-                            iconType="custom"
-                          />
-                          <DropdownMenuSeparator/>
-                          {Object.entries(MARGIN_PRESETS).map(([key, { name, values, details }]) => (
+    <ScrollArea className="w-full whitespace-nowrap">
+      <div className="flex items-start p-2">
+        <RibbonGroup title="Page Setup">
+            <div className="flex">
+                <div className="flex flex-col">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <RibbonButton icon={FileText}>Margins</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-64">
                             <MarginMenuItem 
-                                key={key} 
-                                title={name} 
-                                details={details} 
-                                onSelect={() => setMargins(values)}
-                                iconType={key}
+                              title="Last Custom Setting" 
+                              details={['Top: 0 cm', 'Bottom: 0 cm', 'Left: 0 cm', 'Right: 0 cm']} 
+                              onSelect={() => setMargins({ top: '0', bottom: '0', left: '0', right: '0' })} 
+                              iconType="custom"
                             />
-                          ))}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onSelect={onCustomMarginsClick} className="cursor-pointer">
-                              Custom Margins...
-                          </DropdownMenuItem>
-                      </DropdownMenuContent>
-                  </DropdownMenu>
-              </div>
-              <div className="flex flex-col">
-                   <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                          <RibbonButton icon={BookCopy}>Orientation</RibbonButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                          <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
-                      </DropdownMenuContent>
-                  </DropdownMenu>
-              </div>
-              <div className="flex flex-col">
-                   <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                          <RibbonButton icon={Scaling}>Size</RibbonButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                          {Object.values(PAGE_SIZES).map((size) => (
-                              <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
-                                  {size.name} ({size.width} x {size.height})
-                              </DropdownMenuItem>
-                          ))}
-                      </DropdownMenuContent>
-                  </DropdownMenu>
-              </div>
-               <div className="flex flex-col">
-                   <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                          <RibbonButton icon={ColumnsIcon}>Columns</RibbonButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                          <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
-                      </DropdownMenuContent>
-                  </DropdownMenu>
-              </div>
-          </div>
-           <div className="flex flex-col space-y-1 ml-2 pl-2 border-l">
-              <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
-                  <BreaksIcon /> <span className="ml-1">Breaks</span> <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-               <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
-                  <LineNumbersIcon /> <span className="ml-1">Line Numbers</span> <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-               <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
-                  <HyphenationIcon /> <span className="ml-1">Hyphenation</span> <ChevronDown className="w-3 h-3 ml-auto" />
-              </Button>
-          </div>
-      </RibbonGroup>
-      <RibbonGroup title="Paragraph">
-          <div className="flex gap-4">
-              <div className="flex flex-col gap-2">
-                  <span className="text-sm">Indent</span>
-                  <NumberInputWithSteppers label="Left" value="0" unit="cm" />
-                  <NumberInputWithSteppers label="Right" value="0" unit="cm" />
-              </div>
-              <div className="flex flex-col gap-2">
-                  <span className="text-sm">Spacing</span>
-                  <NumberInputWithSteppers label="Before" value="0" unit="pt" />
-                  <NumberInputWithSteppers label="After" value="8" unit="pt" />
-              </div>
-          </div>
-      </RibbonGroup>
-      <RibbonGroup title="Arrange">
-          <div className="flex items-start gap-1">
-              <div className="flex flex-col gap-1">
-                  <div className="flex gap-1">
-                      <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
-                      <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
-                      <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
-                      <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
-                      <RibbonButton icon={TextSelect} disabled>Selection Pane</RibbonButton>
-                  </div>
-              </div>
-              <div className="flex flex-col gap-1 border-l pl-1">
-                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><AlignIcon/> <span className="ml-1">Align</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><GroupObjectsIcon/> <span className="ml-1">Group</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><RotateIcon/> <span className="ml-1">Rotate</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-              </div>
-          </div>
-      </RibbonGroup>
-    </div>
+                            <DropdownMenuSeparator/>
+                            {Object.entries(MARGIN_PRESETS).map(([key, { name, values, details }]) => (
+                              <MarginMenuItem 
+                                  key={key} 
+                                  title={name} 
+                                  details={details} 
+                                  onSelect={() => setMargins(values)}
+                                  iconType={key}
+                              />
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={onCustomMarginsClick} className="cursor-pointer">
+                                Custom Margins...
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <div className="flex flex-col">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={BookCopy}>Orientation</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => setOrientation('portrait')}>Portrait</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setOrientation('landscape')}>Landscape</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <div className="flex flex-col">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={Scaling}>Size</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {Object.values(PAGE_SIZES).map((size) => (
+                                <DropdownMenuItem key={size.name} onSelect={() => setPageSize(size)}>
+                                    {size.name} ({size.width} x {size.height})
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <div className="flex flex-col">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <RibbonButton icon={ColumnsIcon}>Columns</RibbonButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => setColumns(1)}>One</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setColumns(2)}>Two</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setColumns(3)}>Three</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+            <div className="flex flex-col space-y-1 ml-2 pl-2 border-l">
+                <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                    <BreaksIcon /> <span className="ml-1">Breaks</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                    <LineNumbersIcon /> <span className="ml-1">Line Numbers</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+                <Button variant="ghost" className="h-auto p-1 justify-start text-xs">
+                    <HyphenationIcon /> <span className="ml-1">Hyphenation</span> <ChevronDown className="w-3 h-3 ml-auto" />
+                </Button>
+            </div>
+        </RibbonGroup>
+        <RibbonGroup title="Paragraph">
+            <div className="flex gap-4">
+                <div className="flex flex-col gap-2">
+                    <span className="text-sm">Indent</span>
+                    <NumberInputWithSteppers label="Left" value="0" unit="cm" />
+                    <NumberInputWithSteppers label="Right" value="0" unit="cm" />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <span className="text-sm">Spacing</span>
+                    <NumberInputWithSteppers label="Before" value="0" unit="pt" />
+                    <NumberInputWithSteppers label="After" value="8" unit="pt" />
+                </div>
+            </div>
+        </RibbonGroup>
+        <RibbonGroup title="Arrange">
+            <div className="flex items-start gap-1">
+                <div className="flex flex-col gap-1">
+                    <div className="flex gap-1">
+                        <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
+                        <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
+                        <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
+                        <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
+                        <RibbonButton icon={TextSelect} disabled>Selection Pane</RibbonButton>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-1 border-l pl-1">
+                  <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><AlignIcon/> <span className="ml-1">Align</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
+                  <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><GroupObjectsIcon/> <span className="ml-1">Group</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
+                  <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><RotateIcon/> <span className="ml-1">Rotate</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
+                </div>
+            </div>
+        </RibbonGroup>
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };

@@ -9,7 +9,6 @@ import { useState, useRef, useEffect } from "react";
 import { FileMenu } from "./file-menu";
 import type { Margins, Orientation, PageSize, Columns as ColumnsType, EditorContext } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { HomeTab, InsertTab, DrawTab, DesignTab, LayoutTab, ReferencesTab, MailingsTab, ReviewTab, ViewTab, AIToolsTab, TableDesignTab, TableLayoutTab } from "./ribbon-tabs";
 import { cn } from "@/lib/utils";
@@ -125,14 +124,14 @@ export function AngleWordRibbon({
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full relative">
           <div className="flex justify-between items-end">
-             <div className="flex">
+             <div className="flex items-center">
                 <Button
                   onClick={() => setIsFileMenuOpen(true)}
                   className="text-sm px-4 py-1.5 rounded-b-none rounded-t-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   File
                 </Button>
-                <TabsList className="bg-transparent p-0 h-auto justify-start">
+                <TabsList className="bg-transparent p-0 h-auto justify-start ml-2">
                   <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
                   <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
                   <TabsTrigger value="draw" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Draw</TabsTrigger>
@@ -158,92 +157,77 @@ export function AngleWordRibbon({
           </div>
           
           <div className={cn("bg-background min-h-[120px] flex items-start", !isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
-            <ScrollArea className="w-full whitespace-nowrap">
-                <div className="p-2 inline-block">
-                      <TabsContent value="home" className="w-full p-0 m-0">
-                        <HomeTab editor={editor} />
-                      </TabsContent>
+            <TabsContent value="home" className="w-full p-0 m-0">
+              <HomeTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="insert" className="w-full p-0 m-0">
+              <InsertTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="draw" className="w-full p-0 m-0">
+              <DrawTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="design" className="w-full p-0 m-0">
+              <DesignTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="layout" className="w-full p-0 m-0">
+              <LayoutTab 
+                editor={editor}
+                margins={margins}
+                setMargins={setMargins}
+                orientation={orientation}
+                setOrientation={setOrientation}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+                columns={columns}
+                setColumns={setColumns}
+                onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
+              />
+            </TabsContent>
+            <TabsContent value="references" className="w-full p-0 m-0">
+              <ReferencesTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="mailings" className="w-full p-0 m-0">
+              <MailingsTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="review" className="w-full p-0 m-0">
+              <ReviewTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="view" className="w-full p-0 m-0">
+                <ViewTab 
+                  editor={editor} 
+                  isRulerVisible={isRulerVisible} 
+                  toggleRuler={toggleRuler} 
+                />
+            </TabsContent>
+            <TabsContent value="ai-tools" className="w-full p-0 m-0">
+                <AIToolsTab 
+                  onImproveWriting={onImproveWriting} 
+                  onDetectTone={onDetectTone} 
+                  onSummarizeDocument={onSummarizeDocument} 
+                />
+            </TabsContent>
+            <TabsContent value="table-design" className="w-full p-0 m-0">
+              <TableDesignTab editor={editor} />
+            </TabsContent>
+            <TabsContent value="table-layout" className="w-full p-0 m-0">
+              <TableLayoutTab editor={editor} />
+            </TabsContent>
 
-                      <TabsContent value="insert" className="w-full p-0 m-0">
-                        <InsertTab editor={editor} />
-                      </TabsContent>
-
-                      <TabsContent value="draw" className="w-full p-0 m-0">
-                        <DrawTab editor={editor} />
-                      </TabsContent>
-
-                      <TabsContent value="design" className="w-full p-0 m-0">
-                        <DesignTab editor={editor} />
-                      </TabsContent>
-                      
-                      <TabsContent value="layout" className="w-full p-0 m-0">
-                        <LayoutTab 
-                          editor={editor}
-                          margins={margins}
-                          setMargins={setMargins}
-                          orientation={orientation}
-                          setOrientation={setOrientation}
-                          pageSize={pageSize}
-                          setPageSize={setPageSize}
-                          columns={columns}
-                          setColumns={setColumns}
-                          onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
-                        />
-                      </TabsContent>
-
-                      <TabsContent value="references" className="w-full p-0 m-0">
-                        <ReferencesTab editor={editor} />
-                      </TabsContent>
-
-                      <TabsContent value="mailings" className="w-full p-0 m-0">
-                        <MailingsTab editor={editor} />
-                      </TabsContent>
-
-                      <TabsContent value="review" className="w-full p-0 m-0">
-                        <ReviewTab editor={editor} />
-                      </TabsContent>
-
-                      <TabsContent value="view" className="w-full p-0 m-0">
-                         <ViewTab 
-                            editor={editor} 
-                            isRulerVisible={isRulerVisible} 
-                            toggleRuler={toggleRuler} 
-                         />
-                      </TabsContent>
-
-                      <TabsContent value="ai-tools" className="w-full p-0 m-0">
-                         <AIToolsTab 
-                            onImproveWriting={onImproveWriting} 
-                            onDetectTone={onDetectTone} 
-                            onSummarizeDocument={onSummarizeDocument} 
-                         />
-                      </TabsContent>
-
-                       <TabsContent value="table-design" className="w-full p-0 m-0">
-                         <TableDesignTab editor={editor} />
-                      </TabsContent>
-
-                       <TabsContent value="table-layout" className="w-full p-0 m-0">
-                         <TableLayoutTab editor={editor} />
-                      </TabsContent>
-                </div>
-                 <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-              <div className="absolute bottom-1 right-2 flex items-center">
-                   <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6" 
-                      onClick={() => setIsRibbonPinned(!isRibbonPinned)}
-                      title={isRibbonPinned ? "Unpin the ribbon" : "Pin the ribbon"}
-                   >
-                      <Pin className={cn("h-4 w-4", !isRibbonPinned && "rotate-45 text-muted-foreground")} />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsRibbonExpanded(!isRibbonExpanded)}>
-                      {isRibbonExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                      <span className="sr-only">{isRibbonExpanded ? "Collapse Ribbon" : "Expand Ribbon"}</span>
-                  </Button>
-              </div>
+            <div className="absolute bottom-1 right-2 flex items-center">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6" 
+                    onClick={() => setIsRibbonPinned(!isRibbonPinned)}
+                    title={isRibbonPinned ? "Unpin the ribbon" : "Pin the ribbon"}
+                  >
+                    <Pin className={cn("h-4 w-4", !isRibbonPinned && "rotate-45 text-muted-foreground")} />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setIsRibbonExpanded(!isRibbonExpanded)}>
+                    {isRibbonExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    <span className="sr-only">{isRibbonExpanded ? "Collapse Ribbon" : "Expand Ribbon"}</span>
+                </Button>
+            </div>
           </div>
         </Tabs>
       </div>
