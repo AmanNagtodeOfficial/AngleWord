@@ -17,7 +17,7 @@ import {
   Package,
   PanelBottom,
   PanelTop,
-  PenTool,
+  Pen,
   Projector,
   Shapes,
   Sigma,
@@ -32,7 +32,6 @@ import {
   Blocks,
   Baseline,
   FileText,
-  Pen,
   RefreshCw,
   Sheet,
 } from "lucide-react";
@@ -127,7 +126,7 @@ export const InsertTab: FC<InsertTabProps> = ({ editor }) => {
                     <ChevronDown className="inline w-3 h-3 ml-0.5" />
                 </RibbonButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="p-0 w-auto">
+            <DropdownMenuContent className="p-0 w-64">
                 <TableGridSelector editor={editor} onSelect={() => setIsTableDropdownOpen(false)} />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
@@ -240,7 +239,7 @@ export const InsertTab: FC<InsertTabProps> = ({ editor }) => {
         </div>
         <div className="flex flex-col">
           <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground">
-             <PenTool className="w-4 h-4 mr-2" /> Signature Line
+             <Pen className="w-4 h-4 mr-2" /> Signature Line
           </Button>
           <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground">
             <CalendarDays className="w-4 h-4 mr-2" /> Date & Time
