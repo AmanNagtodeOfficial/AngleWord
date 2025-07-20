@@ -126,7 +126,7 @@ export const InsertTab: FC<InsertTabProps> = ({ editor }) => {
                     <ChevronDown className="inline w-3 h-3 ml-0.5" />
                 </RibbonButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="p-0 w-64">
+            <DropdownMenuContent className="p-0" style={{ minWidth: '260px' }}>
                 <TableGridSelector editor={editor} onSelect={() => setIsTableDropdownOpen(false)} />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
