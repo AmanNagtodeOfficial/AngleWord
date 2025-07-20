@@ -269,9 +269,21 @@ export function FileMenu({
 
 
 function HomeScreen({ onNewDocument, onTemplateClick }: { onNewDocument: () => void, onTemplateClick: () => void }) {
+    
+    const getSalutation = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) {
+            return "Good morning";
+        } else if (hour < 17) {
+            return "Good afternoon";
+        } else {
+            return "Good evening";
+        }
+    };
+    
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-semibold text-primary font-headline mb-6">Good morning</h1>
+            <h1 className="text-3xl font-semibold text-primary font-headline mb-6">{getSalutation()}</h1>
             
             <div className="mb-12">
                 <h2 className="text-xl font-semibold mb-3">New</h2>
@@ -545,7 +557,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                         <div>
                             <h2 className="text-lg font-semibold mb-2">Settings</h2>
                             <div className="space-y-2">
-                                 <PrintSettingDropdown icon={File} title={printRangeOptions[printRange].title} description={printRangeOptions[printRange].description}>
+                                 <PrintSettingDropdown icon={FileText} title={printRangeOptions[printRange].title} description={printRangeOptions[printRange].description}>
                                      <DropdownMenuItem onSelect={() => setPrintRange('all')}>Print All Pages</DropdownMenuItem>
                                      <DropdownMenuItem onSelect={() => setPrintRange('selection')}>Print Selection</DropdownMenuItem>
                                      <DropdownMenuItem onSelect={() => setPrintRange('current')}>Print Current Page</DropdownMenuItem>
@@ -555,7 +567,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                     <Input placeholder="Pages:" className="flex-grow"/>
                                     <Info className="w-4 h-4 text-muted-foreground" />
                                  </div>
-                                 <PrintSettingDropdown icon={File} title={printSidedOptions[printSided].title} description={printSidedOptions[printSided].description}>
+                                 <PrintSettingDropdown icon={FileText} title={printSidedOptions[printSided].title} description={printSidedOptions[printSided].description}>
                                      <DropdownMenuItem onSelect={() => setPrintSided('one-sided')}>Print One Sided</DropdownMenuItem>
                                      <DropdownMenuItem onSelect={() => setPrintSided('two-sided')}>Manually Print on Both Sides</DropdownMenuItem>
                                  </PrintSettingDropdown>
@@ -589,7 +601,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                      <DropdownMenuSeparator />
                                      <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>Custom Margins...</DropdownMenuItem>
                                  </PrintSettingDropdown>
-                                 <PrintSettingDropdown icon={File} title={pagesPerSheetOptions[pagesPerSheet].title} description={pagesPerSheetOptions[pagesPerSheet].description}>
+                                 <PrintSettingDropdown icon={FileText} title={pagesPerSheetOptions[pagesPerSheet].title} description={pagesPerSheetOptions[pagesPerSheet].description}>
                                      <DropdownMenuItem onSelect={() => setPagesPerSheet('1')}>1 Page Per Sheet</DropdownMenuItem>
                                      <DropdownMenuItem onSelect={() => setPagesPerSheet('2')}>2 Pages Per Sheet</DropdownMenuItem>
                                      <DropdownMenuItem onSelect={() => setPagesPerSheet('4')}>4 Pages Per Sheet</DropdownMenuItem>
