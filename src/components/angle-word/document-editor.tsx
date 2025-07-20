@@ -3,7 +3,7 @@
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
+import { Underline } from "@tiptap/extension-underline";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Highlight from "@tiptap/extension-highlight";
@@ -85,6 +85,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
       StarterKit.configure({
         bulletList: false, // Disable default to use our custom one
         paragraph: false, // Disable default to use our custom one
+        underline: false,
       }),
       CharacterCount,
       IndentableParagraph,

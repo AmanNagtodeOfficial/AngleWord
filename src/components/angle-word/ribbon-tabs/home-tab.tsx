@@ -8,6 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu";
 import {
   AlignCenter,
@@ -50,7 +53,7 @@ import {
   Palette,
   Wand2,
 } from "lucide-react";
-import { FC, useRef, useState } from "react";
+import { FC, useRef, useState, SVGProps } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { RibbonGroup, SmallRibbonButton, BulletDiscIcon, BulletCircleIcon, BulletSquareIcon } from "../ribbon-ui";
 import { Button } from "@/components/ui/button";
@@ -84,6 +87,28 @@ const BULLET_STYLES = [
 ];
 
 type CaseType = 'sentence' | 'lower' | 'upper' | 'capitalize';
+
+const UnderlineStyleIcon = ({ style, ...props }: { style: string } & SVGProps<SVGSVGElement>) => (
+    <svg width="100" height="10" viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <line 
+            x1="0" 
+            y1="5" 
+            x2="100" 
+            y2="5" 
+            stroke="currentColor" 
+            strokeWidth="1"
+            strokeDasharray={
+                style === 'dotted' ? '2 3' :
+                style === 'dashed' ? '6 4' :
+                style === 'dot-dash' ? '2 3 6 3' :
+                'none'
+            }
+        />
+        {style === 'double' && <line x1="0" y1="8" x2="100" y2="8" stroke="currentColor" strokeWidth="1" />}
+        {style === 'wavy' && <path d="M 0,5 C 5,2 10,8 15,5 S 25,2 30,5 S 40,8 45,5 S 55,2 60,5 S 70,8 75,5 S 85,2 90,5 S 100,8 100,5" stroke="currentColor" fill="none" strokeWidth="1"/>}
+    </svg>
+);
+
 
 export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
@@ -317,13 +342,42 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                 data-active={editor.isActive('italic')}
                 className="w-7 h-7"
               />
-              <SmallRibbonButton
-                icon={Underline}
-                tooltip="Underline"
-                onClick={() => editor.chain().focus().toggleUnderline().run()}
-                data-active={editor.isActive('underline')}
-                className="w-7 h-7"
-              />
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 h-7 w-7" title="Underline" data-active={editor.isActive('underline')}>
+                          <Underline className="w-4 h-4" />
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="solid" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="double" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="solid" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="dotted" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="dashed" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="dot-dash" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().toggleUnderline().run()}><UnderlineStyleIcon style="wavy" className="w-full h-2" /></DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={() => editor.chain().focus().unsetUnderline().run()}>None</DropdownMenuItem>
+                      <DropdownMenuItem disabled>More Underlines...</DropdownMenuItem>
+                      <DropdownMenuSub>
+                          <DropdownMenuSubTrigger>Underline Colour</DropdownMenuSubTrigger>
+                          <DropdownMenuSubContent className="p-2">
+                          <div className="grid grid-cols-8 gap-1">
+                              {FONT_COLORS.map(color => (
+                              <DropdownMenuItem
+                                  key={color}
+                                  className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                                  onSelect={(e) => { e.preventDefault(); /* TODO: Set underline color */ }}
+                              >
+                                  <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                              </DropdownMenuItem>
+                              ))}
+                          </div>
+                          </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+                  </DropdownMenuContent>
+              </DropdownMenu>
+
               <SmallRibbonButton
                 icon={Strikethrough}
                 tooltip="Strikethrough"
