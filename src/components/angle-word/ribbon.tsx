@@ -3,8 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronDown, File } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
+import { ChevronUp } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { useState } from "react";
 import { FileMenu } from "./file-menu";
@@ -21,6 +20,7 @@ import { MailingsTab } from "./ribbon-tabs/mailings-tab";
 import { ReviewTab } from "./ribbon-tabs/review-tab";
 import { ViewTab } from "./ribbon-tabs/view-tab";
 import { AIToolsTab } from "./ribbon-tabs/ai-tools-tab";
+import { cn } from "@/lib/utils";
 
 
 interface RibbonProps {
@@ -41,6 +41,8 @@ interface RibbonProps {
   isRulerVisible: boolean;
   toggleRuler: () => void;
   onNewDocument: () => void;
+  isRibbonCollapsed: boolean;
+  toggleRibbonCollapse: () => void;
 }
 
 
@@ -62,10 +64,20 @@ export function AngleWordRibbon({
   isRulerVisible,
   toggleRuler,
   onNewDocument,
+  isRibbonCollapsed,
+  toggleRibbonCollapse,
 }: RibbonProps) {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [isCustomMarginsOpen, setIsCustomMarginsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("home");
   
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (isRibbonCollapsed) {
+        toggleRibbonCollapse();
+    }
+  }
+
   return (
     <>
       <FileMenu
@@ -92,7 +104,7 @@ export function AngleWordRibbon({
         }}
       />
       <div className="bg-secondary/30 p-1 border-b shadow-sm">
-        <Tabs defaultValue="home" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full relative">
           <div className="flex">
             <Button
               onClick={() => setIsFileMenuOpen(true)}
@@ -113,65 +125,74 @@ export function AngleWordRibbon({
               <TabsTrigger value="ai-tools" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">AI Tools</TabsTrigger>
             </TabsList>
           </div>
-
-          <TabsContent value="home" className="bg-background p-2">
-            <HomeTab editor={editor} />
-          </TabsContent>
-
-          <TabsContent value="insert" className="bg-background p-2">
-            <InsertTab editor={editor} />
-          </TabsContent>
-
-          <TabsContent value="draw" className="bg-background p-2">
-            <DrawTab editor={editor} />
-          </TabsContent>
-
-          <TabsContent value="design" className="bg-background p-2">
-            <DesignTab editor={editor} />
-          </TabsContent>
           
-          <TabsContent value="layout" className="bg-background p-2">
-            <LayoutTab 
-              editor={editor}
-              margins={margins}
-              setMargins={setMargins}
-              orientation={orientation}
-              setOrientation={setOrientation}
-              pageSize={pageSize}
-              setPageSize={setPageSize}
-              columns={columns}
-              setColumns={setColumns}
-              onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
-            />
-          </TabsContent>
+          <div className={cn(isRibbonCollapsed && "hidden")}>
+              <TabsContent value="home" className="bg-background p-2">
+                <HomeTab editor={editor} />
+              </TabsContent>
 
-          <TabsContent value="references" className="bg-background p-2">
-            <ReferencesTab editor={editor} />
-          </TabsContent>
+              <TabsContent value="insert" className="bg-background p-2">
+                <InsertTab editor={editor} />
+              </TabsContent>
 
-          <TabsContent value="mailings" className="bg-background p-2">
-            <MailingsTab editor={editor} />
-          </TabsContent>
+              <TabsContent value="draw" className="bg-background p-2">
+                <DrawTab editor={editor} />
+              </TabsContent>
 
-          <TabsContent value="review" className="bg-background p-2">
-            <ReviewTab editor={editor} />
-          </TabsContent>
+              <TabsContent value="design" className="bg-background p-2">
+                <DesignTab editor={editor} />
+              </TabsContent>
+              
+              <TabsContent value="layout" className="bg-background p-2">
+                <LayoutTab 
+                  editor={editor}
+                  margins={margins}
+                  setMargins={setMargins}
+                  orientation={orientation}
+                  setOrientation={setOrientation}
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  columns={columns}
+                  setColumns={setColumns}
+                  onCustomMarginsClick={() => setIsCustomMarginsOpen(true)}
+                />
+              </TabsContent>
 
-          <TabsContent value="view" className="bg-background p-2">
-             <ViewTab 
-                editor={editor} 
-                isRulerVisible={isRulerVisible} 
-                toggleRuler={toggleRuler} 
-             />
-          </TabsContent>
+              <TabsContent value="references" className="bg-background p-2">
+                <ReferencesTab editor={editor} />
+              </TabsContent>
 
-          <TabsContent value="ai-tools" className="bg-background p-2">
-             <AIToolsTab 
-                onImproveWriting={onImproveWriting} 
-                onDetectTone={onDetectTone} 
-                onSummarizeDocument={onSummarizeDocument} 
-             />
-          </TabsContent>
+              <TabsContent value="mailings" className="bg-background p-2">
+                <MailingsTab editor={editor} />
+              </TabsContent>
+
+              <TabsContent value="review" className="bg-background p-2">
+                <ReviewTab editor={editor} />
+              </TabsContent>
+
+              <TabsContent value="view" className="bg-background p-2">
+                 <ViewTab 
+                    editor={editor} 
+                    isRulerVisible={isRulerVisible} 
+                    toggleRuler={toggleRuler} 
+                 />
+              </TabsContent>
+
+              <TabsContent value="ai-tools" className="bg-background p-2">
+                 <AIToolsTab 
+                    onImproveWriting={onImproveWriting} 
+                    onDetectTone={onDetectTone} 
+                    onSummarizeDocument={onSummarizeDocument} 
+                 />
+              </TabsContent>
+
+              <div className="absolute bottom-1 right-2">
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={toggleRibbonCollapse}>
+                      <ChevronUp className="h-4 w-4" />
+                      <span className="sr-only">Collapse Ribbon</span>
+                  </Button>
+              </div>
+          </div>
         </Tabs>
       </div>
     </>
