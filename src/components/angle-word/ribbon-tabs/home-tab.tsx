@@ -306,9 +306,10 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   };
   
   const handleUnderline = (style?: string) => {
-    // If no style is provided, toggle with the last used or default style
     const styleToApply = style || activeUnderlineStyle;
-
+  
+    // If the selection is already underlined with the target style, unset it.
+    // Otherwise, apply the new style.
     if (editor.isActive('underline', { 'data-underline-style': styleToApply })) {
         editor.chain().focus().unsetUnderline().run();
     } else {
@@ -458,24 +459,23 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     data-active={editor.isActive('italic')}
                   />
-                  <div className="flex items-center">
-                    <SmallRibbonButton
-                        icon={() => (
-                            <div className="flex flex-col items-center">
-                                <Underline className="w-4 h-4" />
-                                <div className="w-4 h-[3px] mt-0.5">
-                                    {editor.isActive('underline') && <UnderlineStylePreview />}
-                                </div>
-                            </div>
-                        )}
-                        tooltip="Underline"
+                  
+                  <div className="flex items-center border rounded-md" data-active={editor.isActive('underline')}>
+                    <Button
+                        variant="ghost"
+                        className="p-1 h-7 flex-col data-[active=true]:bg-accent"
+                        title="Underline"
                         onClick={() => handleUnderline()}
                         data-active={editor.isActive('underline')}
-                        className="rounded-r-none"
-                    />
+                    >
+                         <Underline className="w-5 h-5" />
+                         <div className="w-5 h-[3px] -mt-0.5">
+                            {editor.isActive('underline') && <UnderlineStylePreview />}
+                         </div>
+                    </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="p-1 h-7 rounded-l-none border-l -ml-1" title="Underline Styles">
+                            <Button variant="ghost" className="p-1 h-7 rounded-l-none border-l" title="Underline Styles">
                                 <ChevronDown className="w-3 h-3" />
                             </Button>
                         </DropdownMenuTrigger>
