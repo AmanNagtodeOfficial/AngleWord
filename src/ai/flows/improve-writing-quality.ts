@@ -16,11 +16,18 @@ const ImproveWritingQualityInputSchema = z.object({
 });
 export type ImproveWritingQualityInput = z.infer<typeof ImproveWritingQualityInputSchema>;
 
+const SuggestionSchema = z.object({
+  type: z.enum(['spelling', 'grammar', 'style', 'vocabulary']).describe('The type of issue found.'),
+  original: z.string().describe('The original text segment with the issue.'),
+  suggestion: z.string().describe('The suggested correction.'),
+  explanation: z.string().describe('A brief explanation of why the change is suggested.'),
+});
+
 const ImproveWritingQualityOutputSchema = z.object({
-  improvedText: z.string().describe('The text with improved grammar, style, and vocabulary.'),
-  suggestions: z.array(z.string()).describe('Specific suggestions for improvement.'),
+  suggestions: z.array(SuggestionSchema).describe('Specific suggestions for improvement.'),
 });
 export type ImproveWritingQualityOutput = z.infer<typeof ImproveWritingQualityOutputSchema>;
+export type Suggestion = z.infer<typeof SuggestionSchema>;
 
 export async function improveWritingQuality(input: ImproveWritingQualityInput): Promise<ImproveWritingQualityOutput> {
   return improveWritingQualityFlow(input);
@@ -32,15 +39,12 @@ const prompt = ai.definePrompt({
   output: {schema: ImproveWritingQualityOutputSchema},
   prompt: `You are an AI Writing Assistant designed to improve the quality of writing.
 
-  You will receive text and provide suggestions for grammar, style, and vocabulary improvements.
-  You will make determination for the improved text, and suggestions for improvement.
+  You will receive text and provide suggestions for grammar, spelling, style, and vocabulary improvements.
+  For each issue you find, provide the original text segment, your suggested correction, the type of issue, and a brief explanation.
 
   Text: {{{text}}}
-  \n  Output in the following JSON format:
-  {
-    "improvedText": "The improved text with better grammar, style and vocabulary",
-    "suggestions": ["Suggestion 1", "Suggestion 2", "Suggestion 3"]
-  }`,
+  
+  Analyze the text and identify all issues. Return a list of suggestions in the specified JSON format. If there are no issues, return an empty array for the suggestions.`,
 });
 
 const improveWritingQualityFlow = ai.defineFlow(
