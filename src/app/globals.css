@@ -138,6 +138,12 @@ body {
     position: absolute;
     z-index: 2;
   }
+  
+  .tiptap u[data-underline-style="double"] { text-decoration-style: double; }
+  .tiptap u[data-underline-style="dotted"] { text-decoration-style: dotted; }
+  .tiptap u[data-underline-style="dashed"] { text-decoration-style: dashed; }
+  .tiptap u[data-underline-style="wavy"] { text-decoration-style: wavy; }
+  .tiptap u[data-underline-style="solid"] { text-decoration-style: solid; }
 
 
   button[data-active="true"] {

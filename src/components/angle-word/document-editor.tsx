@@ -3,7 +3,7 @@
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Underline } from "@tiptap/extension-underline";
+import { Underline as TiptapUnderline } from "@tiptap/extension-underline";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Highlight from "@tiptap/extension-highlight";
@@ -37,6 +37,24 @@ export const BulletList = TiptapBulletList.extend({
       },
     };
   },
+});
+
+const Underline = TiptapUnderline.extend({
+    addAttributes() {
+        return {
+            ...this.parent?.(),
+            'data-underline-style': {
+                default: 'solid',
+                parseHTML: element => element.getAttribute('data-underline-style'),
+                renderHTML: attributes => {
+                    if (!attributes['data-underline-style']) {
+                        return {}
+                    }
+                    return { 'data-underline-style': attributes['data-underline-style'] }
+                },
+            },
+        }
+    },
 });
 
 const IndentableParagraph = Paragraph.extend({
@@ -90,6 +108,7 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
       StarterKit.configure({
         bulletList: false, // Disable default to use our custom one
         paragraph: false, // Disable default to use our custom one
+        underline: false, // Disable default to use our custom one
       }),
       CharacterCount,
       IndentableParagraph,
