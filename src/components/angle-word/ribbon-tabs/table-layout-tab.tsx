@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface TableLayoutTabProps {
   editor: Editor | null;
@@ -36,7 +37,11 @@ interface TableLayoutTabProps {
 
 const handleCommand = (editor: Editor | null, command: keyof ReturnType<Editor['chain']>) => {
     if (editor) {
-        (editor.chain().focus()[command] as () => boolean)();
+        const chain = editor.chain().focus();
+        const cmd = chain[command] as Function;
+        if (typeof cmd === 'function') {
+            cmd();
+        }
     }
 }
 
@@ -48,10 +53,20 @@ export const TableLayoutTab: FC<TableLayoutTabProps> = ({ editor }) => {
     <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex items-start p-2">
             <RibbonGroup title="Table">
-                <RibbonButton icon={Table} onClick={() => handleCommand(editor, 'deleteTable')}>
-                Select
-                <ChevronDown className="inline w-3 h-3 ml-0.5" />
-                </RibbonButton>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <RibbonButton icon={Table}>
+                            Select
+                            <ChevronDown className="inline w-3 h-3 ml-0.5" />
+                        </RibbonButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectCell().run()}>Select Cell</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectColumn().run()}>Select Column</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectRow().run()}>Select Row</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectTable().run()}>Select Table</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <RibbonButton icon={Move}>
                     View
                     <br />
