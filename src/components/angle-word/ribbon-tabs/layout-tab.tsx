@@ -154,14 +154,14 @@ export const LayoutTab: FC<LayoutTabProps> = ({
       <RibbonGroup title="Arrange">
           <div className="flex items-start gap-1">
               <div className="flex flex-col gap-1">
-                 <div className="flex gap-1">
-                    <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
-                    <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
-                 </div>
-                 <div className="flex gap-1">
-                    <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
-                    <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
-                 </div>
+                  <div className="flex gap-1">
+                      <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
+                      <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
+                  </div>
+                  <div className="flex gap-1">
+                      <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
+                      <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
+                  </div>
               </div>
               <div className="flex flex-col gap-1 border-l pl-1">
                  <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><TextSelect/> <span className="ml-1">Selection Pane</span></Button>
