@@ -120,6 +120,22 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
   const { toast } = useToast();
 
+  const currentFontSize = useCallback(() => {
+    if (!editor) return '11';
+    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
+  }, [editor]);
+
+
+  const currentFontFamily = useCallback(() => {
+    if (!editor) return 'PT Sans';
+    for (const family of FONT_FAMILIES) {
+      if (editor.isActive('textStyle', { fontFamily: family.value })) {
+        return family.name;
+      }
+    }
+    return 'PT Sans';
+  }, [editor]);
+
   if (!editor) return null;
 
   const activeHighlightColor = editor.getAttributes('highlight').color;
@@ -150,21 +166,6 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
       });
     }
   };
-  
-  const currentFontSize = useCallback(() => {
-    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
-  }, [editor.state.selection]);
-
-
-  const currentFontFamily = useCallback(() => {
-    for (const family of FONT_FAMILIES) {
-      if (editor.isActive('textStyle', { fontFamily: family.value })) {
-        return family.name;
-      }
-    }
-    return 'PT Sans';
-  }, [editor.state.selection]);
-
   
   const handleChangeCase = (caseType: CaseType) => {
     const { from, to, empty } = editor.state.selection;
@@ -638,5 +639,3 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     </ScrollArea>
   );
 }
-
-    
