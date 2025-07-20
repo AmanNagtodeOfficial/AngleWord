@@ -35,17 +35,6 @@ interface TableLayoutTabProps {
   editor: Editor | null;
 }
 
-const handleCommand = (editor: Editor | null, command: keyof ReturnType<Editor['chain']>) => {
-    if (editor) {
-        const chain = editor.chain().focus();
-        const cmd = chain[command] as Function;
-        if (typeof cmd === 'function') {
-            cmd();
-        }
-    }
-}
-
-
 export const TableLayoutTab: FC<TableLayoutTabProps> = ({ editor }) => {
   if (!editor) return null;
 
@@ -64,7 +53,7 @@ export const TableLayoutTab: FC<TableLayoutTabProps> = ({ editor }) => {
                         <DropdownMenuItem onSelect={() => editor.chain().focus().selectCell().run()}>Select Cell</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => editor.chain().focus().selectColumn().run()}>Select Column</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => editor.chain().focus().selectRow().run()}>Select Row</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectTable().run()}>Select Table</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().selectNode('table').run()}>Select Table</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <RibbonButton icon={Move}>
@@ -79,15 +68,15 @@ export const TableLayoutTab: FC<TableLayoutTabProps> = ({ editor }) => {
                 <RibbonButton icon={Move}>Eraser</RibbonButton>
             </RibbonGroup>
             <RibbonGroup title="Rows & Columns">
-                <RibbonButton icon={Trash2} onClick={() => handleCommand(editor, 'deleteTable')}>Delete <ChevronDown className="inline w-3 h-3 ml-0.5" /></RibbonButton>
-                <RibbonButton icon={ArrowUpFromLine} onClick={() => handleCommand(editor, 'addRowBefore')}>Insert Above</RibbonButton>
-                <RibbonButton icon={ArrowDownToLine} onClick={() => handleCommand(editor, 'addRowAfter')}>Insert Below</RibbonButton>
-                <RibbonButton icon={ArrowLeftFromLine} onClick={() => handleCommand(editor, 'addColumnBefore')}>Insert Left</RibbonButton>
-                <RibbonButton icon={ArrowRightFromLine} onClick={() => handleCommand(editor, 'addColumnAfter')}>Insert Right</RibbonButton>
+                <RibbonButton icon={Trash2} onClick={() => editor.chain().focus().deleteTable().run()}>Delete <ChevronDown className="inline w-3 h-3 ml-0.5" /></RibbonButton>
+                <RibbonButton icon={ArrowUpFromLine} onClick={() => editor.chain().focus().addRowBefore().run()}>Insert Above</RibbonButton>
+                <RibbonButton icon={ArrowDownToLine} onClick={() => editor.chain().focus().addRowAfter().run()}>Insert Below</RibbonButton>
+                <RibbonButton icon={ArrowLeftFromLine} onClick={() => editor.chain().focus().addColumnBefore().run()}>Insert Left</RibbonButton>
+                <RibbonButton icon={ArrowRightFromLine} onClick={() => editor.chain().focus().addColumnAfter().run()}>Insert Right</RibbonButton>
             </RibbonGroup>
             <RibbonGroup title="Merge">
-                <RibbonButton icon={Combine} onClick={() => handleCommand(editor, 'mergeCells')}>Merge Cells</RibbonButton>
-                <RibbonButton icon={Split} onClick={() => handleCommand(editor, 'splitCell')}>Split Cells</RibbonButton>
+                <RibbonButton icon={Combine} onClick={() => editor.chain().focus().mergeCells().run()}>Merge Cells</RibbonButton>
+                <RibbonButton icon={Split} onClick={() => editor.chain().focus().splitCell().run()}>Split Cells</RibbonButton>
                 <RibbonButton icon={Table} onClick={() => { /* Need custom logic */}}>Split Table</RibbonButton>
             </RibbonGroup>
             <RibbonGroup title="Cell Size">
