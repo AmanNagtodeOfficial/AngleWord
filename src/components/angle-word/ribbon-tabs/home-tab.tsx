@@ -15,8 +15,6 @@ import {
   AlignLeft,
   AlignRight,
   ArrowDownAZ,
-  ALargeSmall,
-  Baseline,
   Bold,
   CaseLower,
   CaseSensitive,
@@ -25,17 +23,14 @@ import {
   Copy,
   ChevronDown,
   Eraser,
-  Grid,
   Highlighter,
   IndentDecrease,
   IndentIncrease,
   Italic,
-  LayoutList,
   List,
   ListChecks,
   ListOrdered,
-  PaintBucket,
-  Palette,
+  Paintbrush,
   Pilcrow,
   Pointer,
   Replace,
@@ -45,14 +40,19 @@ import {
   Subscript,
   Superscript,
   Underline,
-  Wand2,
   FileText,
   Merge,
   BringToFront,
+  PaintBucket,
+  Grid,
+  Baseline,
+  ALargeSmall,
+  Palette,
+  Wand2,
 } from "lucide-react";
 import { FC, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { RibbonGroup, RibbonButton, SmallRibbonButton, BulletDiscIcon, BulletCircleIcon, BulletSquareIcon } from "../ribbon-ui";
+import { RibbonGroup, SmallRibbonButton, BulletDiscIcon, BulletCircleIcon, BulletSquareIcon } from "../ribbon-ui";
 import { Button } from "@/components/ui/button";
 
 interface HomeTabProps {
@@ -177,14 +177,6 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     }
   };
   
-  const CaseIcon = () => {
-    switch (lastCaseType) {
-      case 'upper': return <CaseUpper className="w-4 h-4" />;
-      case 'lower': return <CaseLower className="w-4 h-4" />;
-      default: return <CaseSensitive className="w-4 h-4" />;
-    }
-  };
-  
   const handleBulletList = (style: string) => {
     if (editor.isActive('bulletList', { 'data-list-style-type': style })) {
       editor.chain().focus().toggleBulletList().run();
@@ -210,13 +202,13 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
   return (
     <div className="flex items-start">
-        <RibbonGroup title="Clipboard" className="items-stretch">
-          <div className="flex flex-col items-center">
+        <RibbonGroup title="Clipboard">
+          <div className="flex items-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex flex-col items-center h-auto p-2 px-3">
-                  <ClipboardPaste className="w-7 h-7 mb-1 text-primary" />
-                  <span className="text-sm">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
+                  <ClipboardPaste className="w-8 h-8 mb-1 text-primary" />
+                  <span className="text-xs">Paste <ChevronDown className="inline w-3 h-3 ml-0.5" /></span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -238,19 +230,25 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-          <div className="flex flex-col justify-center">
-            <SmallRibbonButton icon={Scissors} tooltip="Cut" />
-            <SmallRibbonButton icon={Copy} tooltip="Copy" />
-            <SmallRibbonButton icon={Eraser} tooltip="Format Painter" />
+            <div className="flex flex-col justify-center">
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Scissors className="w-4 h-4 mr-2" /> Cut
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Copy className="w-4 h-4 mr-2" /> Copy
+              </Button>
+              <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Paintbrush className="w-4 h-4 mr-2" /> Format Painter
+              </Button>
+            </div>
           </div>
         </RibbonGroup>
         <RibbonGroup title="Font">
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-1">
             <div className="flex items-center">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="p-1 text-xs h-auto w-28 justify-between">
+                  <Button variant="outline" className="p-1 text-xs h-8 w-32 justify-between">
                     <span className="truncate">{currentFontFamily()}</span>
                     <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
@@ -270,7 +268,7 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="p-1 text-xs h-auto w-12 justify-between">
+                  <Button variant="outline" className="p-1 text-xs h-8 w-16 justify-between ml-1">
                     {currentFontSize()}
                     <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
@@ -283,13 +281,12 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-
               <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size" onClick={handleIncreaseFontSize}/>
               <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size" onClick={handleDecreaseFontSize}/>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="p-1 h-auto" title="Change Case">
-                    <CaseIcon />
+                    <CaseSensitive className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -305,47 +302,53 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                 onClick={() => editor.chain().focus().unsetAllMarks().run()}
               />
             </div>
-            <div className="flex items-center mt-1">
+            <div className="flex items-center">
               <SmallRibbonButton
                 icon={Bold}
                 tooltip="Bold"
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 data-active={editor.isActive('bold')}
+                className="w-7 h-7"
               />
               <SmallRibbonButton
                 icon={Italic}
                 tooltip="Italic"
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 data-active={editor.isActive('italic')}
+                className="w-7 h-7"
               />
               <SmallRibbonButton
                 icon={Underline}
                 tooltip="Underline"
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
                 data-active={editor.isActive('underline')}
+                className="w-7 h-7"
               />
               <SmallRibbonButton
                 icon={Strikethrough}
                 tooltip="Strikethrough"
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 data-active={editor.isActive('strike')}
+                className="w-7 h-7"
               />
               <SmallRibbonButton
                 icon={Subscript}
                 tooltip="Subscript"
                 onClick={() => editor.chain().focus().toggleSubscript().run()}
                 data-active={editor.isActive('subscript')}
+                className="w-7 h-7"
               />
               <SmallRibbonButton
                 icon={Superscript}
                 tooltip="Superscript"
                 onClick={() => editor.chain().focus().toggleSuperscript().run()}
                 data-active={editor.isActive('superscript')}
+                className="w-7 h-7"
               />
-              <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
+              <SmallRibbonButton icon={Wand2} tooltip="Text Effects" className="w-7 h-7"/>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                   <Button variant="ghost" className="p-1 h-auto" title="Text Highlight Color" data-active={!!activeHighlightColor}>
+                   <Button variant="ghost" className="p-1 h-7" title="Text Highlight Color" data-active={!!activeHighlightColor}>
                       <div className="flex flex-col items-center">
                           <Highlighter className="w-4 h-4" />
                           <div
@@ -409,7 +412,7 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                   <Button variant="ghost" className="p-1 h-auto" title="Font Color" data-active={!!activeFontColor}>
+                   <Button variant="ghost" className="p-1 h-7" title="Font Color" data-active={!!activeFontColor}>
                       <div className="flex flex-col items-center">
                           <Palette className="w-4 h-4" />
                           <div
@@ -475,7 +478,7 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
           </div>
         </RibbonGroup>
         <RibbonGroup title="Paragraph">
-          <div className="flex flex-col">
+          <div className="flex flex-col space-y-1">
             <div className="flex items-center">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -552,12 +555,22 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
           </div>
         </RibbonGroup>
         <RibbonGroup title="Styles">
-          <RibbonButton icon={LayoutList}>Styles</RibbonButton>
+           <div className="p-1 border bg-secondary/30 h-full w-[200px] flex items-center justify-center text-muted-foreground text-sm">
+            Styles Gallery
+          </div>
         </RibbonGroup>
         <RibbonGroup title="Editing">
-           <RibbonButton icon={Search}>Find</RibbonButton>
-           <RibbonButton icon={Replace}>Replace</RibbonButton>
-           <RibbonButton icon={Pointer}>Select</RibbonButton>
+          <div className="flex flex-col items-start">
+             <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Search className="w-4 h-4 mr-2" /> Find
+              </Button>
+             <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Replace className="w-4 h-4 mr-2" /> Replace
+              </Button>
+             <Button variant="ghost" className="h-auto p-1 text-xs justify-start w-full hover:bg-accent hover:text-accent-foreground">
+                <Pointer className="w-4 h-4 mr-2" /> Select
+              </Button>
+          </div>
         </RibbonGroup>
     </div>
   );
