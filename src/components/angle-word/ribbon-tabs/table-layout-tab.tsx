@@ -20,9 +20,9 @@ import {
     AlignCenter,
     AlignRight,
     AlignJustify,
-    AlignTop,
-    AlignMiddle,
-    AlignBottom,
+    AlignStartVertical,
+    AlignCenterVertical,
+    AlignEndVertical,
     CaseSensitive,
     ArrowDownAZ,
     Repeat,
@@ -87,9 +87,9 @@ export const TableLayoutTab: FC<TableLayoutTabProps> = ({ editor }) => {
       </RibbonGroup>
        <RibbonGroup title="Alignment">
           <div className="grid grid-cols-3 gap-1">
-              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignTop /></Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignMiddle /></Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignBottom /></Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignStartVertical /></Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignCenterVertical /></Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6"><AlignEndVertical /></Button>
               <Button variant="ghost" size="icon" className="h-6 w-6"><AlignLeft /></Button>
               <Button variant="ghost" size="icon" className="h-6 w-6"><AlignCenter /></Button>
               <Button variant="ghost" size="icon" className="h-6 w-6"><AlignRight /></Button>
