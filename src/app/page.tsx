@@ -7,7 +7,7 @@ import { AngleWordRibbon } from "@/components/angle-word/ribbon";
 import { EditorArea, type AITool } from "@/components/angle-word/editor-area";
 import { DocumentTabs } from "@/components/angle-word/document-tabs";
 import { StatusBar } from "@/components/angle-word/status-bar";
-import { Editor } from "@tiptap/react";
+import { Editor, EditorEvents } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 
@@ -96,6 +96,7 @@ function AngleWordPage() {
   const [isRibbonExpanded, setIsRibbonExpanded] = useState(true);
   const [isRibbonPinned, setIsRibbonPinned] = useState(true);
   const [activeContext, setActiveContext] = useState<EditorContext>(null);
+  const [_, setForceRender] = useState(0);
 
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -131,24 +132,28 @@ function AngleWordPage() {
 
   useEffect(() => {
     if (editor) {
-        const updateEditorContext = () => {
+        const forceUpdate = () => setForceRender(c => c + 1);
+
+        const updateEditorContext = ({ editor }: EditorEvents['selectionUpdate' | 'transaction']) => {
             const isTable = editor.isActive('table');
             setActiveContext(isTable ? 'table' : null);
+            
+            const text = editor.getText();
+            const count = text.trim().split(/\s+/).filter(Boolean).length;
+            setWordCount(count);
+
+            forceUpdate();
         };
         
         editor.on('selectionUpdate', updateEditorContext);
         editor.on('transaction', updateEditorContext);
-        
-        const text = editor.getText();
-        const count = text.trim().split(/\s+/).filter(Boolean).length;
-        setWordCount(count);
         
         return () => {
             editor.off('selectionUpdate', updateEditorContext);
             editor.off('transaction', updateEditorContext);
         };
     }
-  }, [editor, activeDocument?.content]);
+  }, [editor]);
 
   useEffect(() => {
     return () => {
@@ -301,3 +306,5 @@ function AngleWordPage() {
 }
 
 export default AngleWordPage;
+
+    

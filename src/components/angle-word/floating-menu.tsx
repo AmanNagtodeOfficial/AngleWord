@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { useCallback } from "react";
 
 interface FloatingMenuProps {
   editor: Editor;
@@ -44,16 +45,18 @@ const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '2
 
 export function FloatingMenu({ editor }: FloatingMenuProps) {
 
-  const currentFontFamily = () => {
+  const currentFontFamily = useCallback(() => {
     for (const family of FONT_FAMILIES) {
       if (editor.isActive('textStyle', { fontFamily: family.value })) {
         return family.name;
       }
     }
     return 'Candara';
-  };
+  }, [editor.state.selection]);
   
-  const currentFontSize = () => editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '10';
+  const currentFontSize = useCallback(() => {
+    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '10';
+  }, [editor.state.selection]);
 
   const handleIncreaseFontSize = () => {
     const currentSize = currentFontSize();
@@ -169,3 +172,5 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
     </BubbleMenu>
   );
 }
+
+    

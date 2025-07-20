@@ -54,7 +54,7 @@ import {
   Palette,
   Wand2,
 } from "lucide-react";
-import { FC, useRef, useState, SVGProps } from "react";
+import { FC, useRef, useState, SVGProps, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { RibbonGroup, SmallRibbonButton, BulletDiscIcon, BulletCircleIcon, BulletSquareIcon } from "../ribbon-ui";
 import { Button } from "@/components/ui/button";
@@ -151,16 +151,20 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     }
   };
   
-  const currentFontSize = () => editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
+  const currentFontSize = useCallback(() => {
+    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
+  }, [editor.state.selection]);
 
-  const currentFontFamily = () => {
+
+  const currentFontFamily = useCallback(() => {
     for (const family of FONT_FAMILIES) {
       if (editor.isActive('textStyle', { fontFamily: family.value })) {
         return family.name;
       }
     }
     return 'PT Sans';
-  };
+  }, [editor.state.selection]);
+
   
   const handleChangeCase = (caseType: CaseType) => {
     const { from, to, empty } = editor.state.selection;
@@ -634,3 +638,5 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     </ScrollArea>
   );
 }
+
+    
