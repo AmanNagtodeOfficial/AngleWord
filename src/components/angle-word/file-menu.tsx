@@ -356,6 +356,47 @@ const PrintSettingDropdown: FC<{icon: React.ElementType, title: string, descript
     </DropdownMenu>
 );
 
+const MarginIcon: FC<{ type: string }> = ({ type }) => {
+    const baseStyle: React.SVGProps<SVGSVGElement> = {
+      width: '32px',
+      height: '32px',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: 1.5,
+    };
+
+    switch (type) {
+        case 'normal':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="6" y="6" width="12" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'narrow':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="5" y="5" width="14" height="14" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'moderate':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="5.5" y="6" width="13" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'wide':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><rect x="8" y="6" width="8" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'mirrored':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><path d="M12 6V18" stroke="#3b82f6" strokeDasharray="2 2" /><rect x="6" y="6" width="5" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /><rect x="13" y="6" width="5" height="12" rx="0.5" ry="0.5" strokeDasharray="2 2" stroke="#6b7280" /></svg>;
+        case 'custom':
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /><Star x="8" y="8" width="8" height="8" fill="#f59e0b" stroke="#f59e0b" /></svg>;
+        default:
+            return <svg {...baseStyle}><rect x="4" y="4" width="16" height="16" rx="1" ry="1" stroke="#3b82f6" /></svg>;
+    }
+};
+
+const MarginMenuItem: FC<{ title: string; details: string[]; onSelect: () => void; iconType: string }> = ({ title, details, onSelect, iconType }) => (
+    <DropdownMenuItem className="p-2 cursor-pointer items-start" onSelect={onSelect}>
+        <div className="mr-3 flex-shrink-0">
+            <MarginIcon type={iconType} />
+        </div>
+        <div className="flex-grow">
+            <p className="font-semibold text-sm">{title}</p>
+            <div className="grid grid-cols-2 text-xs text-muted-foreground gap-x-2">
+                {details.map((detail, i) => <span key={i}>{detail}</span>)}
+            </div>
+        </div>
+    </DropdownMenuItem>
+);
 
 interface PrintScreenProps {
   editor: Editor | null;
@@ -403,8 +444,8 @@ const PrintScreen: FC<PrintScreenProps> = ({
 
     const currentMarginPreset = useMemo(() => {
         const marginString = JSON.stringify(margins);
-        const preset = Object.values(MARGIN_PRESETS).find(p => JSON.stringify(p.values) === marginString);
-        return preset ? preset.name : 'Custom Margins';
+        const preset = Object.entries(MARGIN_PRESETS).find(([key, p]) => JSON.stringify(p.values) === marginString);
+        return preset ? MARGIN_PRESETS[preset[0]].name : 'Custom Margins';
     }, [margins]);
 
     const printRangeOptions: { [key in PrintRange]: { title: string, description: string } } = {
@@ -530,10 +571,14 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                     <DropdownMenuItem>More Paper Sizes...</DropdownMenuItem>
                                  </PrintSettingDropdown>
                                  <PrintSettingDropdown icon={File} title={currentMarginPreset} description={Object.values(margins).join(' ')}>
-                                     {Object.values(MARGIN_PRESETS).map(preset => (
-                                        <DropdownMenuItem key={preset.name} onSelect={() => setMargins(preset.values)}>
-                                            {preset.name}
-                                        </DropdownMenuItem>
+                                     {Object.entries(MARGIN_PRESETS).map(([key, preset]) => (
+                                        <MarginMenuItem 
+                                            key={key} 
+                                            title={preset.name} 
+                                            details={preset.details} 
+                                            onSelect={() => setMargins(preset.values)}
+                                            iconType={key}
+                                        />
                                      ))}
                                      <DropdownMenuSeparator />
                                      <DropdownMenuItem onSelect={() => setIsCustomMarginsOpen(true)}>Custom Margins...</DropdownMenuItem>
