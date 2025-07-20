@@ -283,31 +283,31 @@ const HyphenationIcon = () => (
 const PositionIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="4" y="4" width="16" height="16" fill="#F3F4F6"/>
-      <path d="M4 8H20" stroke="#A1A1AA" stroke-width="0.5"/>
-      <path d="M4 12H20" stroke="#A1A1AA" stroke-width="0.5"/>
-      <path d="M4 16H20" stroke="#A1A1AA" stroke-width="0.5"/>
-      <path d="M8 4V20" stroke="#A1A1AA" stroke-width="0.5"/>
-      <path d="M12 4V20" stroke="#A1A1AA" stroke-width="0.5"/>
-      <path d="M16 4V20" stroke="#A1A1AA" stroke-width="0.5"/>
+      <path d="M4 8H20" stroke="#A1A1AA" strokeWidth="0.5"/>
+      <path d="M4 12H20" stroke="#A1A1AA" strokeWidth="0.5"/>
+      <path d="M4 16H20" stroke="#A1A1AA" strokeWidth="0.5"/>
+      <path d="M8 4V20" stroke="#A1A1AA" strokeWidth="0.5"/>
+      <path d="M12 4V20" stroke="#A1A1AA" strokeWidth="0.5"/>
+      <path d="M16 4V20" stroke="#A1A1AA" strokeWidth="0.5"/>
       <rect x="7" y="7" width="4" height="4" fill="#3B82F6"/>
     </svg>
 );
 
 const WrapTextIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 6H20" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M4 10H8" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M16 10H20" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M4 14H8" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M16 14H20" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M4 18H20" stroke="currentColor" stroke-width="1.5"/>
-        <rect x="9" y="9" width="6" height="6" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1"/>
+        <path d="M4 6H20" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M4 10H8" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M16 10H20" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M4 14H8" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M16 14H20" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M4 18H20" stroke="currentColor" strokeWidth="1.5"/>
+        <rect x="9" y="9" width="6" height="6" fill="#3B82F6" stroke="#FFFFFF" strokeWidth="1"/>
     </svg>
 );
 
 const AlignIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 20H20" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 20H20" stroke="currentColor" strokeWidth="2"/>
       <rect x="6" y="8" width="4" height="8" fill="currentColor"/>
       <rect x="14" y="4" width="4" height="12" fill="currentColor"/>
     </svg>
@@ -315,16 +315,16 @@ const AlignIcon = () => (
 
 const GroupObjectsIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="4" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
-      <rect x="12" y="12" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+      <rect x="4" y="4" width="8" height="8" stroke="currentColor" strokeWidth="2" rx="1"/>
+      <rect x="12" y="12" width="8" height="8" stroke="currentColor" strokeWidth="2" rx="1"/>
     </svg>
 );
 
 const RotateIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 3.16327C18.4231 4.54582 21 7.9205 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 9.77398 3.86928 7.76186 5.33782 6.22352" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <path d="M15 3H15.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <path d="M18 6H18.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M15 3.16327C18.4231 4.54582 21 7.9205 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 9.77398 3.86928 7.76186 5.33782 6.22352" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 3H15.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M18 6H18.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
     </svg>
 );
 
@@ -1280,3 +1280,5 @@ export function AngleWordRibbon({
     </>
   );
 }
+
+    
