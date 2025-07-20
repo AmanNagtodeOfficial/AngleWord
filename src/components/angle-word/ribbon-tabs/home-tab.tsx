@@ -105,40 +105,40 @@ const BULLET_STYLES = [
 
 type CaseType = 'sentence' | 'lower' | 'upper' | 'capitalize';
 
-const UnderlineStyleIcon = ({ style, ...props }: { style: string } & SVGProps<SVGSVGElement>) => (
+const UnderlineStyleIcon = ({ style, color = 'currentColor', ...props }: { style: string, color?: string } & SVGProps<SVGSVGElement>) => (
     <svg width="100" height="10" viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg" {...props}>
         <line 
             x1="0" 
             y1="5" 
             x2="100" 
             y2="5" 
-            stroke="currentColor" 
+            stroke={color} 
             strokeWidth={style === 'solid-thick' ? "2" : "1"}
             strokeDasharray={
                 style === 'dotted' ? '2 3' :
                 style === 'dashed' ? '6 4' :
-                style === 'dot-dash' ? '2 3 6 3' :
                 'none'
             }
         />
-        {style === 'double' && <line x1="0" y1="8" x2="100" y2="8" stroke="currentColor" strokeWidth="1" />}
-        {style === 'wavy' && <path d="M 0,5 C 5,2 10,8 15,5 S 25,2 30,5 S 40,8 45,5 S 55,2 60,5 S 70,8 75,5 S 85,2 90,5 S 100,8 100,5" stroke="currentColor" fill="none" strokeWidth="1"/>}
+        {style === 'double' && <line x1="0" y1="8" x2="100" y2="8" stroke={color} strokeWidth="1" />}
+        {style === 'wavy' && <path d="M 0,5 C 5,2 10,8 15,5 S 25,2 30,5 S 40,8 45,5 S 55,2 60,5 S 70,8 75,5 S 85,2 90,5 S 100,8 100,5" stroke={color} fill="none" strokeWidth="1"/>}
     </svg>
 );
 
 const UNDERLINE_STYLES = [
-    { name: 'solid', component: () => <UnderlineStyleIcon style="solid" className="w-full h-2" /> },
-    { name: 'double', component: () => <UnderlineStyleIcon style="double" className="w-full h-2" /> },
-    { name: 'solid-thick', component: () => <UnderlineStyleIcon style="solid-thick" className="w-full h-2" /> },
-    { name: 'dotted', component: () => <UnderlineStyleIcon style="dotted" className="w-full h-2" /> },
-    { name: 'dashed', component: () => <UnderlineStyleIcon style="dashed" className="w-full h-2" /> },
-    { name: 'wavy', component: () => <UnderlineStyleIcon style="wavy" className="w-full h-2" /> },
+    { name: 'solid', component: (props: any) => <UnderlineStyleIcon style="solid" {...props} /> },
+    { name: 'double', component: (props: any) => <UnderlineStyleIcon style="double" {...props} /> },
+    { name: 'solid-thick', component: (props: any) => <UnderlineStyleIcon style="solid-thick" {...props} /> },
+    { name: 'dotted', component: (props: any) => <UnderlineStyleIcon style="dotted" {...props} /> },
+    { name: 'dashed', component: (props: any) => <UnderlineStyleIcon style="dashed" {...props} /> },
+    { name: 'wavy', component: (props: any) => <UnderlineStyleIcon style="wavy" {...props} /> },
 ];
 
 
 export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
+  const underlineColorInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
@@ -160,10 +160,6 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
   const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
   const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamilyName());
-  
-  const activeUnderlineStyle = editor?.getAttributes('underline')['data-underline-style'] || 'solid';
-  const UnderlineStylePreview = UNDERLINE_STYLES.find(s => s.name === activeUnderlineStyle)?.component || (() => <UnderlineStyleIcon style="solid" />);
-
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -186,6 +182,10 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
   const activeHighlightColor = editor.getAttributes('highlight').color;
   const activeFontColor = editor.getAttributes('textStyle').color;
+  
+  const activeUnderlineStyle = editor.getAttributes('underline')['data-underline-style'] || 'solid';
+  const activeUnderlineColor = editor.getAttributes('underline')['data-underline-color'] || activeFontColor || 'currentColor';
+
 
   const handleFontColorSelect = (color: string) => {
     if (!color) return;
@@ -306,16 +306,20 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   };
   
   const handleUnderline = (style?: string) => {
-    const styleToApply = style || activeUnderlineStyle || 'solid';
-  
-    // If the selection is already underlined with the style we want to apply, unset it.
-    // Otherwise, set/change the underline style.
-    if (editor.isActive('underline') && activeUnderlineStyle === styleToApply) {
-        editor.chain().focus().unsetUnderline().run();
-    } else {
-        editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': styleToApply }).run();
-    }
+      if (style) {
+          if (editor.isActive('underline') && activeUnderlineStyle === style) {
+              editor.chain().focus().unsetUnderline().run();
+          } else {
+              editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': style }).run();
+          }
+      } else {
+          editor.chain().focus().toggleUnderline().run();
+      }
   };
+
+  const handleUnderlineColor = (color: string) => {
+      editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-color': color }).run();
+  }
 
 
   return (
@@ -460,37 +464,56 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                     data-active={editor.isActive('italic')}
                   />
                   
-                  <div className="flex items-center border rounded-md h-[28px]" data-active={editor.isActive('underline')}>
-                    <Button
-                        variant="ghost"
-                        className="p-1 h-full flex flex-col items-center justify-center data-[active=true]:bg-accent"
-                        title="Underline"
-                        onClick={() => handleUnderline()}
-                        data-active={editor.isActive('underline')}
-                    >
-                         <Underline className="w-4 h-4" />
-                         <div className="w-4 h-[3px] -mt-0.5">
-                            {editor.isActive('underline') && <UnderlineStylePreview />}
-                         </div>
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="p-1 h-full rounded-l-none border-l" title="Underline Styles">
-                                <ChevronDown className="w-3 h-3" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {UNDERLINE_STYLES.map(style => (
-                                <DropdownMenuItem key={style.name} onSelect={() => handleUnderline(style.name)}>
-                                    <style.component />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-1 h-7" title="Underline" data-active={editor.isActive('underline')}>
+                          <div className="flex flex-col items-center">
+                              <Underline className="w-4 h-4" />
+                              <div
+                                  className="w-4 h-[3px] rounded-sm mt-0.5"
+                                  style={{ backgroundColor: editor.isActive('underline') ? activeUnderlineColor : 'transparent' }}
+                              />
+                          </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="p-2">
+                         <div className="text-xs text-muted-foreground px-1 pb-1">Underline Style</div>
+                         {UNDERLINE_STYLES.map(style => (
+                            <DropdownMenuItem key={style.name} className="p-1 h-6" onSelect={() => handleUnderline(style.name)}>
+                                <style.component className="w-full h-2" />
+                            </DropdownMenuItem>
+                         ))}
+                         <DropdownMenuSeparator />
+                         <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Underline Color</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="p-2">
+                                <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                                <div className="grid grid-cols-8 gap-1">
+                                    {FONT_COLORS.map(color => (
+                                    <DropdownMenuItem
+                                        key={color}
+                                        className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                                        onSelect={(e) => { e.preventDefault(); handleUnderlineColor(color); }}
+                                    >
+                                        <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                                    </DropdownMenuItem>
+                                    ))}
+                                </div>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); underlineColorInputRef.current?.click(); }}>
+                                    More Colors...
                                 </DropdownMenuItem>
-                            ))}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => editor.chain().focus().unsetUnderline().run()}>None</DropdownMenuItem>
-                        <DropdownMenuItem disabled>More Underlines...</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                            </DropdownMenuSubContent>
+                         </DropdownMenuSub>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <input
+                    type="color"
+                    ref={underlineColorInputRef}
+                    className="absolute w-0 h-0 opacity-0"
+                    onChange={(e) => handleUnderlineColor(e.target.value)}
+                  />
+
 
                   <SmallRibbonButton
                     icon={Strikethrough}

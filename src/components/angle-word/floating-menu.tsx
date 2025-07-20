@@ -14,6 +14,7 @@ import {
   MessageSquarePlus,
   ALargeSmall,
   CaseLower,
+  Underline,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +22,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef, SVGProps } from "react";
 import { Input } from "@/components/ui/input";
 
 interface FloatingMenuProps {
@@ -55,9 +60,47 @@ const FONT_FAMILIES = [
 ];
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
+const FONT_COLORS = [
+  '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
+  '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#C0C0C0', '#808080',
+];
+const HIGHLIGHT_COLORS = [
+  '#FFFF00', '#00FF00', '#FFC0CB', '#ADD8E6', '#FFA500', '#800080',
+  '#FF0000', '#C0C0C0', '#00FFFF', '#F0E68C', '#E6E6FA', '#FFF0F5',
+];
 
+
+const UnderlineStyleIcon = ({ style, color = 'currentColor', ...props }: { style: string, color?: string } & SVGProps<SVGSVGElement>) => (
+    <svg width="100" height="10" viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <line 
+            x1="0" 
+            y1="5" 
+            x2="100" 
+            y2="5" 
+            stroke={color} 
+            strokeWidth={style === 'solid-thick' ? "2" : "1"}
+            strokeDasharray={
+                style === 'dotted' ? '2 3' :
+                style === 'dashed' ? '6 4' :
+                'none'
+            }
+        />
+        {style === 'double' && <line x1="0" y1="8" x2="100" y2="8" stroke={color} strokeWidth="1" />}
+        {style === 'wavy' && <path d="M 0,5 C 5,2 10,8 15,5 S 25,2 30,5 S 40,8 45,5 S 55,2 60,5 S 70,8 75,5 S 85,2 90,5 S 100,8 100,5" stroke={color} fill="none" strokeWidth="1"/>}
+    </svg>
+);
+
+const UNDERLINE_STYLES = [
+    { name: 'solid', component: (props: any) => <UnderlineStyleIcon style="solid" {...props} /> },
+    { name: 'double', component: (props: any) => <UnderlineStyleIcon style="double" {...props} /> },
+    { name: 'solid-thick', component: (props: any) => <UnderlineStyleIcon style="solid-thick" {...props} /> },
+    { name: 'dotted', component: (props: any) => <UnderlineStyleIcon style="dotted" {...props} /> },
+    { name: 'dashed', component: (props: any) => <UnderlineStyleIcon style="dashed" {...props} /> },
+    { name: 'wavy', component: (props: any) => <UnderlineStyleIcon style="wavy" {...props} /> },
+];
 
 export function FloatingMenu({ editor }: FloatingMenuProps) {
+  const underlineColorInputRef = useRef<HTMLInputElement>(null);
 
   const currentFontFamilyName = useCallback(() => {
     for (const family of FONT_FAMILIES) {
@@ -132,6 +175,23 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
       setFontSize(String(currentSize - 1));
     }
   };
+
+  const activeUnderlineStyle = editor.getAttributes('underline')['data-underline-style'] || 'solid';
+  const handleUnderline = (style?: string) => {
+      if (style) {
+          if (editor.isActive('underline') && activeUnderlineStyle === style) {
+              editor.chain().focus().unsetUnderline().run();
+          } else {
+              editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': style }).run();
+          }
+      } else {
+          editor.chain().focus().toggleUnderline().run();
+      }
+  };
+
+  const handleUnderlineColor = (color: string) => {
+      editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-color': color }).run();
+  }
 
 
   return (
@@ -226,6 +286,49 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => editor.chain().focus().toggleItalic().run()} data-active={editor.isActive('italic')}>
           <Italic className="w-4 h-4" />
         </Button>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-7 w-7" data-active={editor.isActive('underline')}>
+                    <Underline className="w-4 h-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-2">
+                <div className="text-xs text-muted-foreground px-1 pb-1">Underline Style</div>
+                {UNDERLINE_STYLES.map(style => (
+                    <DropdownMenuItem key={style.name} className="p-1 h-6" onSelect={() => handleUnderline(style.name)}>
+                        <style.component className="w-full h-2" />
+                    </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Underline Color</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="p-2">
+                        <div className="text-xs text-muted-foreground px-1 pb-1">Standard Colors</div>
+                        <div className="grid grid-cols-8 gap-1">
+                            {FONT_COLORS.map(color => (
+                            <DropdownMenuItem
+                                key={color}
+                                className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
+                                onSelect={(e) => { e.preventDefault(); handleUnderlineColor(color); }}
+                            >
+                                <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
+                            </DropdownMenuItem>
+                            ))}
+                        </div>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); underlineColorInputRef.current?.click(); }}>
+                            More Colors...
+                        </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
+            </DropdownMenuContent>
+        </DropdownMenu>
+        <input
+            type="color"
+            ref={underlineColorInputRef}
+            className="absolute w-0 h-0 opacity-0"
+            onChange={(e) => handleUnderlineColor(e.target.value)}
+        />
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => editor.chain().focus().toggleStrike().run()} data-active={editor.isActive('strike')}>
           <Strikethrough className="w-4 h-4" />
         </Button>
@@ -236,8 +339,9 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleHighlight({ color: '#FFFF00' }).run()}>Yellow</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleHighlight({ color: '#00FF00' }).run()}>Green</DropdownMenuItem>
+            {HIGHLIGHT_COLORS.map(color => (
+                <DropdownMenuItem key={color} onClick={() => editor.chain().focus().toggleHighlight({ color }).run()}>{color}</DropdownMenuItem>
+            ))}
             <DropdownMenuItem onClick={() => editor.chain().focus().unsetHighlight().run()}>No color</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -249,8 +353,9 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setColor('#FF0000').run()}>Red</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setColor('#0000FF').run()}>Blue</DropdownMenuItem>
+            {FONT_COLORS.map(color => (
+                <DropdownMenuItem key={color} onClick={() => editor.chain().focus().setColor(color).run()}>{color}</DropdownMenuItem>
+            ))}
             <DropdownMenuItem onClick={() => editor.chain().focus().unsetColor().run()}>Default</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

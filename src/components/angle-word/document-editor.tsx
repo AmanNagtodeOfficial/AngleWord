@@ -45,7 +45,7 @@ const Underline = TiptapUnderline.extend({
             ...this.parent?.(),
             'data-underline-style': {
                 default: 'solid',
-                parseHTML: element => element.getAttribute('data-underline-style') || 'solid',
+                parseHTML: element => element.getAttribute('data-underline-style'),
                 renderHTML: attributes => {
                     if (!attributes['data-underline-style'] || attributes['data-underline-style'] === 'solid') {
                         return {}
@@ -53,6 +53,16 @@ const Underline = TiptapUnderline.extend({
                     return { 'data-underline-style': attributes['data-underline-style'] }
                 },
             },
+            'data-underline-color': {
+                default: null,
+                parseHTML: element => element.getAttribute('data-underline-color'),
+                renderHTML: attributes => {
+                    if (!attributes['data-underline-color']) {
+                        return {}
+                    }
+                    return { 'data-underline-color': attributes['data-underline-color'], style: `text-decoration-color: ${attributes['data-underline-color']}` }
+                },
+            }
         }
     },
 });
@@ -119,7 +129,9 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
       Highlight.configure({ multicolor: true }),
       TextStyle,
       Color,
-      FontFamily,
+      FontFamily.configure({
+        types: ['textStyle'],
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
