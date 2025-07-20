@@ -4,7 +4,8 @@
 import { improveWritingQuality, type ImproveWritingQualityInput, type ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
 import { detectToneAndSuggestAlternatives, type DetectToneAndSuggestAlternativesInput, type DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-tone-and-suggest-alternatives";
 import { summarizeDocument, type SummarizeDocumentInput, type SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
-import { generatePdfFromHtml, type GeneratePdfFromHtmlInput, type GeneratePdfFromHtmlOutput } from "@/ai/flows/generate-pdf-from-html";
+import { generatePdfFromHtml } from "@/ai/flows/generate-pdf-from-html";
+import type { GeneratePdfFromHtmlInput, GeneratePdfFromHtmlOutput } from "@/ai/schemas/pdf-schemas";
 
 export async function improveTextAction(
   input: ImproveWritingQualityInput

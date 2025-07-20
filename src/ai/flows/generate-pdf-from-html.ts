@@ -4,23 +4,16 @@
  * @fileOverview A flow to generate a PDF from HTML content using Puppeteer.
  *
  * - generatePdfFromHtml - A function that handles the PDF generation process.
- * - GeneratePdfFromHtmlInput - The input type for the generatePdfFromHtml function.
- * - GeneratePdfFromHtmlOutput - The return type for the generatePdfFromHtml function.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
 import puppeteer from 'puppeteer';
-
-export const GeneratePdfFromHtmlInputSchema = z.object({
-  html: z.string().describe('The HTML content to convert to PDF.'),
-});
-export type GeneratePdfFromHtmlInput = z.infer<typeof GeneratePdfFromHtmlInputSchema>;
-
-export const GeneratePdfFromHtmlOutputSchema = z.object({
-  pdfBase64: z.string().describe('The generated PDF, encoded in Base64.'),
-});
-export type GeneratePdfFromHtmlOutput = z.infer<typeof GeneratePdfFromHtmlOutputSchema>;
+import {
+  GeneratePdfFromHtmlInput,
+  GeneratePdfFromHtmlInputSchema,
+  GeneratePdfFromHtmlOutput,
+  GeneratePdfFromHtmlOutputSchema,
+} from '@/ai/schemas/pdf-schemas';
 
 export async function generatePdfFromHtml(
   input: GeneratePdfFromHtmlInput
