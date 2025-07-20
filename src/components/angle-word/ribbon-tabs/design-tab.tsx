@@ -53,12 +53,12 @@ export const DesignTab: FC<DesignTabProps> = ({ editor }) => {
               <div className="flex w-max space-x-2 p-2">
                 {documentStyles.map((style, index) => (
                     <div key={index} className="flex-shrink-0 cursor-pointer group">
-                        <div className="w-24 h-32 p-1 border-2 border-transparent group-hover:border-primary bg-background">
+                        <div className="w-16 h-20 p-1 border-2 border-transparent group-hover:border-primary bg-background">
                             <Image
                                 src={style.image}
                                 alt={style.name}
-                                width={88}
-                                height={120}
+                                width={60}
+                                height={76}
                                 className="object-contain w-full h-full"
                                 data-ai-hint={style.hint}
                             />
