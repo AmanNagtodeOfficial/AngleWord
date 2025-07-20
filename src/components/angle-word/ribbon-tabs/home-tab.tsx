@@ -54,11 +54,12 @@ import {
   Palette,
   Wand2,
 } from "lucide-react";
-import { FC, useRef, useState, SVGProps, useCallback } from "react";
+import { FC, useRef, useState, SVGProps, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { RibbonGroup, SmallRibbonButton, BulletDiscIcon, BulletCircleIcon, BulletSquareIcon } from "../ribbon-ui";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 
 interface HomeTabProps {
   editor: Editor | null;
@@ -115,15 +116,29 @@ const UnderlineStyleIcon = ({ style, ...props }: { style: string } & SVGProps<SV
 export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   const fontColorInputRef = useRef<HTMLInputElement>(null);
   const highlightColorInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
   const [recentFontColors, setRecentFontColors] = useState<string[]>([]);
   const [recentHighlightColors, setRecentHighlightColors] = useState<string[]>([]);
   const [lastCaseType, setLastCaseType] = useState<CaseType>('sentence');
-  const { toast } = useToast();
-
+  
   const currentFontSize = useCallback(() => {
-    if (!editor) return '11';
-    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
+    return editor?.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
   }, [editor]);
+  
+  const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
+
+  useEffect(() => {
+    const handleSelectionUpdate = () => {
+      if (editor) {
+        setFontSizeInput(currentFontSize());
+      }
+    };
+
+    editor?.on('selectionUpdate', handleSelectionUpdate);
+    return () => {
+      editor?.off('selectionUpdate', handleSelectionUpdate);
+    };
+  }, [editor, currentFontSize]);
 
 
   const currentFontFamily = useCallback(() => {
@@ -190,22 +205,43 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     setLastCaseType(caseType);
     editor.chain().focus().deleteRange({ from, to }).insertContent(transformedText).run();
   };
+  
+  const setFontSize = (size: string) => {
+    const numSize = parseInt(size, 10);
+    if (!isNaN(numSize) && numSize > 0) {
+      editor.chain().focus().setMark('textStyle', { fontSize: `${numSize}pt` }).run();
+      setFontSizeInput(size);
+    }
+  };
 
   const handleIncreaseFontSize = () => {
-    const currentSize = currentFontSize();
-    const currentIndex = FONT_SIZES.indexOf(currentSize);
+    const currentSize = parseInt(currentFontSize(), 10);
+    const currentIndex = FONT_SIZES.map(s => parseInt(s, 10)).findIndex(s => s >= currentSize);
+    
     if (currentIndex > -1 && currentIndex < FONT_SIZES.length - 1) {
       const newSize = FONT_SIZES[currentIndex + 1];
-      editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+      setFontSize(newSize);
+    } else if (currentSize < 72) { // Handle non-standard sizes
+      setFontSize(String(currentSize + 1));
     }
   };
 
   const handleDecreaseFontSize = () => {
-    const currentSize = currentFontSize();
-    const currentIndex = FONT_SIZES.indexOf(currentSize);
-    if (currentIndex > 0) {
-      const newSize = FONT_SIZES[currentIndex - 1];
-      editor.chain().focus().setMark('textStyle', { fontSize: `${newSize}pt` }).run();
+    const currentSize = parseInt(currentFontSize(), 10);
+    const fontSizesNum = FONT_SIZES.map(s => parseInt(s, 10));
+    let newIndex = -1;
+    for(let i = fontSizesNum.length - 1; i >= 0; i--) {
+        if(fontSizesNum[i] < currentSize) {
+            newIndex = i;
+            break;
+        }
+    }
+    
+    if (newIndex > -1) {
+      const newSize = FONT_SIZES[newIndex];
+      setFontSize(newSize);
+    } else if (currentSize > 1) { // Handle non-standard sizes
+      setFontSize(String(currentSize - 1));
     }
   };
   
@@ -299,21 +335,36 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="p-1 text-xs h-8 w-16 justify-between ml-1">
-                        {currentFontSize()}
-                        <ChevronDown className="w-3 h-3 ml-1" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {FONT_SIZES.map(size => (
-                        <DropdownMenuItem key={size} onClick={() => editor.chain().focus().setMark('textStyle', { fontSize: `${size}pt` }).run()}>
-                          {size}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                   <div className="flex items-center ml-1 border rounded-md">
+                        <Input
+                            type="text"
+                            value={fontSizeInput}
+                            onChange={(e) => setFontSizeInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    setFontSize(fontSizeInput);
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                            onBlur={() => setFontSize(fontSizeInput)}
+                            className="p-1 text-xs h-8 w-10 border-0 focus-visible:ring-0"
+                        />
+                         <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="p-1 h-8 w-6 border-l rounded-l-none">
+                                    <ChevronDown className="w-3 h-3" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {FONT_SIZES.map(size => (
+                                    <DropdownMenuItem key={size} onSelect={() => setFontSize(size)}>
+                                        {size}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+
                   <SmallRibbonButton icon={ALargeSmall} tooltip="Increase Font Size" onClick={handleIncreaseFontSize}/>
                   <SmallRibbonButton icon={CaseLower} tooltip="Decrease Font Size" onClick={handleDecreaseFontSize}/>
                   <DropdownMenu>
