@@ -103,6 +103,17 @@ body {
     list-style-type: square;
   }
 
+  .tiptap table {
+    @apply w-full border-collapse my-4;
+  }
+  .tiptap th,
+  .tiptap td {
+    @apply border border-border p-2 text-left;
+  }
+  .tiptap th {
+    @apply bg-muted font-bold;
+  }
+
 
   button[data-active="true"] {
     @apply bg-primary/20 text-primary;
