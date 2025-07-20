@@ -6,6 +6,7 @@ import { detectToneAndSuggestAlternatives, type DetectToneAndSuggestAlternatives
 import { summarizeDocument, type SummarizeDocumentInput, type SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { generatePdfFromHtml } from "@/ai/flows/generate-pdf-from-html";
 import type { GeneratePdfFromHtmlInput, GeneratePdfFromHtmlOutput } from "@/ai/schemas/pdf-schemas";
+import { detectLanguage, type DetectLanguageInput, type DetectLanguageOutput } from "@/ai/flows/detect-language";
 
 export async function improveTextAction(
   input: ImproveWritingQualityInput
@@ -48,5 +49,16 @@ export async function generatePdfAction(
   } catch (error) {
     console.error("Error in generatePdfAction:", error);
     throw new Error("Failed to generate PDF. Please try again.");
+  }
+}
+
+export async function detectLanguageAction(
+  input: DetectLanguageInput
+): Promise<DetectLanguageOutput> {
+  try {
+    return await detectLanguage(input);
+  } catch (error) {
+    console.error("Error in detectLanguageAction:", error);
+    throw new Error("Failed to detect language. Please try again.");
   }
 }

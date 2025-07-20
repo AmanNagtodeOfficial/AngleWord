@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const ImproveWritingQualityInputSchema = z.object({
   text: z.string().describe('The text to improve.'),
+  language: z.string().optional().describe('The language of the text (e.g., "English (United States)", "हिन्दी (भारत)"). Defaults to English if not provided.'),
 });
 export type ImproveWritingQualityInput = z.infer<typeof ImproveWritingQualityInputSchema>;
 
@@ -40,7 +41,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI Writing Assistant designed to improve the quality of writing.
 
   You will receive text and provide suggestions for grammar, spelling, style, and vocabulary improvements.
-  For each issue you find, provide the original text segment, your suggested correction, the type of issue, and a brief explanation.
+  The text is written in the following language: {{{language}}}. All your suggestions and explanations must be tailored for this language.
 
   Text: {{{text}}}
   

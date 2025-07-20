@@ -11,7 +11,7 @@ import { Editor, EditorEvents } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import type { Suggestion } from "@/ai/flows/improve-writing-quality";
-import { improveTextAction } from "@/app/actions";
+import { improveTextAction, detectLanguageAction } from "@/app/actions";
 import { GrammarCheckSidebar } from "@/components/angle-word/grammar-check-sidebar";
 
 
@@ -162,15 +162,20 @@ function AngleWordPage() {
     
     setIsCheckingGrammar(true);
     try {
-        const result = await improveTextAction({ text });
+        const result = await improveTextAction({ text, language: language.name });
         setGrammarSuggestions(result.suggestions);
+
+        // Also run language detection (proof-of-concept)
+        const langResult = await detectLanguageAction({ text });
+        console.log("Detected Language:", langResult);
+
     } catch (error) {
         console.error("Grammar check failed:", error);
         setGrammarSuggestions([]);
     } finally {
         setIsCheckingGrammar(false);
     }
-  }, [editor]);
+  }, [editor, language]);
 
   const handleContentUpdate = (content: string) => {
     if (!activeDocumentId) return;
@@ -240,6 +245,11 @@ function AngleWordPage() {
       runGrammarCheck();
     }
   }, [activeDocument, editor, runGrammarCheck]);
+
+  // Rerun grammar check when language changes
+  useEffect(() => {
+      runGrammarCheck();
+  }, [language, runGrammarCheck]);
 
 
   // These functions are passed to the Ribbon to set the active AI tool,
