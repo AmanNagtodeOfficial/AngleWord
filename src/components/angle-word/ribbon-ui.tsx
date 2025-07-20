@@ -13,14 +13,14 @@ export const RibbonGroup: FC<{ title: string, children: React.ReactNode, classNa
     <div className="flex items-start gap-0.5">
       {children}
     </div>
-    <span className="text-xs text-muted-foreground mt-1">{title}</span>
+    <span className="text-xs text-muted-foreground mt-1 text-center">{title}</span>
   </div>
 );
 
 export const RibbonButton: FC<{ children: React.ReactNode, icon: React.ElementType, className?: string, [key: string]: any }> = ({ children, icon: Icon, className: extraClassName, ...props }) => (
   <Button variant="ghost" className={`flex flex-col items-center h-auto p-2 ${extraClassName || ''}`} {...props}>
-    <Icon className="w-5 h-5 mb-1" />
-    <span className="text-xs text-center">{children}</span>
+    <Icon className="w-8 h-8 mb-1" />
+    <span className="text-xs text-center leading-tight">{children}</span>
   </Button>
 );
 
@@ -203,4 +203,131 @@ export const NumberInputWithSteppers: FC<{ label: string, value: string, unit: s
     </div>
 );
 
+
+export const SpellingAndGrammarIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="12" fontFamily="sans-serif" fontSize="10" fill="currentColor">ABC</text>
+        <path d="M7 14L9 18L15 8" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const ThesaurusIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="4" width="14" height="16" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M9 4V20" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M5 9H19" stroke="currentColor" strokeWidth="1"/>
+        <path d="M5 15H19" stroke="currentColor" strokeWidth="1"/>
+        <path d="M12 7h4" stroke="red" strokeWidth="1"/>
+        <path d="M12 12h5" stroke="currentColor" strokeWidth="1"/>
+    </svg>
+);
+
+export const CheckAccessibilityIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="6" r="2" fill="currentColor"/>
+        <path d="M12 10v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M9 18h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M10 12l-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M14 12l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+);
+
+export const TranslateIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-1.5l-2-4H5v4H3V7h4c1.66 0 3 1.34 3 3s-1.34 3-3 3h-1.5l2 4zm6-1.75c-1.04 0-1.92-.6-2.4-1.5H9.5v-1.5h7.21c.14-.4.29-.78.29-1.25s-.15-.85-.29-1.25H12v-1.5h3.4c.48-.9 1.36-1.5 2.4-1.5.25 0 .49.03.71.09l.79-2.09L20 7.03l-.79 2.09c.47.6.79 1.32.79 2.13s-.32 1.53-.79 2.13l.79 2.09-2.12.72-.79-2.09c-.22.06-.46.09-.71.09z" fill="currentColor"/>
+    </svg>
+);
+
+export const SetLanguageIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="m11.99 2-8.99 9L2 15h9v7h2v-7h9l-1-4-9-9zM5.41 13.01l-1.42-1.42L12 3.59l8.01 8.01-1.42 1.42L12 6.41 5.41 13.01z" fill="currentColor"/>
+        <path d="M6 17h12v2H6z" fill="currentColor"/>
+    </svg>
+);
+
+export const TrackChangesIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M6 8h12" stroke="red" strokeWidth="1" strokeDasharray="2 2"/>
+        <path d="M6 12h12" stroke="currentColor" strokeWidth="1"/>
+        <path d="M6 16h12" stroke="currentColor" strokeWidth="1"/>
+        <path d="M18 6l-2 4h4z" fill="#3B82F6"/>
+    </svg>
+);
+
+export const ReviewingPaneIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M4 4h6v16H4z" fill="#E0E7FF"/>
+        <path d="M5 6h4v1H5z" stroke="currentColor"/>
+        <path d="M5 9h4v1H5z" stroke="currentColor"/>
+    </svg>
+);
+
+export const AcceptChangesIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M6 12h12" stroke="currentColor" strokeWidth="1"/>
+        <path d="m9 16 2 2 4-4" stroke="#34D399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+export const RejectChangesIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M6 12h12" stroke="red" strokeWidth="1" strokeDasharray="2 2"/>
+        <path d="m10 15 4-4m0 4-4-4" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const PreviousChangeIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M12 8l-4 4 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const NextChangeIcon = () => (
+     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M12 8l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const CompareIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 2h10v20H4z" fill="#F3F4F6"/>
+        <path d="M6 6h6" stroke="currentColor" strokeWidth="1"/>
+        <path d="M10 2h10v20H10z" fill="#E0E7FF" opacity="0.7"/>
+        <path d="M12 10h6" stroke="red" strokeWidth="1"/>
+        <path d="M16 4l4 4m0-4-4 4" stroke="#3B82F6" strokeWidth="2"/>
+    </svg>
+);
+
+export const BlockAuthorsIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M17 18c0-2.76-2.24-5-5-5s-5 2.24-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <circle cx="16" cy="16" r="5" fill="#FEE2E2"/>
+        <path d="m13.5 18.5 5-5" stroke="#EF4444" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+);
+
+export const RestrictEditingIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16v16H4z" fill="#F3F4F6"/>
+        <path d="M6 6h12v1H6z" stroke="currentColor" strokeWidth="1"/>
+        <path d="M6 8h12v1H6z" stroke="currentColor" strokeWidth="1"/>
+        <path d="M6 10h12v1H6z" stroke="currentColor" strokeWidth="1"/>
+        <path d="M16 14v-1h-2v1h-1v3h4v-3z" fill="currentColor"/>
+        <path d="M15 14h-1v-2a2 2 0 0 1 4 0v2h-1" stroke="currentColor" strokeWidth="1" fill="none"/>
+    </svg>
+);
+
+export const HideInkIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 6h12v12H6z" stroke="currentColor" strokeDasharray="2 2" strokeWidth="1"/>
+        <path d="M18 6 A 8 8 0 0 0 10 14" stroke="red" strokeWidth="1.5" fill="none"/>
+        <path d="M6 18 L 18 6" stroke="currentColor" strokeWidth="1"/>
+    </svg>
+);
     
