@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, ShieldCheck } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, Mail, Projector, Cloud, ShieldCheck } from "lucide-react";
 import { useState, FC, useMemo, useEffect } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -139,6 +139,8 @@ export function FileMenu({
         return <div>New Screen Content</div>;
       case 'open':
         return <div>Open Screen Content</div>;
+      case 'share':
+        return <ShareScreen />;
       case 'print':
         return (
           <PrintScreen 
@@ -199,7 +201,7 @@ export function FileMenu({
     { name: 'save-as', label: 'Save As', icon: FileEdit, action: () => setActiveScreen('save-as') },
     { name: 'history', label: 'History', icon: History, disabled: true, action: () => setActiveScreen('history') },
     { name: 'print', label: 'Print', icon: Printer, action: () => setActiveScreen('print') },
-    { name: 'share', label: 'Share', icon: Share2, disabled: true, action: () => setActiveScreen('share') },
+    { name: 'share', label: 'Share', icon: Share2, action: () => setActiveScreen('share') },
     { name: 'export', label: 'Export', icon: FileOutput, disabled: true, action: () => setActiveScreen('export') },
     { name: 'transform', label: 'Transform', icon: ChevronsRight, disabled: true, action: () => setActiveScreen('transform') },
     { name: 'close', label: 'Close', icon: X, action: onClose },
@@ -694,6 +696,7 @@ const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentNam
 
   const authorName = user?.displayName || 'Unknown Author';
   const getInitials = (name: string) => {
+    if(!name) return '...';
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
@@ -766,7 +769,7 @@ const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentNam
                     <dt className="text-sm text-muted-foreground">Author</dt>
                     <dd className="text-sm font-medium flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                            <AvatarFallback>{user ? getInitials(authorName) : '...'}</AvatarFallback>
+                            <AvatarFallback>{getInitials(authorName)}</AvatarFallback>
                         </Avatar>
                         {user ? authorName : 'Loading...'}
                     </dd>
@@ -779,4 +782,76 @@ const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentNam
   );
 };
 
+
+const ShareScreen: FC = () => {
+  const [activeShareOption, setActiveShareOption] = useState('people');
+
+  const ShareOptionButton = ({
+    id,
+    icon: Icon,
+    title,
+  }: {
+    id: string;
+    icon: React.ElementType;
+    title: string;
+  }) => (
+    <Button
+      variant="ghost"
+      onClick={() => setActiveShareOption(id)}
+      className={cn(
+        "h-auto w-full justify-start p-3 text-left",
+        activeShareOption === id && "bg-primary/10"
+      )}
+    >
+      <Icon className="w-8 h-8 mr-3 text-primary/80" />
+      <div>
+        <p className="font-semibold text-base">{title}</p>
+      </div>
+    </Button>
+  );
+
+  return (
+    <div className="flex h-full">
+      <div className="w-1/3 border-r p-4">
+        <h1 className="text-4xl font-light mb-6">Share</h1>
+        <div className="space-y-2">
+            <h2 className="text-xl font-semibold px-3">Share</h2>
+            <ShareOptionButton id="people" icon={Users} title="Share with People" />
+            <ShareOptionButton id="email" icon={Mail} title="Email" />
+            <ShareOptionButton id="present" icon={Projector} title="Present Online" />
+        </div>
+      </div>
+      <div className="w-2/3 p-8">
+        {activeShareOption === 'people' && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">Share with People</h2>
+            <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 bg-muted-foreground rounded-sm mt-1" />
+                    <p>Step 1: Save your document to the cloud.</p>
+                </div>
+                 <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 bg-muted-foreground rounded-sm mt-1" />
+                    <p>Step 2: Share your document. We'll do this once you've finished saving.</p>
+                </div>
+            </div>
+            <div className="mt-8">
+                <Button variant="outline" className="h-auto p-4 flex flex-col items-center justify-center w-36 h-36 border-2">
+                    <Cloud className="w-12 h-12 text-primary mb-2" />
+                    <span className="text-base font-semibold">Save to Cloud</span>
+                </Button>
+            </div>
+          </div>
+        )}
+         {activeShareOption === 'email' && (
+            <div className="text-center mt-20 text-muted-foreground">Email sharing options would be here.</div>
+         )}
+         {activeShareOption === 'present' && (
+            <div className="text-center mt-20 text-muted-foreground">Online presentation options would be here.</div>
+         )}
+      </div>
+    </div>
+  );
+};
     
+
