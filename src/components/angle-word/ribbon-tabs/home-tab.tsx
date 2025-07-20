@@ -160,6 +160,10 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
   const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
   const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamilyName());
+  
+  const activeUnderlineStyle = editor?.getAttributes('underline')['data-underline-style'] || 'solid';
+  const UnderlineStylePreview = UNDERLINE_STYLES.find(s => s.name === activeUnderlineStyle)?.component || (() => <UnderlineStyleIcon style="solid" />);
+
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -182,7 +186,6 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
 
   const activeHighlightColor = editor.getAttributes('highlight').color;
   const activeFontColor = editor.getAttributes('textStyle').color;
-  const activeUnderlineStyle = editor.getAttributes('underline')['data-underline-style'] || 'solid';
 
   const handleFontColorSelect = (color: string) => {
     if (!color) return;
@@ -302,16 +305,16 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     return editor.can().outdent();
   };
   
-  const handleUnderline = (style: string) => {
-    // If the current style is active, toggling turns it off. Otherwise, set the new style.
-    if (editor.isActive('underline', { 'data-underline-style': style })) {
+  const handleUnderline = (style?: string) => {
+    // If no style is provided, toggle with the last used or default style
+    const styleToApply = style || activeUnderlineStyle;
+
+    if (editor.isActive('underline', { 'data-underline-style': styleToApply })) {
         editor.chain().focus().unsetUnderline().run();
     } else {
-        editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': style }).run();
+        editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': styleToApply }).run();
     }
   };
-
-  const UnderlineStylePreview = UNDERLINE_STYLES.find(s => s.name === activeUnderlineStyle)?.component || (() => <UnderlineStyleIcon style="solid" />);
 
 
   return (
@@ -448,74 +451,66 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                     tooltip="Bold"
                     onClick={() => editor.chain().focus().toggleBold().run()}
                     data-active={editor.isActive('bold')}
-                    className="w-7 h-7"
                   />
                   <SmallRibbonButton
                     icon={Italic}
                     tooltip="Italic"
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     data-active={editor.isActive('italic')}
-                    className="w-7 h-7"
                   />
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="p-1 h-7 flex-col" title="Underline" data-active={editor.isActive('underline')}>
-                          <Underline className="w-4 h-4" />
-                          <div className="w-4 h-[3px] mt-0.5">
-                              {editor.isActive('underline') && <UnderlineStylePreview />}
-                          </div>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        {UNDERLINE_STYLES.map(style => (
-                             <DropdownMenuItem key={style.name} onSelect={() => handleUnderline(style.name)}>
-                                <style.component />
-                             </DropdownMenuItem>
-                        ))}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onSelect={() => editor.chain().focus().unsetUnderline().run()}>None</DropdownMenuItem>
-                      <DropdownMenuItem disabled>More Underlines...</DropdownMenuItem>
-                      <DropdownMenuSub>
-                          <DropdownMenuSubTrigger>Underline Colour</DropdownMenuSubTrigger>
-                          <DropdownMenuSubContent className="p-2">
-                          <div className="grid grid-cols-8 gap-1">
-                              {FONT_COLORS.map(color => (
-                              <DropdownMenuItem
-                                  key={color}
-                                  className="p-0 w-6 h-6 flex items-center justify-center cursor-pointer"
-                                  onSelect={(e) => { e.preventDefault(); editor.chain().focus().setUnderline().setColor(color).run() }}
-                              >
-                                  <div className="w-5 h-5 rounded-sm border" style={{ backgroundColor: color }}/>
-                              </DropdownMenuItem>
-                              ))}
-                          </div>
-                          </DropdownMenuSubContent>
-                      </DropdownMenuSub>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div className="flex items-center">
+                    <SmallRibbonButton
+                        icon={() => (
+                            <div className="flex flex-col items-center">
+                                <Underline className="w-4 h-4" />
+                                <div className="w-4 h-[3px] mt-0.5">
+                                    {editor.isActive('underline') && <UnderlineStylePreview />}
+                                </div>
+                            </div>
+                        )}
+                        tooltip="Underline"
+                        onClick={() => handleUnderline()}
+                        data-active={editor.isActive('underline')}
+                        className="rounded-r-none"
+                    />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="p-1 h-7 rounded-l-none border-l -ml-1" title="Underline Styles">
+                                <ChevronDown className="w-3 h-3" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {UNDERLINE_STYLES.map(style => (
+                                <DropdownMenuItem key={style.name} onSelect={() => handleUnderline(style.name)}>
+                                    <style.component />
+                                </DropdownMenuItem>
+                            ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={() => editor.chain().focus().unsetUnderline().run()}>None</DropdownMenuItem>
+                        <DropdownMenuItem disabled>More Underlines...</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
 
                   <SmallRibbonButton
                     icon={Strikethrough}
                     tooltip="Strikethrough"
                     onClick={() => editor.chain().focus().toggleStrike().run()}
                     data-active={editor.isActive('strike')}
-                    className="w-7 h-7"
                   />
                   <SmallRibbonButton
                     icon={Subscript}
                     tooltip="Subscript"
                     onClick={() => editor.chain().focus().toggleSubscript().run()}
                     data-active={editor.isActive('subscript')}
-                    className="w-7 h-7"
                   />
                   <SmallRibbonButton
                     icon={Superscript}
                     tooltip="Superscript"
                     onClick={() => editor.chain().focus().toggleSuperscript().run()}
                     data-active={editor.isActive('superscript')}
-                    className="w-7 h-7"
                   />
-                  <SmallRibbonButton icon={Wand2} tooltip="Text Effects" className="w-7 h-7"/>
+                  <SmallRibbonButton icon={Wand2} tooltip="Text Effects"/>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="p-1 h-7" title="Text Highlight Color" data-active={!!activeHighlightColor}>

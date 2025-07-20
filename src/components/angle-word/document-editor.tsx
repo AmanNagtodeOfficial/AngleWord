@@ -45,9 +45,9 @@ const Underline = TiptapUnderline.extend({
             ...this.parent?.(),
             'data-underline-style': {
                 default: 'solid',
-                parseHTML: element => element.getAttribute('data-underline-style'),
+                parseHTML: element => element.getAttribute('data-underline-style') || 'solid',
                 renderHTML: attributes => {
-                    if (!attributes['data-underline-style']) {
+                    if (!attributes['data-underline-style'] || attributes['data-underline-style'] === 'solid') {
                         return {}
                     }
                     return { 'data-underline-style': attributes['data-underline-style'] }
