@@ -81,7 +81,7 @@ const TableGridSelector: FC<{ editor: Editor, onSelect: () => void }> = ({ edito
                         <div
                             key={index}
                             className={cn(
-                                "w-5 h-5 border border-muted-foreground/50",
+                                "w-4 h-4 border border-muted-foreground/50",
                                 isHovered ? "bg-primary/50 border-primary" : "bg-muted/50"
                             )}
                             onMouseEnter={() => setHovered({ rows: row, cols: col })}
