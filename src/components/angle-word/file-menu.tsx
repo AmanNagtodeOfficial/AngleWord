@@ -2,8 +2,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
-import { useState, FC } from "react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { useState, FC, useMemo } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -114,7 +114,7 @@ export function FileMenu({ isOpen, onClose, editor, documentName, setDocumentNam
       case 'open':
         return <div>Open Screen Content</div>;
       case 'print':
-        return <PrintScreen editor={editor} onPrint={handlePrint} />;
+        return <PrintScreen editor={editor} onPrint={handlePrint} documentName={documentName} />;
       case 'save-as':
         return (
           <div className="p-8">
@@ -315,7 +315,7 @@ const PrintSettingButton: FC<{icon: React.ElementType, title: string, descriptio
     </Button>
 );
 
-const PrintScreen: FC<{ editor: Editor | null, onPrint: () => void }> = ({ editor, onPrint }) => {
+const PrintScreen: FC<{ editor: Editor | null; onPrint: () => void; documentName: string; }> = ({ editor, onPrint, documentName }) => {
     const [copies, setCopies] = useState(1);
     const [zoomLevel, setZoomLevel] = useState(56);
     
