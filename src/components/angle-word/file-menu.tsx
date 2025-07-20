@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, ShieldCheck } from "lucide-react";
-import { useState, FC, useMemo } from "react";
+import { useState, FC, useMemo, useEffect } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,11 +16,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DocumentEditor } from "./document-editor";
 import { Separator } from "../ui/separator";
 import { Slider } from "../ui/slider";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import type { Margins, Orientation, PageSize } from "@/app/page";
 import { PAGE_SIZES, MARGIN_PRESETS } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { auth } from "@/lib/firebase";
+import type { User as FirebaseUser } from "firebase/auth";
+
 
 interface FileMenuProps {
   isOpen: boolean;
@@ -680,6 +683,24 @@ const PropertyItem: FC<{ label: string; value: string | number; isEditable?: boo
 );
 
 const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentName, wordCount }) => {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+
+  useEffect(() => {
+    if (auth && typeof auth.onAuthStateChanged === 'function') {
+      const unsubscribe = auth.onAuthStateChanged(setUser);
+      return () => unsubscribe();
+    }
+  }, []);
+
+  const authorName = user?.displayName || 'Unknown Author';
+  const getInitials = (name: string) => {
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+  };
+
   return (
     <div className="p-8 h-full">
       <h1 className="text-4xl font-light mb-6">Info</h1>
@@ -745,12 +766,12 @@ const InfoScreen: FC<{documentName: string; wordCount: number}> = ({ documentNam
                     <dt className="text-sm text-muted-foreground">Author</dt>
                     <dd className="text-sm font-medium flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                            <AvatarFallback>AN</AvatarFallback>
+                            <AvatarFallback>{user ? getInitials(authorName) : '...'}</AvatarFallback>
                         </Avatar>
-                        Aman Nagtode
+                        {user ? authorName : 'Loading...'}
                     </dd>
                 </div>
-                 <PropertyItem label="Last Modified By" value="Aman Nagtode" />
+                 <PropertyItem label="Last Modified By" value={user ? authorName : 'Loading...'} />
             </dl>
         </div>
       </div>
