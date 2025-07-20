@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -41,7 +42,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI Writing Assistant designed to improve the quality of writing.
 
   You will receive text and provide suggestions for grammar, spelling, style, and vocabulary improvements.
-  The text is written in the following language: {{{language}}}. All your suggestions and explanations must be tailored for this language.
+  The text is written in the following language: {{{language | "English (United States)"}}}. All your suggestions and explanations must be tailored for this language.
 
   Text: {{{text}}}
   
