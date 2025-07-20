@@ -306,11 +306,9 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   };
   
   const handleUnderline = (style?: string) => {
-    const styleToApply = style || activeUnderlineStyle;
+    const styleToApply = style || activeUnderlineStyle || 'solid';
   
-    // If the selection is already underlined with the target style, unset it.
-    // Otherwise, apply the new style.
-    if (editor.isActive('underline', { 'data-underline-style': styleToApply })) {
+    if (editor.isActive('underline') && activeUnderlineStyle === styleToApply) {
         editor.chain().focus().unsetUnderline().run();
     } else {
         editor.chain().focus().setUnderline().setAttributes('underline', { 'data-underline-style': styleToApply }).run();
@@ -463,7 +461,7 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                   <div className="flex items-center border rounded-md" data-active={editor.isActive('underline')}>
                     <Button
                         variant="ghost"
-                        className="p-1 h-7 flex-col data-[active=true]:bg-accent"
+                        className="p-1 h-7 flex-col items-center justify-center data-[active=true]:bg-accent"
                         title="Underline"
                         onClick={() => handleUnderline()}
                         data-active={editor.isActive('underline')}
