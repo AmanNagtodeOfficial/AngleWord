@@ -167,7 +167,7 @@ export const EditRecipientListIcon = () => (
 
 export const PreviewResultsIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <text x="6" y="16" fontFamily="serif" fontSize="10" fill="currentColor" font-weight="bold">AB</text>
+        <text x="6" y="16" fontFamily="serif" fontSize="10" fill="currentColor" fontWeight="bold">AB</text>
         <circle cx="15" cy="9" r="5" stroke="currentColor" strokeWidth="1.5" />
         <path d="M18 12l-4 4" stroke="currentColor" strokeWidth="1.5" />
     </svg>
@@ -202,3 +202,5 @@ export const NumberInputWithSteppers: FC<{ label: string, value: string, unit: s
         </div>
     </div>
 );
+
+    
