@@ -4,17 +4,19 @@
 import { Editor } from "@tiptap/react";
 import {
   BarChart3,
+  Baseline,
   Blocks,
   Bookmark,
   CalendarDays,
   Camera,
   FilePlus2,
   GalleryThumbnails,
+  Hash,
+  Image as LucideImage,
   ImageUp,
   Library,
   Link as LinkIcon,
   Link2,
-  Image as LucideImage,
   MessageSquare,
   Newspaper,
   Omega,
@@ -31,7 +33,6 @@ import {
   Type,
   UnfoldVertical,
   Video,
-  Hash,
 } from "lucide-react";
 import { FC } from "react";
 import { RibbonGroup, RibbonButton } from "../ribbon-ui";
