@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, Mail, Projector, Cloud, ShieldCheck } from "lucide-react";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, Mail, Projector, Cloud, ShieldCheck, FileType, FileText as FileTextIcon, Globe, FileKey2, FileBox } from "lucide-react";
 import { useState, FC, useMemo, useEffect } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ interface FileMenuProps {
 
 type MenuScreen = 'home' | 'new' | 'open' | 'info' | 'save' | 'save-as' | 'history' | 'print' | 'share' | 'export' | 'transform' | 'close' | 'account' | 'options';
 
-type SaveFormat = 'html' | 'txt';
+export type SaveFormat = 'html' | 'txt';
 
 const templates = [
     { name: 'Blank document', image: 'https://placehold.co/150x200', hint: 'blank paper' },
@@ -74,46 +74,34 @@ export function FileMenu({
   const [fileName, setFileName] = useState(documentName);
   const [saveFormat, setSaveFormat] = useState<SaveFormat>('html');
 
-  const handleSave = (asNewFile: boolean = false) => {
+  const handleSave = (asNewFile: boolean = false, newFormat?: SaveFormat) => {
     if (!editor) return;
 
-    if (asNewFile || activeScreen === 'save-as') {
-      let content: string;
-      let blobType: string;
-      let extension: string;
-      const finalFileName = fileName || 'document';
+    const finalFormat = newFormat || saveFormat;
+    let content: string;
+    let blobType: string;
+    let extension: string;
+    const finalFileName = fileName || 'document';
 
-      if (saveFormat === 'txt') {
-        content = editor.getText();
-        blobType = 'text/plain';
-        extension = 'txt';
-      } else {
-        content = editor.getHTML();
-        blobType = 'text/html';
-        extension = 'html';
-      }
-      
-      setDocumentName(finalFileName);
-
-      const blob = new Blob([content], { type: blobType });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${finalFileName}.${extension}`;
-      a.click();
-      URL.revokeObjectURL(url);
+    if (finalFormat === 'txt') {
+      content = editor.getText();
+      blobType = 'text/plain';
+      extension = 'txt';
     } else {
-      // Default quick save
-      const content = editor.getHTML();
-      const blob = new Blob([content], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${documentName}.html`;
-      a.click();
-      URL.revokeObjectURL(url);
-      console.log("Saving document...");
+      content = editor.getHTML();
+      blobType = 'text/html';
+      extension = 'html';
     }
+    
+    setDocumentName(finalFileName);
+
+    const blob = new Blob([content], { type: blobType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${finalFileName}.${extension}`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleNewDocument = () => {
@@ -141,6 +129,8 @@ export function FileMenu({
         return <div>Open Screen Content</div>;
       case 'share':
         return <ShareScreen />;
+      case 'export':
+        return <ExportScreen onSaveAs={setActiveScreen} onSetFormat={setSaveFormat} />;
       case 'print':
         return (
           <PrintScreen 
@@ -202,7 +192,7 @@ export function FileMenu({
     { name: 'history', label: 'History', icon: History, disabled: true, action: () => setActiveScreen('history') },
     { name: 'print', label: 'Print', icon: Printer, action: () => setActiveScreen('print') },
     { name: 'share', label: 'Share', icon: Share2, action: () => setActiveScreen('share') },
-    { name: 'export', label: 'Export', icon: FileOutput, disabled: true, action: () => setActiveScreen('export') },
+    { name: 'export', label: 'Export', icon: FileOutput, action: () => setActiveScreen('export') },
     { name: 'transform', label: 'Transform', icon: ChevronsRight, disabled: true, action: () => setActiveScreen('transform') },
     { name: 'close', label: 'Close', icon: X, action: onClose },
   ];
@@ -623,7 +613,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                          </div>
                          <div className="flex items-center gap-2">
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.max(10, prev - 10))}>
-                                <Minus className="h-4 w-4" />
+                                <Minus className="h-4 h-4" />
                             </Button>
                             <span className="w-16 text-center text-sm">{zoomLevel}%</span>
                             <Slider
@@ -635,7 +625,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                 className="w-32"
                             />
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setZoomLevel(prev => Math.min(200, prev + 10))}>
-                                <Plus className="h-4 w-4" />
+                                <Plus className="h-4 h-4" />
                             </Button>
                         </div>
                      </div>
@@ -854,4 +844,109 @@ const ShareScreen: FC = () => {
   );
 };
     
+const ExportScreen: FC<{
+    onSaveAs: (screen: MenuScreen) => void;
+    onSetFormat: (format: SaveFormat) => void;
+}> = ({ onSaveAs, onSetFormat }) => {
+    const [activeSubMenu, setActiveSubMenu] = useState('changeType');
+    const [selectedType, setSelectedType] = useState('document');
 
+    const handleTypeSelect = (type: string, format: SaveFormat) => {
+        setSelectedType(type);
+        onSetFormat(format);
+    };
+
+    const handleSaveAsClick = () => {
+        onSaveAs('save-as');
+    };
+
+    const fileTypes = {
+        document: { name: 'Document', description: 'Uses the Word Document format', icon: FileType, format: 'html' as SaveFormat },
+        word97: { name: 'Word 97-2003 Document', description: 'Uses the Word 97-2003 Document format', icon: FileType, format: 'html' as SaveFormat, disabled: true },
+        openDocument: { name: 'OpenDocument Text', description: 'Uses the OpenDocument Text format', icon: FileType, format: 'html' as SaveFormat, disabled: true },
+        template: { name: 'Template', description: 'Starting point for new documents', icon: FileKey2, format: 'html' as SaveFormat, disabled: true },
+        plainText: { name: 'Plain Text', description: 'Only contains the text in your document', icon: FileTextIcon, format: 'txt' as SaveFormat },
+        rtf: { name: 'Rich Text Format', description: 'Preserves text formatting information', icon: FileType, format: 'html' as SaveFormat, disabled: true },
+        html: { name: 'Single File Web Page', description: 'Web page is stored as a single file', icon: Globe, format: 'html' as SaveFormat },
+        another: { name: 'Save as Another File Type', description: 'Brings you to the Save As dialog', icon: FileBox, format: 'html' as SaveFormat, isAction: true },
+    };
+
+    const FileTypeButton: FC<{typeKey: string}> = ({ typeKey }) => {
+        const type = fileTypes[typeKey as keyof typeof fileTypes];
+        return (
+            <button
+                className={cn(
+                    "flex items-center w-full text-left p-3 rounded-md border",
+                    selectedType === typeKey ? "bg-primary/10 border-primary" : "border-transparent hover:bg-muted/50",
+                    type.disabled && "opacity-50 cursor-not-allowed"
+                )}
+                onClick={() => !type.disabled && (type.isAction ? handleSaveAsClick() : handleTypeSelect(typeKey, type.format))}
+                disabled={type.disabled}
+            >
+                <type.icon className="w-10 h-10 mr-3 text-primary/80 flex-shrink-0" />
+                <div>
+                    <p className="font-semibold">{type.name}</p>
+                    <p className="text-xs text-muted-foreground">{type.description}</p>
+                </div>
+            </button>
+        );
+    };
+
+    return (
+        <div className="flex h-full">
+            <aside className="w-1/3 border-r p-4">
+                <h1 className="text-4xl font-light mb-6">Export</h1>
+                <div className="space-y-1">
+                    <Button variant="ghost" onClick={() => setActiveSubMenu('pdf')} className={cn("w-full justify-start p-3 text-left h-auto", activeSubMenu === 'pdf' && "bg-primary/10")} disabled>
+                        <File className="w-8 h-8 mr-3 text-primary/80" />
+                        <div>
+                            <p className="font-semibold">Create PDF/XPS Document</p>
+                        </div>
+                    </Button>
+                    <Button variant="ghost" onClick={() => setActiveSubMenu('changeType')} className={cn("w-full justify-start p-3 text-left h-auto", activeSubMenu === 'changeType' && "bg-primary/10")}>
+                        <FileEdit className="w-8 h-8 mr-3 text-primary/80" />
+                        <div>
+                            <p className="font-semibold">Change File Type</p>
+                        </div>
+                    </Button>
+                </div>
+            </aside>
+            <main className="w-2/3 p-8">
+                {activeSubMenu === 'changeType' && (
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-4">Change File Type</h2>
+                        <div className="space-y-4">
+                            <div>
+                                <div className="text-sm font-semibold p-2 bg-muted rounded-t-md">Document File Types</div>
+                                <div className="p-4 border-x border-b rounded-b-md grid grid-cols-2 gap-4">
+                                    <FileTypeButton typeKey="document" />
+                                    <FileTypeButton typeKey="word97" />
+                                    <FileTypeButton typeKey="openDocument" />
+                                    <FileTypeButton typeKey="template" />
+                                </div>
+                            </div>
+                            <div>
+                                <div className="text-sm font-semibold p-2 bg-muted rounded-t-md">Other File Types</div>
+                                <div className="p-4 border-x border-b rounded-b-md grid grid-cols-2 gap-4">
+                                    <FileTypeButton typeKey="plainText" />
+                                    <FileTypeButton typeKey="rtf" />
+                                    <FileTypeButton typeKey="html" />
+                                    <FileTypeButton typeKey="another" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-8 flex justify-start">
+                             <Button size="lg" className="h-auto p-4 flex-col w-32 h-24" variant="outline" onClick={handleSaveAsClick}>
+                                <FileEdit className="w-10 h-10 mb-1" />
+                                <span>Save As</span>
+                             </Button>
+                        </div>
+                    </div>
+                )}
+                 {activeSubMenu === 'pdf' && (
+                    <div className="text-center mt-20 text-muted-foreground">PDF/XPS creation options would be here.</div>
+                 )}
+            </main>
+        </div>
+    );
+};
