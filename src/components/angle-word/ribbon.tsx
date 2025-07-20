@@ -152,23 +152,23 @@ export function AngleWordRibbon({
           </div>
           
           <div className={cn(!isRibbonExpanded && "hidden")} onClickCapture={handleRibbonInteraction}>
-              <TabsContent value="home" className="bg-background p-2">
+              <TabsContent value="home" className="bg-background p-2 min-h-[120px] flex items-start">
                 <HomeTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="insert" className="bg-background p-2">
+              <TabsContent value="insert" className="bg-background p-2 min-h-[120px] flex items-start">
                 <InsertTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="draw" className="bg-background p-2">
+              <TabsContent value="draw" className="bg-background p-2 min-h-[120px] flex items-start">
                 <DrawTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="design" className="bg-background p-2">
+              <TabsContent value="design" className="bg-background p-2 min-h-[120px] flex items-start">
                 <DesignTab editor={editor} />
               </TabsContent>
               
-              <TabsContent value="layout" className="bg-background p-2">
+              <TabsContent value="layout" className="bg-background p-2 min-h-[120px] flex items-start">
                 <LayoutTab 
                   editor={editor}
                   margins={margins}
@@ -183,19 +183,19 @@ export function AngleWordRibbon({
                 />
               </TabsContent>
 
-              <TabsContent value="references" className="bg-background p-2">
+              <TabsContent value="references" className="bg-background p-2 min-h-[120px] flex items-start">
                 <ReferencesTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="mailings" className="bg-background p-2">
+              <TabsContent value="mailings" className="bg-background p-2 min-h-[120px] flex items-start">
                 <MailingsTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="review" className="bg-background p-2">
+              <TabsContent value="review" className="bg-background p-2 min-h-[120px] flex items-start">
                 <ReviewTab editor={editor} />
               </TabsContent>
 
-              <TabsContent value="view" className="bg-background p-2">
+              <TabsContent value="view" className="bg-background p-2 min-h-[120px] flex items-start">
                  <ViewTab 
                     editor={editor} 
                     isRulerVisible={isRulerVisible} 
@@ -203,7 +203,7 @@ export function AngleWordRibbon({
                  />
               </TabsContent>
 
-              <TabsContent value="ai-tools" className="bg-background p-2">
+              <TabsContent value="ai-tools" className="bg-background p-2 min-h-[120px] flex items-start">
                  <AIToolsTab 
                     onImproveWriting={onImproveWriting} 
                     onDetectTone={onDetectTone} 
