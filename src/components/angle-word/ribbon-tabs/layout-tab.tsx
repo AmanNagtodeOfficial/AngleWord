@@ -86,7 +86,9 @@ export const LayoutTab: FC<LayoutTabProps> = ({
                           </DropdownMenuItem>
                       </DropdownMenuContent>
                   </DropdownMenu>
-                  <DropdownMenu>
+              </div>
+              <div className="flex flex-col">
+                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                           <RibbonButton icon={BookCopy}>Orientation</RibbonButton>
                       </DropdownMenuTrigger>
@@ -109,6 +111,8 @@ export const LayoutTab: FC<LayoutTabProps> = ({
                           ))}
                       </DropdownMenuContent>
                   </DropdownMenu>
+              </div>
+               <div className="flex flex-col">
                    <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                           <RibbonButton icon={ColumnsIcon}>Columns</RibbonButton>
