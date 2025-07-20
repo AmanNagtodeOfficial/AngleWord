@@ -152,22 +152,18 @@ export const LayoutTab: FC<LayoutTabProps> = ({
           </div>
       </RibbonGroup>
       <RibbonGroup title="Arrange">
-          <div className="flex">
-              <div className="flex flex-col gap-1">
+          <div className="flex items-start gap-1">
+              <div className="grid grid-cols-2 gap-1">
                   <RibbonButton icon={PositionIcon} disabled>Position</RibbonButton>
                   <RibbonButton icon={WrapTextIcon} disabled>Wrap Text</RibbonButton>
-              </div>
-              <div className="flex flex-col gap-1">
                   <RibbonButton icon={BringToFront} disabled>Bring Forward</RibbonButton>
                   <RibbonButton icon={SendToBack} disabled>Send Backward</RibbonButton>
               </div>
-              <div className="flex flex-col gap-1">
-                 <RibbonButton icon={TextSelect} disabled>Selection Pane</RibbonButton>
-                 <div className="flex flex-col items-start pl-1">
-                     <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><AlignIcon/> <span className="ml-1">Align</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-                     <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><GroupObjectsIcon/> <span className="ml-1">Group</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-                     <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><RotateIcon/> <span className="ml-1">Rotate</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
-                 </div>
+              <div className="flex flex-col gap-1 border-l pl-1">
+                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><TextSelect/> <span className="ml-1">Selection Pane</span></Button>
+                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><AlignIcon/> <span className="ml-1">Align</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
+                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><GroupObjectsIcon/> <span className="ml-1">Group</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
+                 <Button variant="ghost" size="sm" className="h-auto p-1 text-xs justify-start" disabled><RotateIcon/> <span className="ml-1">Rotate</span> <ChevronDown className="w-3 h-3 ml-auto" /></Button>
               </div>
           </div>
       </RibbonGroup>
