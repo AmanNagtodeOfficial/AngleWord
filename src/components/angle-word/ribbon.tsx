@@ -13,6 +13,7 @@ import { CustomMarginsDialog } from "./custom-margins-dialog";
 
 import { HomeTab } from "./ribbon-tabs/home-tab";
 import { InsertTab } from "./ribbon-tabs/insert-tab";
+import { DrawTab } from "./ribbon-tabs/draw-tab";
 import { DesignTab } from "./ribbon-tabs/design-tab";
 import { LayoutTab } from "./ribbon-tabs/layout-tab";
 import { ReferencesTab } from "./ribbon-tabs/references-tab";
@@ -102,6 +103,7 @@ export function AngleWordRibbon({
             <TabsList className="bg-transparent p-0 h-auto justify-start">
               <TabsTrigger value="home" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Home</TabsTrigger>
               <TabsTrigger value="insert" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Insert</TabsTrigger>
+              <TabsTrigger value="draw" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Draw</TabsTrigger>
               <TabsTrigger value="design" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Design</TabsTrigger>
               <TabsTrigger value="layout" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">Layout</TabsTrigger>
               <TabsTrigger value="references" className="text-sm px-3 py-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:shadow-none">References</TabsTrigger>
@@ -118,6 +120,10 @@ export function AngleWordRibbon({
 
           <TabsContent value="insert" className="bg-background p-2">
             <InsertTab editor={editor} />
+          </TabsContent>
+
+          <TabsContent value="draw" className="bg-background p-2">
+            <DrawTab editor={editor} />
           </TabsContent>
 
           <TabsContent value="design" className="bg-background p-2">

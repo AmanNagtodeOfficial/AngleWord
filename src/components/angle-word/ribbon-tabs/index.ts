@@ -1,6 +1,7 @@
 
 export * from './home-tab';
 export * from './insert-tab';
+export * from './draw-tab';
 export * from './design-tab';
 export * from './layout-tab';
 export * from './references-tab';
