@@ -90,8 +90,6 @@ export function DocumentEditor({ content, onUpdate, setEditor, className, style 
       StarterKit.configure({
         bulletList: false, // Disable default to use our custom one
         paragraph: false, // Disable default to use our custom one
-        underline: false,
-        bubbleMenu: false, // We'll manage it ourselves
       }),
       CharacterCount,
       IndentableParagraph,
