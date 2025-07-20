@@ -31,17 +31,27 @@ interface FloatingMenuProps {
 }
 
 const FONT_FAMILIES = [
-  { name: "Candara", value: "Candara, sans-serif" },
-  { name: "Arial", value: "Arial, sans-serif" },
-  { name: "Georgia", value: "Georgia, serif" },
-  { name: "Inter", value: "Inter, sans-serif" },
-  { name: "PT Sans", value: "PT Sans, sans-serif" },
-  { name: "Tahoma", value: "Tahoma, sans-serif" },
-  { name: "Times New Roman", value: "Times New Roman, Times, serif" },
-  { name: "Verdana", value: "Verdana, sans-serif" },
-  { name: 'Calibri', value: 'Calibri, sans-serif' },
-  { name: 'Cambria', value: 'Cambria, serif' },
-  { name: 'Courier New', value: 'Courier New, monospace' },
+    { name: 'Arial', value: 'Arial, sans-serif' },
+    { name: 'Calibri', value: 'Calibri, sans-serif' },
+    { name: 'Cambria', value: 'Cambria, serif' },
+    { name: 'Candara', value: 'Candara, sans-serif' },
+    { name: 'Courier New', value: 'Courier New, monospace' },
+    { name: 'Georgia', value: 'Georgia, serif' },
+    { name: 'Inter', value: 'Inter, sans-serif' },
+    { name: 'Lato', value: 'Lato, sans-serif' },
+    { name: 'Merriweather', value: 'Merriweather, serif' },
+    { name: 'Montserrat', value: 'Montserrat, sans-serif' },
+    { name: 'Noto Sans', value: 'Noto Sans, sans-serif' },
+    { name: 'Open Sans', value: 'Open Sans, sans-serif' },
+    { name: 'Oswald', value: 'Oswald, sans-serif' },
+    { name: 'PT Sans', value: 'PT Sans, sans-serif' },
+    { name: 'Playfair Display', value: 'Playfair Display, serif' },
+    { name: 'Raleway', value: 'Raleway, sans-serif' },
+    { name: 'Roboto', value: 'Roboto, sans-serif' },
+    { name: 'Roboto Mono', value: 'Roboto Mono, monospace' },
+    { name: 'Tahoma', value: 'Tahoma, sans-serif' },
+    { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
+    { name: 'Verdana', value: 'Verdana, sans-serif' },
 ];
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
@@ -49,32 +59,34 @@ const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '2
 
 export function FloatingMenu({ editor }: FloatingMenuProps) {
 
-  const currentFontFamily = useCallback(() => {
+  const currentFontFamilyName = useCallback(() => {
     for (const family of FONT_FAMILIES) {
       if (editor.isActive('textStyle', { fontFamily: family.value })) {
         return family.name;
       }
     }
-    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'Candara';
+    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'Arial';
   }, [editor]);
   
   const currentFontSize = useCallback(() => {
-    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '10';
+    return editor.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
   }, [editor]);
 
+  const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamilyName());
   const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
 
   useEffect(() => {
-    const handleSelectionUpdate = () => {
+    const handleUpdate = () => {
       setFontSizeInput(currentFontSize());
+      setFontFamilyInput(currentFontFamilyName());
     };
-    editor.on('selectionUpdate', handleSelectionUpdate);
-    editor.on('transaction', handleSelectionUpdate);
+    editor.on('selectionUpdate', handleUpdate);
+    editor.on('transaction', handleUpdate);
     return () => {
-        editor.off('selectionUpdate', handleSelectionUpdate);
-        editor.off('transaction', handleSelectionUpdate);
+        editor.off('selectionUpdate', handleUpdate);
+        editor.off('transaction', handleUpdate);
     };
-  }, [editor, currentFontSize]);
+  }, [editor, currentFontSize, currentFontFamilyName]);
 
   const setFontSize = (size: string) => {
     const numSize = parseInt(size, 10);
@@ -82,6 +94,12 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
       editor.chain().focus().setMark('textStyle', { fontSize: `${numSize}pt` }).run();
       setFontSizeInput(size);
     }
+  };
+  
+  const setFontFamily = (family: string) => {
+    const fontFamilyValue = FONT_FAMILIES.find(f => f.name.toLowerCase() === family.toLowerCase())?.value || family;
+    editor.chain().focus().setFontFamily(fontFamilyValue).run();
+    setFontFamilyInput(family);
   };
 
   const handleIncreaseFontSize = () => {
@@ -124,25 +142,40 @@ export function FloatingMenu({ editor }: FloatingMenuProps) {
     >
       {/* Top Row */}
       <div className="flex items-center gap-1 px-1">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="p-1 text-xs h-7 w-28 justify-between">
-              <span className="truncate">{currentFontFamily()}</span>
-              <ChevronDown className="w-3 h-3 ml-1" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {FONT_FAMILIES.map(font => (
-              <DropdownMenuItem
-                key={font.value}
-                onClick={() => editor.chain().focus().setFontFamily(font.value).run()}
-                style={{fontFamily: font.value}}
-              >
-                {font.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center border rounded-md h-7">
+            <Input
+                type="text"
+                value={fontFamilyInput}
+                onChange={(e) => setFontFamilyInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        setFontFamily(e.currentTarget.value);
+                        e.currentTarget.blur();
+                    }
+                }}
+                onBlur={(e) => setFontFamily(e.currentTarget.value)}
+                className="p-1 text-xs h-full w-28 border-0 focus-visible:ring-0"
+            />
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="p-1 h-full w-5 border-l rounded-l-none">
+                        <ChevronDown className="w-3 h-3" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {FONT_FAMILIES.map(font => (
+                    <DropdownMenuItem
+                        key={font.value}
+                        onClick={() => setFontFamily(font.name)}
+                        style={{fontFamily: font.value}}
+                    >
+                        {font.name}
+                    </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+
 
         <div className="flex items-center border rounded-md h-7">
             <Input

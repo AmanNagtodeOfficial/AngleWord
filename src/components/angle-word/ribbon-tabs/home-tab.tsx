@@ -67,17 +67,27 @@ interface HomeTabProps {
 
 const FONT_SIZES = ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '72'];
 const FONT_FAMILIES = [
-  { name: "PT Sans", value: "PT Sans, sans-serif" },
-  { name: "Arial", value: "Arial, sans-serif" },
-  { name: 'Calibri', value: 'Calibri, sans-serif' },
-  { name: 'Cambria', value: 'Cambria, serif' },
-  { name: 'Candara', value: 'Candara, sans-serif' },
-  { name: 'Courier New', value: 'Courier New, monospace' },
-  { name: "Georgia", value: "Georgia, serif" },
-  { name: "Inter", value: "Inter, sans-serif" },
-  { name: "Tahoma", value: "Tahoma, sans-serif" },
-  { name: "Times New Roman", value: "Times New Roman, Times, serif" },
-  { name: "Verdana", value: "Verdana, sans-serif" },
+    { name: 'Arial', value: 'Arial, sans-serif' },
+    { name: 'Calibri', value: 'Calibri, sans-serif' },
+    { name: 'Cambria', value: 'Cambria, serif' },
+    { name: 'Candara', value: 'Candara, sans-serif' },
+    { name: 'Courier New', value: 'Courier New, monospace' },
+    { name: 'Georgia', value: 'Georgia, serif' },
+    { name: 'Inter', value: 'Inter, sans-serif' },
+    { name: 'Lato', value: 'Lato, sans-serif' },
+    { name: 'Merriweather', value: 'Merriweather, serif' },
+    { name: 'Montserrat', value: 'Montserrat, sans-serif' },
+    { name: 'Noto Sans', value: 'Noto Sans, sans-serif' },
+    { name: 'Open Sans', value: 'Open Sans, sans-serif' },
+    { name: 'Oswald', value: 'Oswald, sans-serif' },
+    { name: 'PT Sans', value: 'PT Sans, sans-serif' },
+    { name: 'Playfair Display', value: 'Playfair Display, serif' },
+    { name: 'Raleway', value: 'Raleway, sans-serif' },
+    { name: 'Roboto', value: 'Roboto, sans-serif' },
+    { name: 'Roboto Mono', value: 'Roboto Mono, monospace' },
+    { name: 'Tahoma', value: 'Tahoma, sans-serif' },
+    { name: 'Times New Roman', value: 'Times New Roman, Times, serif' },
+    { name: 'Verdana', value: 'Verdana, sans-serif' },
 ];
 const FONT_COLORS = [
   '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
@@ -129,34 +139,34 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
     return editor?.getAttributes('textStyle').fontSize?.replace('pt', '') || '11';
   }, [editor]);
   
-  const currentFontFamily = useCallback(() => {
-    if (!editor) return 'PT Sans';
+  const currentFontFamilyName = useCallback(() => {
+    if (!editor) return 'Arial';
     for (const family of FONT_FAMILIES) {
       if (editor.isActive('textStyle', { fontFamily: family.value })) {
         return family.name;
       }
     }
-    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'PT Sans';
+    return editor.getAttributes('textStyle').fontFamily?.split(',')[0].replace(/['"]/g, '') || 'Arial';
   }, [editor]);
 
   const [fontSizeInput, setFontSizeInput] = useState(currentFontSize());
-  const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamily());
+  const [fontFamilyInput, setFontFamilyInput] = useState(currentFontFamilyName());
 
   useEffect(() => {
-    const handleSelectionUpdate = () => {
+    const handleUpdate = () => {
       if (editor) {
         setFontSizeInput(currentFontSize());
-        setFontFamilyInput(currentFontFamily());
+        setFontFamilyInput(currentFontFamilyName());
       }
     };
 
-    editor?.on('selectionUpdate', handleSelectionUpdate);
-    editor?.on('transaction', handleSelectionUpdate);
+    editor?.on('selectionUpdate', handleUpdate);
+    editor?.on('transaction', handleUpdate);
     return () => {
-      editor?.off('selectionUpdate', handleSelectionUpdate);
-      editor?.off('transaction', handleSelectionUpdate);
+      editor?.off('selectionUpdate', handleUpdate);
+      editor?.off('transaction', handleUpdate);
     };
-  }, [editor, currentFontSize, currentFontFamily]);
+  }, [editor, currentFontSize, currentFontFamilyName]);
 
 
   if (!editor) return null;
@@ -223,8 +233,9 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
   };
 
   const setFontFamily = (family: string) => {
-    editor.chain().focus().setFontFamily(family).run();
-    setFontFamilyInput(family.split(',')[0].replace(/['"]/g, ''));
+    const fontFamilyValue = FONT_FAMILIES.find(f => f.name.toLowerCase() === family.toLowerCase())?.value || family;
+    editor.chain().focus().setFontFamily(fontFamilyValue).run();
+    setFontFamilyInput(family);
   };
 
   const handleIncreaseFontSize = () => {
@@ -335,11 +346,11 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                             onChange={(e) => setFontFamilyInput(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                    setFontFamily(fontFamilyInput);
+                                    setFontFamily(e.currentTarget.value);
                                     e.currentTarget.blur();
                                 }
                             }}
-                            onBlur={() => setFontFamily(fontFamilyInput)}
+                            onBlur={(e) => setFontFamily(e.currentTarget.value)}
                             className="p-1 text-xs h-8 w-32 border-0 focus-visible:ring-0"
                         />
                          <DropdownMenu>
@@ -350,7 +361,7 @@ export const HomeTab: FC<HomeTabProps> = ({ editor }) => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 {FONT_FAMILIES.map(font => (
-                                    <DropdownMenuItem key={font.value} onSelect={() => setFontFamily(font.value)} style={{fontFamily: font.value}}>
+                                    <DropdownMenuItem key={font.value} onSelect={() => setFontFamily(font.name)} style={{fontFamily: font.value}}>
                                         {font.name}
                                     </DropdownMenuItem>
                                 ))}
