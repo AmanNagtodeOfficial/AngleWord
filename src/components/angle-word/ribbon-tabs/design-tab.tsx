@@ -49,7 +49,7 @@ export const DesignTab: FC<DesignTabProps> = ({ editor }) => {
                 <ChevronDown className="inline w-3 h-3 ml-0.5" />
             </RibbonButton>
 
-            <ScrollArea className="w-[500px] whitespace-nowrap rounded-md border">
+            <ScrollArea className="w-[400px] whitespace-nowrap rounded-md border">
               <div className="flex w-max space-x-2 p-2">
                 {documentStyles.map((style, index) => (
                     <div key={index} className="flex-shrink-0 cursor-pointer group">
@@ -69,22 +69,26 @@ export const DesignTab: FC<DesignTabProps> = ({ editor }) => {
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
             
-            <div className="flex flex-col space-y-1 items-start pl-2 border-l">
-                <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                    <Droplet className="w-4 h-4 mr-2" /> Colours <ChevronDown className="w-3 h-3 ml-auto" />
-                </Button>
-                <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                    <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
-                </Button>
-                <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                    <SlidersHorizontal className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
-                </Button>
-                <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                    <Wand2 className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
-                </Button>
-                 <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
-                    <Check className="w-4 h-4 mr-2" /> Set as Default
-                </Button>
+            <div className="flex items-start space-x-1 pl-2 border-l">
+                <div className="flex flex-col space-y-1">
+                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                        <Droplet className="w-4 h-4 mr-2" /> Colours <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                        <Type className="w-4 h-4 mr-2" /> Fonts <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                </div>
+                <div className="flex flex-col space-y-1">
+                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                        <SlidersHorizontal className="w-4 h-4 mr-2" /> Paragraph Spacing <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                        <Wand2 className="w-4 h-4 mr-2" /> Effects <ChevronDown className="w-3 h-3 ml-auto" />
+                    </Button>
+                    <Button variant="ghost" className="h-auto p-1 text-xs justify-start hover:bg-accent hover:text-accent-foreground w-full">
+                        <Check className="w-4 h-4 mr-2" /> Set as Default
+                    </Button>
+                </div>
             </div>
         </div>
       </RibbonGroup>
