@@ -2,7 +2,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, Mail, Projector, Cloud, ShieldCheck, FileType, FileText as FileTextIcon, Globe, FileKey2, FileBox } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ArrowLeft, File, FilePlus, Home, Info, Printer, Save, Share2, FileEdit, FolderOpen, History, Star, Users, FileInput, FileOutput, X, ChevronsRight, Settings, UserCircle, CheckCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Minus, Plus, BookCopy, Scaling, Combine, Lock, FileSearch, FileCheck, FolderSync, Puzzle, ShieldCheck, Mail, Projector, Cloud, FileType, FileText as FileTextIcon, Globe, FileKey2, FileBox, Loader2 } from "lucide-react";
 import { useState, FC, useMemo, useEffect } from "react";
 import { type Editor } from "@tiptap/react";
 import { Input } from "@/components/ui/input";
@@ -20,9 +21,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import type { Margins, Orientation, PageSize } from "@/app/page";
 import { PAGE_SIZES, MARGIN_PRESETS } from "@/app/page";
 import { CustomMarginsDialog } from "./custom-margins-dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { auth } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
+import { generatePdfAction } from "@/app/actions";
+import { useToast } from "@/hooks/use-toast";
 
 
 interface FileMenuProps {
@@ -42,7 +44,7 @@ interface FileMenuProps {
 
 type MenuScreen = 'home' | 'new' | 'open' | 'info' | 'save' | 'save-as' | 'history' | 'print' | 'share' | 'export' | 'transform' | 'close' | 'account' | 'options';
 
-export type SaveFormat = 'html' | 'txt';
+export type SaveFormat = 'html' | 'txt' | 'pdf';
 
 const templates = [
     { name: 'Blank document', image: 'https://placehold.co/150x200', hint: 'blank paper' },
@@ -73,8 +75,9 @@ export function FileMenu({
   const [activeScreen, setActiveScreen] = useState<MenuScreen>('home');
   const [fileName, setFileName] = useState(documentName);
   const [saveFormat, setSaveFormat] = useState<SaveFormat>('html');
-
-  const handleSave = (asNewFile: boolean = false, newFormat?: SaveFormat) => {
+  const { toast } = useToast();
+  
+  const handleSaveAs = async (asNewFile: boolean = false, newFormat?: SaveFormat) => {
     if (!editor) return;
 
     const finalFormat = newFormat || saveFormat;
@@ -82,27 +85,35 @@ export function FileMenu({
     let blobType: string;
     let extension: string;
     const finalFileName = fileName || 'document';
+    
+    setDocumentName(finalFileName);
 
     if (finalFormat === 'txt') {
       content = editor.getText();
       blobType = 'text/plain';
       extension = 'txt';
-    } else {
+      const blob = new Blob([content], { type: blobType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${finalFileName}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+    } else if (finalFormat === 'html') {
       content = editor.getHTML();
       blobType = 'text/html';
       extension = 'html';
+       const blob = new Blob([content], { type: blobType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${finalFileName}.${extension}`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
-    
-    setDocumentName(finalFileName);
-
-    const blob = new Blob([content], { type: blobType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${finalFileName}.${extension}`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
+
 
   const handleNewDocument = () => {
     onNewDocument();
@@ -130,7 +141,7 @@ export function FileMenu({
       case 'share':
         return <ShareScreen />;
       case 'export':
-        return <ExportScreen onSaveAs={setActiveScreen} onSetFormat={setSaveFormat} />;
+        return <ExportScreen onSaveAs={setActiveScreen} onSetFormat={setSaveFormat} editor={editor} documentName={documentName} />;
       case 'print':
         return (
           <PrintScreen 
@@ -172,7 +183,7 @@ export function FileMenu({
                 </Select>
               </div>
               <div className="flex justify-end pt-4">
-                 <Button onClick={() => handleSave(true)}>Save</Button>
+                 <Button onClick={() => handleSaveAs(true)}>Save</Button>
               </div>
             </div>
           </div>
@@ -187,7 +198,7 @@ export function FileMenu({
     { name: 'new', label: 'New', icon: FilePlus, action: handleNewDocument },
     { name: 'open', label: 'Open', icon: FolderOpen, action: () => setActiveScreen('open') },
     { name: 'info', label: 'Info', icon: Info, action: () => setActiveScreen('info') },
-    { name: 'save', label: 'Save', icon: Save, action: () => handleSave(false) },
+    { name: 'save', label: 'Save', icon: Save, action: () => handleSaveAs(false) },
     { name: 'save-as', label: 'Save As', icon: FileEdit, action: () => setActiveScreen('save-as') },
     { name: 'history', label: 'History', icon: History, disabled: true, action: () => setActiveScreen('history') },
     { name: 'print', label: 'Print', icon: Printer, action: () => setActiveScreen('print') },
@@ -333,25 +344,6 @@ function HomeScreen({ onNewDocument, onTemplateClick }: { onNewDocument: () => v
         </div>
     );
 }
-
-const PrintSettingDropdown: FC<{icon: React.ElementType, title: string, description: string, children: React.ReactNode}> = ({ icon: Icon, title, description, children }) => (
-    <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-auto w-full justify-start p-2 text-left">
-                <Icon className="w-8 h-8 mr-3 text-primary/80" />
-                <div className="flex flex-col">
-                    <span className="font-semibold">{title}</span>
-                    <span className="text-xs text-muted-foreground">{description}</span>
-                </div>
-                <ChevronDown className="w-4 h-4 ml-auto" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            {children}
-        </DropdownMenuContent>
-    </DropdownMenu>
-);
-
 const MarginIcon: FC<{ type: string }> = ({ type }) => {
     const baseStyle: React.SVGProps<SVGSVGElement> = {
       width: '32px',
@@ -392,6 +384,24 @@ const MarginMenuItem: FC<{ title: string; details: string[]; onSelect: () => voi
             </div>
         </div>
     </DropdownMenuItem>
+);
+
+const PrintSettingDropdown: FC<{icon: React.ElementType, title: string, description: string, children: React.ReactNode}> = ({ icon: Icon, title, description, children }) => (
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="h-auto w-full justify-start p-2 text-left">
+                <Icon className="w-8 h-8 mr-3 text-primary/80" />
+                <div className="flex flex-col">
+                    <span className="font-semibold">{title}</span>
+                    <span className="text-xs text-muted-foreground">{description}</span>
+                </div>
+                <ChevronDown className="w-4 h-4 ml-auto" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+            {children}
+        </DropdownMenuContent>
+    </DropdownMenu>
 );
 
 interface PrintScreenProps {
@@ -566,7 +576,7 @@ const PrintScreen: FC<PrintScreenProps> = ({
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>More Paper Sizes...</DropdownMenuItem>
                                  </PrintSettingDropdown>
-                                 <PrintSettingDropdown icon={File} title={currentMarginPreset} description={Object.values(margins).join(' ')}>
+                                 <PrintSettingDropdown icon={FileText} title={currentMarginPreset} description={Object.values(margins).join(' ')}>
                                      {Object.entries(MARGIN_PRESETS).map(([key, preset]) => (
                                         <MarginMenuItem 
                                             key={key} 
@@ -847,9 +857,13 @@ const ShareScreen: FC = () => {
 const ExportScreen: FC<{
     onSaveAs: (screen: MenuScreen) => void;
     onSetFormat: (format: SaveFormat) => void;
-}> = ({ onSaveAs, onSetFormat }) => {
+    editor: Editor | null;
+    documentName: string;
+}> = ({ onSaveAs, onSetFormat, editor, documentName }) => {
     const [activeSubMenu, setActiveSubMenu] = useState('changeType');
     const [selectedType, setSelectedType] = useState('document');
+    const [isPdfLoading, setIsPdfLoading] = useState(false);
+    const { toast } = useToast();
 
     const handleTypeSelect = (type: string, format: SaveFormat) => {
         setSelectedType(type);
@@ -858,6 +872,38 @@ const ExportScreen: FC<{
 
     const handleSaveAsClick = () => {
         onSaveAs('save-as');
+    };
+    
+    const handleCreatePdf = async () => {
+        if (!editor) {
+            toast({ title: 'Error', description: 'Editor not available.', variant: 'destructive' });
+            return;
+        }
+        setIsPdfLoading(true);
+        try {
+            const htmlContent = editor.getHTML();
+            const result = await generatePdfAction({ html: htmlContent });
+            
+            if (result.pdfBase64) {
+                const blob = new Blob([Buffer.from(result.pdfBase64, 'base64')], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${documentName}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                toast({ title: 'Success', description: 'PDF has been downloaded.' });
+            } else {
+                 throw new Error('PDF generation failed, no data returned.');
+            }
+        } catch(error: any) {
+            console.error("PDF generation error:", error);
+            toast({ title: 'PDF Generation Failed', description: error.message || 'An unknown error occurred.', variant: 'destructive' });
+        } finally {
+            setIsPdfLoading(false);
+        }
     };
 
     const fileTypes = {
@@ -897,7 +943,7 @@ const ExportScreen: FC<{
             <aside className="w-1/3 border-r p-4">
                 <h1 className="text-4xl font-light mb-6">Export</h1>
                 <div className="space-y-1">
-                    <Button variant="ghost" onClick={() => setActiveSubMenu('pdf')} className={cn("w-full justify-start p-3 text-left h-auto", activeSubMenu === 'pdf' && "bg-primary/10")} disabled>
+                    <Button variant="ghost" onClick={() => setActiveSubMenu('pdf')} className={cn("w-full justify-start p-3 text-left h-auto", activeSubMenu === 'pdf' && "bg-primary/10")}>
                         <File className="w-8 h-8 mr-3 text-primary/80" />
                         <div>
                             <p className="font-semibold">Create PDF/XPS Document</p>
@@ -944,7 +990,25 @@ const ExportScreen: FC<{
                     </div>
                 )}
                  {activeSubMenu === 'pdf' && (
-                    <div className="text-center mt-20 text-muted-foreground">PDF/XPS creation options would be here.</div>
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-4">Create PDF/XPS Document</h2>
+                        <p className="text-sm text-muted-foreground mb-4">Preserves layout, formatting, fonts, and images. Content can't be easily changed. Free viewers are available on the web.</p>
+                        <Separator className="my-6" />
+                        <Button 
+                            size="lg" 
+                            className="h-auto p-4 flex-col w-40 h-28" 
+                            variant="outline" 
+                            onClick={handleCreatePdf}
+                            disabled={isPdfLoading}
+                        >
+                            {isPdfLoading ? (
+                                <Loader2 className="w-10 h-10 mb-1 animate-spin" />
+                            ) : (
+                                <File className="w-10 h-10 mb-1" />
+                            )}
+                            <span>{isPdfLoading ? 'Creating...' : 'Create PDF/XPS'}</span>
+                        </Button>
+                    </div>
                  )}
             </main>
         </div>
