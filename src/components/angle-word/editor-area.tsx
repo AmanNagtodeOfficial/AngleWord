@@ -7,7 +7,7 @@ import { AIModal } from "./ai-modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { improveTextAction, detectToneAction, summarizeTextAction } from "@/app/actions";
-import type { ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
+import type { Suggestion, ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
 import type { DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-tone-and-suggest-alternatives";
 import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,6 +94,8 @@ export function EditorArea({
     setImproveError(null);
     setImproveResult(null);
     try {
+      // For the modal, we don't pass a language, letting it default to English.
+      // The real-time grammar check uses the selected language.
       const result = await improveTextAction({ text });
       setImproveResult(result);
     } catch (error: any) {
@@ -145,10 +147,10 @@ export function EditorArea({
   }, [getTextForAI, toast]);
   
   const applyImprovedText = () => {
-    if (improveResult?.improvedText) {
-      editorInstance?.commands.setContent(improveResult.improvedText);
-      setActiveAITool(null);
-    }
+    // This function is no longer directly applicable as the sidebar handles suggestions.
+    // Kept for potential future use or if modal functionality is restored differently.
+    // For now, the modal is more of a viewer.
+    handleCloseModal();
   };
 
   useEffect(() => {
@@ -240,26 +242,29 @@ export function EditorArea({
         <AIModal
           isOpen={activeAITool === "improve"}
           onClose={handleCloseModal}
-          title="Improve Writing Quality"
+          title="Writing Suggestions"
           isLoading={isLoadingImprove}
           error={improveError}
-          onApply={applyImprovedText}
         >
-          {improveResult && (
+          {improveResult && improveResult.suggestions.length > 0 ? (
             <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-2 font-headline">Improved Text:</h3>
-                <p className="text-sm p-3 bg-secondary/50 rounded-md whitespace-pre-wrap">{improveResult.improvedText}</p>
-              </div>
-              <Separator />
-              <div>
-                <h3 className="font-semibold mb-2 font-headline">Suggestions:</h3>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
+              <p className="text-sm text-muted-foreground">
+                The following suggestions were found. You can review and apply them from the Editor sidebar, opened via the status bar.
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
                   {improveResult.suggestions.map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
+                    <li key={index} className="border-b pb-2">
+                        <span className="font-semibold capitalize text-primary/80">{suggestion.type}: </span> 
+                        <span className="text-destructive line-through">{suggestion.original}</span> → <span className="text-green-600 font-medium">{suggestion.suggestion}</span>
+                        <p className="text-xs text-muted-foreground mt-1">{suggestion.explanation}</p>
+                    </li>
                   ))}
                 </ul>
-              </div>
+            </div>
+          ) : (
+             <div className="text-center py-8">
+                <p className="text-lg font-semibold">No suggestions found!</p>
+                <p className="text-sm text-muted-foreground">Your text looks great.</p>
             </div>
           )}
         </AIModal>

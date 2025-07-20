@@ -42,11 +42,11 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI Writing Assistant designed to improve the quality of writing.
 
   You will receive text and provide suggestions for grammar, spelling, style, and vocabulary improvements.
-  The text is written in the following language: {{{language | "English (United States)"}}}. All your suggestions and explanations must be tailored for this language.
+  The text is written in the following language: {{{language}}}. All your suggestions and explanations must be tailored for this language.
 
   Text: {{{text}}}
   
-  Analyze the text and identify all issues. Return a list of suggestions in the specified JSON format. If there are no issues, return an empty array for the suggestions.`,
+  Analyze the text and identify all issues. Return a list of suggestions in the specified JSON format. If there are no issues, return an empty array for the suggestions field.`,
 });
 
 const improveWritingQualityFlow = ai.defineFlow(
@@ -56,7 +56,10 @@ const improveWritingQualityFlow = ai.defineFlow(
     outputSchema: ImproveWritingQualityOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    // Provide a default language if none is given.
+    const language = input.language || 'English (United States)';
+    
+    const {output} = await prompt({ ...input, language });
     return output!;
   }
 );
