@@ -6,7 +6,6 @@
  *
  * - improveWritingQuality - A function that handles the process of improving writing quality.
  * - ImproveWritingQualityInput - The input type for the improveWritingQuality function.
- * - ImproveWritingQualityOutput - The return type for the improveWritingQuality function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -18,18 +17,9 @@ const ImproveWritingQualityInputSchema = z.object({
 });
 export type ImproveWritingQualityInput = z.infer<typeof ImproveWritingQualityInputSchema>;
 
-const SuggestionSchema = z.object({
-  type: z.enum(['spelling', 'grammar', 'style', 'vocabulary']).describe('The type of issue found.'),
-  original: z.string().describe('The original text segment with the issue.'),
-  suggestion: z.string().describe('The suggested correction.'),
-  explanation: z.string().describe('A brief explanation of why the change is suggested.'),
-});
+// The output is now a simple string, which is more robust.
+export type ImproveWritingQualityOutput = string;
 
-const ImproveWritingQualityOutputSchema = z.object({
-  suggestions: z.array(SuggestionSchema).describe('Specific suggestions for improvement.'),
-});
-export type ImproveWritingQualityOutput = z.infer<typeof ImproveWritingQualityOutputSchema>;
-export type Suggestion = z.infer<typeof SuggestionSchema>;
 
 export async function improveWritingQuality(input: ImproveWritingQualityInput): Promise<ImproveWritingQualityOutput> {
   return improveWritingQualityFlow(input);
@@ -38,28 +28,29 @@ export async function improveWritingQuality(input: ImproveWritingQualityInput): 
 const prompt = ai.definePrompt({
   name: 'improveWritingQualityPrompt',
   input: {schema: ImproveWritingQualityInputSchema},
-  output: {schema: ImproveWritingQualityOutputSchema},
-  prompt: `You are an AI Writing Assistant designed to improve the quality of writing.
-
-  You will receive text and provide suggestions for grammar, spelling, style, and vocabulary improvements.
-  The text is written in the following language: {{{language}}}. All your suggestions and explanations must be tailored for this language.
-
-  Text: {{{text}}}
+  prompt: `You are an AI Writing Assistant. Your task is to improve the provided text by correcting spelling, grammar, style, and vocabulary.
   
-  Analyze the text and identify all issues. Return a list of suggestions in the specified JSON format. If there are no issues, return an empty array for the suggestions field.`,
+  The text is written in the following language: {{{language}}}.
+  
+  Text to improve:
+  """
+  {{{text}}}
+  """
+  
+  Return ONLY the full, corrected version of the text. Do not include any explanations, introductory phrases, or markdown formatting.`,
 });
 
 const improveWritingQualityFlow = ai.defineFlow(
   {
     name: 'improveWritingQualityFlow',
     inputSchema: ImproveWritingQualityInputSchema,
-    outputSchema: ImproveWritingQualityOutputSchema,
+    outputSchema: z.string(),
   },
   async input => {
     // Provide a default language if none is given.
     const language = input.language || 'English (United States)';
     
-    const {output} = await prompt({ ...input, language });
-    return output!;
+    const {text} = await prompt({ ...input, language });
+    return text;
   }
 );

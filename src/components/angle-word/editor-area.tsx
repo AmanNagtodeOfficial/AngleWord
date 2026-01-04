@@ -7,7 +7,8 @@ import { AIModal } from "./ai-modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { improveTextAction, detectToneAction, summarizeTextAction } from "@/app/actions";
-import type { Suggestion, ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
+import type { ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
+import type { Suggestion } from "@/ai/flows/improve-writing-quality";
 import type { DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-tone-and-suggest-alternatives";
 import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,8 +95,6 @@ export function EditorArea({
     setImproveError(null);
     setImproveResult(null);
     try {
-      // For the modal, we don't pass a language, letting it default to English.
-      // The real-time grammar check uses the selected language.
       const result = await improveTextAction({ text });
       setImproveResult(result);
     } catch (error: any) {
@@ -147,9 +146,24 @@ export function EditorArea({
   }, [getTextForAI, toast]);
   
   const applyImprovedText = () => {
-    // This function is no longer directly applicable as the sidebar handles suggestions.
-    // Kept for potential future use or if modal functionality is restored differently.
-    // For now, the modal is more of a viewer.
+    if (improveResult && editorInstance) {
+      // Create a temporary div to convert the plain text to HTML paragraphs
+      const tempDiv = document.createElement('div');
+      tempDiv.innerText = improveResult;
+      // Wrap each line in a <p> tag
+      const newContent = Array.from(tempDiv.childNodes).map(node => {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+              return `<p>${node.textContent}</p>`;
+          }
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            return (node as HTMLElement).outerHTML;
+          }
+          return '';
+      }).join('');
+      
+      onContentUpdate(newContent);
+      editorInstance.commands.setContent(newContent);
+    }
     handleCloseModal();
   };
 
@@ -245,21 +259,20 @@ export function EditorArea({
           title="Writing Suggestions"
           isLoading={isLoadingImprove}
           error={improveError}
+          onApply={applyImprovedText}
+          applyText="Accept Suggestion"
         >
-          {improveResult && improveResult.suggestions.length > 0 ? (
+          {improveResult ? (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                The following suggestions were found. You can review and apply them from the Editor sidebar, opened via the status bar.
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                  {improveResult.suggestions.map((suggestion, index) => (
-                    <li key={index} className="border-b pb-2">
-                        <span className="font-semibold capitalize text-primary/80">{suggestion.type}: </span> 
-                        <span className="text-destructive line-through">{suggestion.original}</span> → <span className="text-green-600 font-medium">{suggestion.suggestion}</span>
-                        <p className="text-xs text-muted-foreground mt-1">{suggestion.explanation}</p>
-                    </li>
-                  ))}
-                </ul>
+                <div>
+                    <h3 className="font-semibold mb-2 font-headline">Suggested Version:</h3>
+                    <p className="text-sm p-3 bg-secondary/50 rounded-md whitespace-pre-wrap">{improveResult}</p>
+                </div>
+                <Separator />
+                 <div>
+                    <h3 className="font-semibold mb-2 font-headline">Original Version:</h3>
+                    <p className="text-sm p-3 bg-muted/50 rounded-md whitespace-pre-wrap line-through text-muted-foreground">{getTextForAI()}</p>
+                </div>
             </div>
           ) : (
              <div className="text-center py-8">
