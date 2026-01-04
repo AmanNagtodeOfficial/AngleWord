@@ -13,6 +13,7 @@ import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { improveTextAction, detectLanguageAction } from "@/app/actions";
 import { GrammarCheckSidebar } from "@/components/angle-word/grammar-check-sidebar";
 import type { Suggestion } from "@/ai/schemas/suggestion-schema";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
@@ -330,6 +331,7 @@ function AngleWordPage() {
 
   return (
     <AuthWrapper>
+      <SidebarProvider>
       <div className="flex flex-col h-screen bg-muted/20 overflow-hidden">
         <AngleWordHeader documentName={activeDocument.name} saveStatus={activeDocument.saveStatus} />
         <DocumentTabs
@@ -411,6 +413,7 @@ function AngleWordPage() {
           onProofingClick={handleProofingClick}
         />
       </div>
+      </SidebarProvider>
     </AuthWrapper>
   );
 }
