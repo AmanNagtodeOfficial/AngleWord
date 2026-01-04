@@ -10,9 +10,9 @@ import { StatusBar } from "@/components/angle-word/status-bar";
 import { Editor, EditorEvents } from "@tiptap/react";
 import AuthWrapper from "@/components/auth-wrapper";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
-import type { Suggestion } from "@/ai/flows/improve-writing-quality";
 import { improveTextAction, detectLanguageAction } from "@/app/actions";
 import { GrammarCheckSidebar } from "@/components/angle-word/grammar-check-sidebar";
+import type { Suggestion } from "@/ai/schemas/suggestion-schema";
 
 
 export type SaveStatus = "unsaved" | "saving" | "saved";
@@ -254,7 +254,6 @@ function AngleWordPage() {
 
   // These functions are passed to the Ribbon to set the active AI tool,
   // which then triggers the modal in EditorArea.
-  const handleTriggerImproveWriting = () => setActiveAITool("improve");
   const handleTriggerDetectTone = () => setActiveAITool("tone");
   const handleTriggerSummarizeDocument = () => setActiveAITool("summarize");
 
@@ -343,7 +342,6 @@ function AngleWordPage() {
         />
         <AngleWordRibbon
           editor={editor}
-          onImproveWriting={handleTriggerImproveWriting}
           onDetectTone={handleTriggerDetectTone}
           onSummarizeDocument={handleTriggerSummarizeDocument}
           onGrammarCheck={handleProofingClick}
@@ -366,8 +364,8 @@ function AngleWordPage() {
           setIsRibbonPinned={setIsRibbonPinned}
           activeContext={activeContext}
         />
-        <div className="flex-grow flex overflow-hidden">
-            <main className="flex-grow overflow-auto">
+        <div className="flex-1 flex min-h-0">
+            <main className="flex-1 overflow-auto">
               <EditorArea
                 key={activeDocument.id} // Re-mounts editor area on tab change
                 activeAITool={activeAITool}
@@ -418,5 +416,3 @@ function AngleWordPage() {
 }
 
 export default AngleWordPage;
-
-    

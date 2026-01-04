@@ -1,12 +1,13 @@
 
 "use server";
 
-import { improveWritingQuality, type ImproveWritingQualityInput, type ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
 import { detectToneAndSuggestAlternatives, type DetectToneAndSuggestAlternativesInput, type DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-tone-and-suggest-alternatives";
 import { summarizeDocument, type SummarizeDocumentInput, type SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { generatePdfFromHtml } from "@/ai/flows/generate-pdf-from-html";
 import type { GeneratePdfFromHtmlInput, GeneratePdfFromHtmlOutput } from "@/ai/schemas/pdf-schemas";
 import { detectLanguage, type DetectLanguageInput, type DetectLanguageOutput } from "@/ai/flows/detect-language";
+import { improveWritingQuality } from "@/ai/flows/improve-writing-quality";
+import type { ImproveWritingQualityInput, ImproveWritingQualityOutput } from "@/ai/schemas/suggestion-schema";
 
 export async function improveTextAction(
   input: ImproveWritingQualityInput

@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { type Suggestion } from "@/ai/flows/improve-writing-quality";
+import { type Suggestion } from "@/ai/schemas/suggestion-schema";
 import { X, Check, Trash2, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -103,5 +103,3 @@ export function GrammarCheckSidebar({
     </aside>
   );
 }
-
-    

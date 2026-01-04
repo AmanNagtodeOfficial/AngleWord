@@ -6,9 +6,7 @@ import { DocumentEditor } from "./document-editor";
 import { AIModal } from "./ai-modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { improveTextAction, detectToneAction, summarizeTextAction } from "@/app/actions";
-import type { ImproveWritingQualityOutput } from "@/ai/flows/improve-writing-quality";
-import type { Suggestion } from "@/ai/flows/improve-writing-quality";
+import { detectToneAction, summarizeTextAction, improveTextAction } from "@/app/actions";
 import type { DetectToneAndSuggestAlternativesOutput } from "@/ai/flows/detect-tone-and-suggest-alternatives";
 import type { SummarizeDocumentOutput } from "@/ai/flows/summarize-document";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +18,7 @@ import { HorizontalRuler, VerticalRuler } from "./ruler";
 import { FloatingMenu } from "./floating-menu";
 
 
-export type AITool = "improve" | "tone" | "summarize" | null;
+export type AITool = "tone" | "summarize" | null;
 
 interface EditorAreaProps {
   activeAITool: AITool;
@@ -53,10 +51,6 @@ export function EditorArea({
 }: EditorAreaProps) {
   const { toast } = useToast();
 
-  const [isLoadingImprove, setIsLoadingImprove] = useState(false);
-  const [improveResult, setImproveResult] = useState<ImproveWritingQualityOutput | null>(null);
-  const [improveError, setImproveError] = useState<string | null>(null);
-
   const [isLoadingTone, setIsLoadingTone] = useState(false);
   const [toneResult, setToneResult] = useState<DetectToneAndSuggestAlternativesOutput | null>(null);
   const [toneError, setToneError] = useState<string | null>(null);
@@ -84,26 +78,6 @@ export function EditorArea({
     return "";
   }, [editorInstance, content]);
 
-
-  const handleImproveWriting = useCallback(async () => {
-    const text = getTextForAI();
-    if (!text.trim()) {
-      toast({ title: "Input Required", description: "Please enter some text to improve.", variant: "destructive" });
-      return;
-    }
-    setIsLoadingImprove(true);
-    setImproveError(null);
-    setImproveResult(null);
-    try {
-      const result = await improveTextAction({ text });
-      setImproveResult(result);
-    } catch (error: any) {
-      setImproveError(error.message || "Failed to improve writing.");
-      toast({ title: "Error", description: error.message || "Failed to improve writing.", variant: "destructive" });
-    } finally {
-      setIsLoadingImprove(false);
-    }
-  }, [getTextForAI, toast]);
 
   const handleDetectTone = useCallback(async () => {
     const text = getTextForAI();
@@ -145,42 +119,17 @@ export function EditorArea({
     }
   }, [getTextForAI, toast]);
   
-  const applyImprovedText = () => {
-    if (improveResult && editorInstance) {
-      // Create a temporary div to convert the plain text to HTML paragraphs
-      const tempDiv = document.createElement('div');
-      tempDiv.innerText = improveResult;
-      // Wrap each line in a <p> tag
-      const newContent = Array.from(tempDiv.childNodes).map(node => {
-          if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
-              return `<p>${node.textContent}</p>`;
-          }
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            return (node as HTMLElement).outerHTML;
-          }
-          return '';
-      }).join('');
-      
-      onContentUpdate(newContent);
-      editorInstance.commands.setContent(newContent);
-    }
-    handleCloseModal();
-  };
 
   useEffect(() => {
-    if (activeAITool === 'improve') {
-       handleImproveWriting();
-    } else if (activeAITool === 'tone') {
+    if (activeAITool === 'tone') {
        handleDetectTone();
     } else if (activeAITool === 'summarize') {
        handleSummarizeDocument();
     }
-  }, [activeAITool, handleImproveWriting, handleDetectTone, handleSummarizeDocument]);
+  }, [activeAITool, handleDetectTone, handleSummarizeDocument]);
 
   const handleCloseModal = () => {
     setActiveAITool(null);
-    setImproveResult(null);
-    setImproveError(null);
     setToneResult(null);
     setToneError(null);
     setSummarizeResult(null);
@@ -252,37 +201,6 @@ export function EditorArea({
             </div>
         </div>
       
-      {activeAITool === "improve" && (
-        <AIModal
-          isOpen={activeAITool === "improve"}
-          onClose={handleCloseModal}
-          title="Writing Suggestions"
-          isLoading={isLoadingImprove}
-          error={improveError}
-          onApply={applyImprovedText}
-          applyText="Accept Suggestion"
-        >
-          {improveResult ? (
-            <div className="space-y-4">
-                <div>
-                    <h3 className="font-semibold mb-2 font-headline">Suggested Version:</h3>
-                    <p className="text-sm p-3 bg-secondary/50 rounded-md whitespace-pre-wrap">{improveResult}</p>
-                </div>
-                <Separator />
-                 <div>
-                    <h3 className="font-semibold mb-2 font-headline">Original Version:</h3>
-                    <p className="text-sm p-3 bg-muted/50 rounded-md whitespace-pre-wrap line-through text-muted-foreground">{getTextForAI()}</p>
-                </div>
-            </div>
-          ) : (
-             <div className="text-center py-8">
-                <p className="text-lg font-semibold">No suggestions found!</p>
-                <p className="text-sm text-muted-foreground">Your text looks great.</p>
-            </div>
-          )}
-        </AIModal>
-      )}
-
       {activeAITool === "tone" && (
          <AIModal
           isOpen={activeAITool === "tone"}

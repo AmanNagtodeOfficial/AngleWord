@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 
 
 interface RibbonProps {
-  onImproveWriting: () => void;
   onDetectTone: () => void;
   onSummarizeDocument: () => void;
   onGrammarCheck: () => void;
@@ -43,7 +42,6 @@ interface RibbonProps {
 
 export function AngleWordRibbon({
   editor,
-  onImproveWriting,
   onDetectTone,
   onSummarizeDocument,
   onGrammarCheck,
@@ -203,7 +201,6 @@ export function AngleWordRibbon({
             </TabsContent>
             <TabsContent value="ai-tools" className="w-full p-0 m-0">
                 <AIToolsTab 
-                  onImproveWriting={onImproveWriting} 
                   onDetectTone={onDetectTone} 
                   onSummarizeDocument={onSummarizeDocument} 
                 />
@@ -236,5 +233,3 @@ export function AngleWordRibbon({
     </>
   );
 }
-
-    
